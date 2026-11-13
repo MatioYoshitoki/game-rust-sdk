@@ -31,6 +31,6 @@ cargo build --locked --features replay --bin kernel-host
 node adapters/h5/server.mjs --port 4183 --state .local/sdk-5-10-demo.sqlite --configs examples/unit-skill-host/catalog.json --account examples/unit-skill-host/account.json
 ```
 
-[完整配置](../../examples/unit-skill-host/arena.json)默认Q为指定单位弹道，2为自身护盾/HOT；先选目标。两名敌人、状态ID和数值均是配置数据。独立交付的samples/unit-targets可复制到包外消费。
+[完整配置](../guides/config-cookbook.md#player-skills)arena.json)默认Q为指定单位弹道，2为自身护盾/HOT；先选目标。两名敌人、状态ID和数值均是配置数据。独立交付的samples/unit-targets可复制到包外消费。
 
 本批不含友军、单位瞬时治疗/效果、追踪、穿透/多目标、地面目标、更多槽位、引导/蓄力/再施放、HP成本、多技能AI、多人或完整技能目录。

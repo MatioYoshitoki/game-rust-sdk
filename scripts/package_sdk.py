@@ -183,7 +183,7 @@ def build(output):
         document=root/'docs/interfaces/multiplayer-periodic-v1.md'
         document.write_text(document.read_text().replace('(periodic-damage-v1.md)','(../../sdk/SDK.md)').replace('(periodic-healing-v1.md)','(../../sdk/SDK.md)'))
         (root/'docs/guides').mkdir(exist_ok=True)
-        for source in ['node-quickstart.md','sdk-integration.md','h5-lab.md']:
+        for source in ['config-cookbook.md','node-quickstart.md','sdk-integration.md','h5-lab.md']:
             guide=root/'docs/guides'/source
             shutil.copy2(ROOT/'docs/guides'/source,guide)
             # 交付包目录布局与仓库不同：hosts/consumer 替代 adapters/examples，仓库文档不入包。

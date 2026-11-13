@@ -25,6 +25,6 @@ cargo build --locked --features replay --bin kernel-host
 node adapters/h5/server.mjs --port 4184 --state .local/sdk-5-11-demo.sqlite --configs examples/ground-skill-host/catalog.json --account examples/ground-skill-host/account.json
 ```
 
-[完整配置](../../examples/ground-skill-host/arena.json)默认Q为地面圆形，2为自身护盾/HOT。H5先点选或触摸地图选择落点，再按技能；准备中换选只影响下一次。描边为当前选择，实心预警以Rust视图为准。Node参考只提交选定坐标，不自行判伤。独立交付samples/ground-targets可以复制到包外接入。
+[完整配置](../guides/config-cookbook.md#player-skills)arena.json)默认Q为地面圆形，2为自身护盾/HOT。H5先点选或触摸地图选择落点，再按技能；准备中换选只影响下一次。描边为当前选择，实心预警以Rust视图为准。Node参考只提交选定坐标，不自行判伤。独立交付samples/ground-targets可以复制到包外接入。
 
 本批不含持续区域、陷阱、追踪、落点裁剪、友军效果、更多槽、引导/蓄力/再施放、多人或完整技能目录。

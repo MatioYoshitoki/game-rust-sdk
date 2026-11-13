@@ -40,7 +40,7 @@ hp_restored = min(adjusted_heal, max(0, maxHp - hp))
 
 Node/H5只显示权威基础量、倍率、调整量和实回，不补算HP。重连保持实例与原期限，旧连接拒绝；来源/目标失效、归位/复位和关闭清理。重启仅恢复冻结资产责任，删除临时状态及healing_received_bps，不恢复World或按新配置重算旧金额。0.10.0包含公开DTO/枚举源码变更，六类Client、协议1～3、资产/恢复schema保持。
 
-完整[配置](../../examples/heal-modifier-host/arena.json)、[清单](../../examples/heal-modifier-host/catalog.json)、[账户](../../examples/heal-modifier-host/account.json)。实时验证：
+完整[配置](../guides/config-cookbook.md#statuses)arena.json)、[清单](../guides/config-cookbook.md#statuses)catalog.json)、[账户](../guides/config-cookbook.md#statuses)account.json)。实时验证：
 
 ```sh
 cargo build --locked --features replay --bin kernel-host

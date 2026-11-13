@@ -46,7 +46,7 @@ periodic_heal_tick事件提供instance_id、definition_id、source、target、ti
 
 同World重连保持实例/原期限/节拍，旧连接拒绝；重启只履行原冻结资产责任，移除HOT/DOT，不恢复World或按新配置/墙钟补跳。0.9.0新增公开Rust DTO字段和枚举分支；六类Client、协议1～3、资产和恢复schema保持。
 
-完整[配置](../../examples/hot-host/arena.json)、[清单](../../examples/hot-host/catalog.json)、[账户](../../examples/hot-host/account.json)。实时验证：
+完整[配置](../guides/config-cookbook.md#statuses)arena.json)、[清单](../guides/config-cookbook.md#statuses)catalog.json)、[账户](../guides/config-cookbook.md#statuses)account.json)。实时验证：
 
 ```sh
 cargo build --locked --features replay --bin kernel-host

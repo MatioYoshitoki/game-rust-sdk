@@ -36,9 +36,9 @@ SDK 0.103.0 的 `combat_rules.self_statuses_by_mastery` 用已注册的自身技
 
 同一技能最多 16 行，门槛从 0 起并严格递增。取满足条件的最后一行。每行提供 1～2 个已注册且不同的状态，所选列表整体替换缺省。SDK 在预检和提交时校验所选状态的容量，使用原技能 ID、费用与冷却。阶段从同一成员、同一技能的可信 `CombatBuild.powers` 取得，客户端仍提交原有施法输入。可复用配置样例为 `examples/combat-host/mastery-stages.json`，交付包内位于 `samples/combat/mastery-stages.json`。
 
-SDK 0.129.0 的 `combat_rules.unit_hit_statuses_by_mastery` 使用同样的表结构，适用于即时敌对 `unit_effect`。正式提交时读取原施法者的可信阶段，在合法命中后用选中的列表向实际目标施加状态。低于首行或缺可信记录时使用 `on_hit_target_statuses`。伤害免疫、闪避、状态拦截和容量沿用原命中规则。 [配置样例](../../examples/combat-host/source-wushi-shu.json)
+SDK 0.129.0 的 `combat_rules.unit_hit_statuses_by_mastery` 使用同样的表结构，适用于即时敌对 `unit_effect`。正式提交时读取原施法者的可信阶段，在合法命中后用选中的列表向实际目标施加状态。低于首行或缺可信记录时使用 `on_hit_target_statuses`。伤害免疫、闪避、状态拦截和容量沿用原命中规则。 [配置样例](../guides/config-cookbook.md#combat-rules)source-wushi-shu.json)
 
-协议 6 的 `combat_rules.skill_cooldowns_by_mastery` 按成员技能 ID 配置 1～16 行递增的 `{minimum_mastery, reduction_bps}`，适用于基础冷却大于 0 的技能。提交时选择满足条件的最高阶段，低于首行或缺可信熟练记录时用基础冷却。阶段倍率与当时有效的状态冷却倍率相乘后向下取整，继续沿用已有最小冷却下限。同一技能的提交状态在设置本次截止时间之后施加。 [磐心守一样例](../../examples/combat-host/source-lin-mi.json)
+协议 6 的 `combat_rules.skill_cooldowns_by_mastery` 按成员技能 ID 配置 1～16 行递增的 `{minimum_mastery, reduction_bps}`，适用于基础冷却大于 0 的技能。提交时选择满足条件的最高阶段，低于首行或缺可信熟练记录时用基础冷却。阶段倍率与当时有效的状态冷却倍率相乘后向下取整，继续沿用已有最小冷却下限。同一技能的提交状态在设置本次截止时间之后施加。 [磐心守一样例](../guides/config-cookbook.md#combat-rules)source-lin-mi.json)
 
 ## 按动作尝试上限
 

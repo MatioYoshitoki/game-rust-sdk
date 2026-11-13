@@ -4,7 +4,7 @@ crate0.11.0 / 机制26 / schema4 / 协议3 / 单人PVE。规格与验收见[本�
 
 保留必填`skill`主技能，可省略`additional_skills`；显式提供时数组须恰有一个SkillConfig对象，最多两项，ID唯一。每项使用已有projectile机制、windup_ms/recovery_ms/cooldown_ms/cost/damage_bps/range/speed/radius和on_commit_self_statuses/on_hit_target_statuses。参数/引用/绑定/未知字段与主技能同样严格校验，状态容量在提交时原子预检。null、空数组、多项及旧机制携带该字段拒绝。只有单技能的机制26仍须schema4/PVE。
 
-完整可复制配置见[arena.json](../../examples/dual-skill-host/arena.json)，账户与清单在同目录。示例主技能ward-bolt产生护盾，附加renewal-bolt产生HOT；这是数据组合，SDK没有按示例ID分支。
+完整可复制配置见[arena.json](../guides/config-cookbook.md#player-skills)arena.json)，账户与清单在同目录。示例主技能ward-bolt产生护盾，附加renewal-bolt产生HOT；这是数据组合，SDK没有按示例ID分支。
 
 ```json
 {"kind":"cast","skill_id":"renewal-bolt","direction":[1,0]}

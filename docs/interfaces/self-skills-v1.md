@@ -22,7 +22,7 @@ crate0.12.0 / 机制27 / schema4 / 协议3 / 单人PVE。范围及SS01～SS10见
 
 Snapshot沿用player_skills/pending_action及主技能skill_ready_at_ms别名；ActionCommitted使用skill_id、skill=true和spirit_cost。H5/Node按配置mechanism选择意图，读取Rust权威状态/CD/资源。重连保持同World已提交状态/CD/后摇及身份，准备沿原连接策略中断。进程重启只核对原冻结资产，清除临时状态/技能视图，不恢复World，不用新配置重算旧金额。
 
-完整样例见[arena.json](../../examples/self-skill-host/arena.json)。其护盾/HOT组合属于数据，不是地图专用代码。
+完整样例见[arena.json](../guides/config-cookbook.md#player-skills)arena.json)。其护盾/HOT组合属于数据，不是地图专用代码。
 
 ```sh
 cargo build --locked --features replay --bin kernel-host

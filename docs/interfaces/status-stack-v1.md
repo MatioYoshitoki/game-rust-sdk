@@ -16,7 +16,7 @@ source_scoped=true按来源实体身份各自叠层；false同定义合并，每
 
 stack实例增加`stacks`、`max_stacks`，旧refresh/ignore的JSON省略它们。首次沿用status_applied；重施输出`status_stacked {status,added_stacks}`，封顶为0。Node/H5显示层数/上限、来源、有效DEF与截止，不能直接施加/改层数或推动时钟。0.5.0新增公开Rust字段与Event变体，源码消费方适配匹配分支；六类Client调用、协议1/2/3和恢复schema1保持。
 
-完整[配置](../../examples/stack-host/arena.json)、[清单](../../examples/stack-host/catalog.json)、[账户事实](../../examples/stack-host/account.json)：
+完整[配置](../guides/config-cookbook.md#statuses)arena.json)、[清单](../guides/config-cookbook.md#statuses)catalog.json)、[账户事实](../guides/config-cookbook.md#statuses)account.json)：
 
 ```sh
 cargo build --locked --features replay --bin kernel-host

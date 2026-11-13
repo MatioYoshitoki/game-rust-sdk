@@ -38,7 +38,7 @@ Damage.amount继续表示实际HP伤害，完全吸收为0。shield_absorbed事�
 
 Node/H5只转交意图、存储证明和展示权威盾量、吸收/HP事件。没有直接设置盾量入口。前后台/重连保留余额与绝对截止；到期、来源/目标失效、归位/复位、关闭清理。进程重启只履行原资产责任，Closed视图移除临时状态和shield_total，不恢复World或按新配置重算旧责任。
 
-完整[配置](../../examples/shield-host/arena.json)、[清单](../../examples/shield-host/catalog.json)、[账户](../../examples/shield-host/account.json)。实时验证：
+完整[配置](../guides/config-cookbook.md#statuses)arena.json)、[清单](../guides/config-cookbook.md#statuses)catalog.json)、[账户](../guides/config-cookbook.md#statuses)account.json)。实时验证：
 
 ```sh
 cargo build --locked --features replay --bin kernel-host

@@ -7,6 +7,7 @@
 - Rust 加载宿主清单 `ConfigCatalog::load(manifest_path)`，把加载结果传给 `Runtime::with_catalog`。公开 API、版本与回执契约见 [SDK 说明](SDK.md) 和 [接入指南](docs/guides/sdk-integration.md)。
 - JSONL 宿主用 `kernel-host --configs /absolute/path/to/game/catalog.json` 启动。也可通过 `MATCH_CONFIG_MANIFEST` 指定清单。查询编译能力使用 `kernel-host --sdk-info`。
 - Node 宿主的十分钟最小接入路径（成员模式完整对局：建账本 → 就绪 → 战斗拾取 → 撤离结算）见 [Node 快速上手](docs/guides/node-quickstart.md)。
+- 技能与机制配置速查（需求 → 机制 → 字段 → 实测示例 → 版本门槛）见 [配置手册](docs/guides/config-cookbook.md)。
 - 配置文档使用 schema 2～7，清单使用 schema 1。单场景清单可省略 `default_scenario`，多场景清单须指定默认场景。
 - [接口文档](docs/interfaces/) 描述配置字段、协议及机制限制。剩余范围和验收门槛见 [当前执行计划](docs/plans/sdk-delivery-roadmap.md)，已完成切片见 [验收记录](docs/evidence/)。
 

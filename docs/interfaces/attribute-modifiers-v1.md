@@ -35,7 +35,7 @@ attribute只接受atk/def；ATK定义必须提供attack_bonus_cap_bps（0～1000
 
 Node/H5仅展示属性、有效ATK/DEF、层数、来源和剩余时间，不推算伤害或直接设置属性。同World重连保留绝对截止；进程重启只恢复原资产责任，Closed视图移除临时状态及有效属性，不按新配置重算旧责任。
 
-完整[配置](../../examples/attribute-host/arena.json)、[清单](../../examples/attribute-host/catalog.json)、[账户](../../examples/attribute-host/account.json)。实时验证：
+完整[配置](../guides/config-cookbook.md#statuses)arena.json)、[清单](../guides/config-cookbook.md#statuses)catalog.json)、[账户](../guides/config-cookbook.md#statuses)account.json)。实时验证：
 
 ```sh
 cargo build --locked --features replay --bin kernel-host

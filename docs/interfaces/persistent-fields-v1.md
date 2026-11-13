@@ -27,6 +27,6 @@ cargo build --locked --features replay --bin kernel-host
 node adapters/h5/server.mjs --port 4185 --state .local/sdk-5-12-demo.sqlite --configs examples/field-host/catalog.json --account examples/field-host/account.json
 ```
 
-[完整配置](../../examples/field-host/arena.json)：先点选/触摸地图，Q创建持续区域；2为自身护盾/HOT。H5显示Rust预警/激活/剩余时间/周期，不自行判伤。Node只转发意图。独立包samples/fields可复制到包外使用。
+[完整配置](../guides/config-cookbook.md#player-skills)arena.json)：先点选/触摸地图，Q创建持续区域；2为自身护盾/HOT。H5显示Rust预警/激活/剩余时间/周期，不自行判伤。Node只转发意图。独立包samples/fields可复制到包外使用。
 
 本批不含治疗区域/光环、移动/跟随/附着、陷阱、其它形状、独立重复接触间隔/目标总预算、周期扣费/引导、来源失效可选策略、多人或完整M05/技能目录。

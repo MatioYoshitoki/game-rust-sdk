@@ -1,6 +1,6 @@
 # 通用战斗配置 v1
 
-SDK 0.90.0，机制105，schema7，协议6。此能力由配置顶层显式的`combat_rules`对象启用；旧机制与缺省路径保留原结算及随机消费轨迹；属性聚合超过u32边界时现改为饱和，避免原先的整数回绕。完整示例见[四人](../../examples/combat-host/arena-a.json)与[八人](../../examples/combat-host/arena-b.json)。所有对象拒绝未知字段与非法引用。
+SDK 0.90.0，机制105，schema7，协议6。此能力由配置顶层显式的`combat_rules`对象启用；旧机制与缺省路径保留原结算及随机消费轨迹；属性聚合超过u32边界时现改为饱和，避免原先的整数回绕。完整示例见[四人](../guides/config-cookbook.md#combat-rules)arena-a.json)与[八人](../guides/config-cookbook.md#combat-rules)arena-b.json)。所有对象拒绝未知字段与非法引用。
 
 ## 初始化与数值表
 
@@ -92,7 +92,7 @@ SDK 0.104.0 的成员普攻和伤害技能 `AttackRule` 可配置 `life_steal_ti
 
 协议 6 的记录盾定义可选 `shield_family`，标识由 1～64 个 ASCII 字母、数字、下划线、点或连字符组成。家族成员须来源隔离、使用刷新策略，并配置为不可转移的增益。家族盾通过普通状态授予，溢出治疗仍用独立盾定义。
 
-同一来源和目标的同家族盾共用一个位置。先在统一盾池中为候选计算可授予量，计算时扣除其它盾余额。候选严格大于旧盾剩余量时才更新。同定义沿用原实例及记录刷新策略，换定义时清理旧实例并从新记录起算。较弱或等量的候选保留旧实例、余额、时钟和记录，正常提交的技能仍结算费用与冷却。替换使用 `reset` 原因，清理本身无反击或余韵。 [双家族配置](../../examples/combat-host/source-guard-families.json)
+同一来源和目标的同家族盾共用一个位置。先在统一盾池中为候选计算可授予量，计算时扣除其它盾余额。候选严格大于旧盾剩余量时才更新。同定义沿用原实例及记录刷新策略，换定义时清理旧实例并从新记录起算。较弱或等量的候选保留旧实例、余额、时钟和记录，正常提交的技能仍结算费用与冷却。替换使用 `reset` 原因，清理本身无反击或余韵。 [双家族配置](../guides/config-cookbook.md#combat-rules)source-guard-families.json)
 
 ## 条件、概率与原子消费
 
@@ -116,7 +116,7 @@ SDK 0.104.0 的成员普攻和伤害技能 `AttackRule` 可配置 `life_steal_ti
 
 协议 6 可通过 `combat_rules.status_death_guards` 为最多 16 个状态定义配置窗口保命。载体须为来源隔离、不可转移的自身增益，采用定时数值或复合状态与刷新或忽略重复策略。配置项包含 `cooldown_group`、`cooldown_ms` 和上述格式的 `guard`。冷却至少一个 World 步长，最多 600000 ms，同组的定义使用同一时长。附带状态沿用原生保命约束，且须为可独立结算的来源隔离状态。
 
-实体仅使用自身来源且仍有效的载体。多个可用载体按到期时间、施加时间、实例 ID 选择。没有可用载体时按原战斗档案规则检查。选中载体后先校验附带状态的封禁及容量，成功才保存实体代次与配置组的绝对期限。载体更新或结束、同一 World 重连均保留期限，实体清理会移除记录。事件继续使用私有 `death_guard_activated`。 [磐心守一样例](../../examples/combat-host/source-lin-mi.json)
+实体仅使用自身来源且仍有效的载体。多个可用载体按到期时间、施加时间、实例 ID 选择。没有可用载体时按原战斗档案规则检查。选中载体后先校验附带状态的封禁及容量，成功才保存实体代次与配置组的绝对期限。载体更新或结束、同一 World 重连均保留期限，实体清理会移除记录。事件继续使用私有 `death_guard_activated`。 [磐心守一样例](../guides/config-cookbook.md#combat-rules)source-lin-mi.json)
 
 ## 目标计数和原生动作汇总
 
@@ -318,7 +318,7 @@ transfer_statuses.from=other可承担友方身上的NPC来源硬控，按原来�
 
 按实际目标profile先解析控制替换/期限帽，再在已消费条件状态的预览上检查类别封禁、普通/首次免控和容量。失败不消费层数、首次免控或ICD，也不回滚已经命中的主攻击及其附带层数；action计数下同一动作仍只尝试一次，下次独立动作可重试。预检成功后原子消费并进入原生状态入口，期限缩减/刷新/ignore/叠层/打断、重连及退出沿原规则。原生命中绑定直接施控的首次免控消费行为保持。
 
-标量movement_slow在机制105及combat_rules下可用stack，max_stacks为1～32；单层modifier_bps为-9999～-1。单实例减速为`max(-9999, modifier_bps × stacks)`，多个来源仍只取最强减速；部分消费不重置期限。复合减速和flags硬控仍禁止叠层。参数/阈值/期限/控制或数值替代由配置初始化，Rust不识别寒意、龙威或雷印等内容名称。公开[三层示例A](../../examples/combat-host/hit-status-a.json)及[示例B](../../examples/combat-host/hit-status-b.json)分别展示普通控制与profile数值替代；完整碎冰增伤、链雷和原内容投放另行验收。
+标量movement_slow在机制105及combat_rules下可用stack，max_stacks为1～32；单层modifier_bps为-9999～-1。单实例减速为`max(-9999, modifier_bps × stacks)`，多个来源仍只取最强减速；部分消费不重置期限。复合减速和flags硬控仍禁止叠层。参数/阈值/期限/控制或数值替代由配置初始化，Rust不识别寒意、龙威或雷印等内容名称。公开[三层示例A](../guides/config-cookbook.md#combat-rules)hit-status-a.json)及[示例B](../guides/config-cookbook.md#combat-rules)hit-status-b.json)分别展示普通控制与profile数值替代；完整碎冰增伤、链雷和原内容投放另行验收。
 
 ## 消费状态增强本次命中
 
@@ -334,7 +334,7 @@ subject选择攻击者自身或当前目标，来源固定匹配当前攻击者�
 
 消费与原status_consumed/移除事实先于本次防御、暴击、减伤、盾和HP结算。部分消费保持实例/来源/施加及到期时间，整份消费同步清理属性/当前上限及普攻时钟；既有吸血/伤害触发只使用最终实际HP损失，不额外制造一次damage或抽取随机数。条件不满足按基础攻击处理；合法零伤害/全盾吸收仍消费，落空/闪避/免伤/无效目标不消费。标记在真实命中时取样，发射后新获得、到期或先被其它攻击消费都会影响此时的结果；不改在途基础预算。
 
-同一命中后才施加的新标记不参与本次增强，区域多跳/重复弹道只使用当时剩余层数；配置决定是否在命中后重新施加标记。原生来源/持有者私有路由、重连和生命周期保持，Node/H5仅显示原伤害与状态消费事实。[配置A](../../examples/combat-host/contact-status-a.json)展示逐层25%增伤/5%破甲和最多消费3层，[配置B](../../examples/combat-host/contact-status-b.json)展示另一组数值与最多消费2层；完整剑痕追击/冷却、碎冰额外威力和其它原内容投放另行验收。
+同一命中后才施加的新标记不参与本次增强，区域多跳/重复弹道只使用当时剩余层数；配置决定是否在命中后重新施加标记。原生来源/持有者私有路由、重连和生命周期保持，Node/H5仅显示原伤害与状态消费事实。[配置A](../guides/config-cookbook.md#combat-rules)contact-status-a.json)展示逐层25%增伤/5%破甲和最多消费3层，[配置B](../guides/config-cookbook.md#combat-rules)contact-status-b.json)展示另一组数值与最多消费2层；完整剑痕追击/冷却、碎冰额外威力和其它原内容投放另行验收。
 
 ## 有界链式伤害
 
@@ -367,7 +367,7 @@ subject选择攻击者自身或当前目标，来源固定匹配当前攻击者�
 
 `combat_rules.max_chain_hits_per_step`为1～128，缺省32，全部来源/触发共用。预检要求有效来源、敌对原点、消费后正预算、第一目标及剩余全局预算，失败不消费条件/ICD/概率。链中无新目标、零预算、来源失效或全局预算不足立即结束，保留已执行前缀，不挂起或在重连时补发。
 
-私有`chain_damage_resolved`发布`trigger_id/source/origin/initial_raw`、最多8项`hops:[{from,target,raw_damage,applied}]`及`reason`（complete/no_target/zero_budget/source_invalid/capacity），仅来源的合法自身观察者收到。raw_damage是本跳统一伤害结算前的预算，实际HP仍读取原伤害事实。没有新增快照状态或客户端伤害计算。状态仍以原生身份/来源/绝对期限快照恢复，摘要不重放。可执行的两组配置见[四人示例](../../examples/combat-host/chain-a.json)及[八人示例](../../examples/combat-host/chain-b.json)。这只验收通用链及原链雷跳数/衰减/末跳系数，不代替原功法威力、初始目标控制、剑痕追击入口或完整内容投放。
+私有`chain_damage_resolved`发布`trigger_id/source/origin/initial_raw`、最多8项`hops:[{from,target,raw_damage,applied}]`及`reason`（complete/no_target/zero_budget/source_invalid/capacity），仅来源的合法自身观察者收到。raw_damage是本跳统一伤害结算前的预算，实际HP仍读取原伤害事实。没有新增快照状态或客户端伤害计算。状态仍以原生身份/来源/绝对期限快照恢复，摘要不重放。可执行的两组配置见[四人示例](../guides/config-cookbook.md#combat-rules)chain-a.json)及[八人示例](../guides/config-cookbook.md#combat-rules)chain-b.json)。这只验收通用链及原链雷跳数/衰减/末跳系数，不代替原功法威力、初始目标控制、剑痕追击入口或完整内容投放。
 
 ## 命中消费联动与技能冷却返还
 
@@ -398,7 +398,7 @@ chain_damage可选`direction:"forward"`，缺省all保留旧序列。forward第�
 
 `reduce_skill_cooldowns`可由合法非action_total事实触发，skill_ids为1～8个不同且已登记的成员技能，remaining_bps为0～10000，fixed_ms为0～3600000，两项不能都0。每技能按执行当刻当前截止计算`R=max(ready−now,0)`、`D=min(R,floor(R×remaining_bps/10000)+fixed_ms)`、`new_ready=ready−D`，使用宽整数。多个效果按触发优先级/ID顺序执行，后一个看到更新后的剩余时间。只修改归属成员已有且有实际正返还的技能，不创建不存在的冷却；NPC或没有实际变化时预检失败，条件消费/ICD/概率不支出。其它技能、成员、普攻、道具、准备/后摇/排队不变，不重新应用原冷却缩减。
 
-私有`skill_cooldowns_reduced:{at_ms,trigger_id,source,changes:[{skill_id,previous_ready_at_ms,ready_at_ms,reduced_ms}]}`只交本人合法观察者；changes仅包含正变化且最多8项。Node/H5直接采用权威player_skills.ready_at_ms，摘要只供显示，不在客户端重新返还；重连恢复原截止，摘要不重放。示例[四人](../../examples/combat-host/post-consumption-a.json)/[八人](../../examples/combat-host/post-consumption-b.json)组合消费事实、forward追击与不同冷却参数；原追击60%/当前冷却30%系数只是局部执行绑定，完整原功法阶段、动态威力、原始在途朝向及所有投放仍开放。
+私有`skill_cooldowns_reduced:{at_ms,trigger_id,source,changes:[{skill_id,previous_ready_at_ms,ready_at_ms,reduced_ms}]}`只交本人合法观察者；changes仅包含正变化且最多8项。Node/H5直接采用权威player_skills.ready_at_ms，摘要只供显示，不在客户端重新返还；重连恢复原截止，摘要不重放。示例[四人](../guides/config-cookbook.md#combat-rules)post-consumption-a.json)/[八人](../guides/config-cookbook.md#combat-rules)post-consumption-b.json)组合消费事实、forward追击与不同冷却参数；原追击60%/当前冷却30%系数只是局部执行绑定，完整原功法阶段、动态威力、原始在途朝向及所有投放仍开放。
 
 ## 接触状态反应
 
@@ -430,7 +430,7 @@ when为direct_contact或hp_damage：前者允许全盾/零HP的合格接触，�
 
 max_contact_reactions_per_hit为1～4、缺省1；max_contact_reactions_per_step为1～128、缺省32，跨所有来源/目标共用。每成功消费占一次，两种预算限制实际执行前缀；未消费的状态保留，后续新的真实接触可重试，不存在延迟补发。合法状态转移保留原来源/身份/绝对期限，反应只在新持有者上执行；驱散、自然到期、来源退出仅清理，不释放。
 
-私有`contact_reaction_resolved:{instance_id,definition_id,source,target,provoker,raw_damage,hp_damage,absorbed}`只交原状态合法来源/持有者观察者。provoker是本次实际攻击者，source是原施加者；第三方不会因引发反应获得状态私有明细。公开伤害事实仍承载实际结果；快照沿旧状态身份恢复，已消费摘要不重放，也没有新增客户端计时或伤害计算。两份[四人配置](../../examples/combat-host/reaction-a.json)/[八人配置](../../examples/combat-host/reaction-b.json)用不同模式、比例及profile点数验证25/67预算。
+私有`contact_reaction_resolved:{instance_id,definition_id,source,target,provoker,raw_damage,hp_damage,absorbed}`只交原状态合法来源/持有者观察者。provoker是本次实际攻击者，source是原施加者；第三方不会因引发反应获得状态私有明细。公开伤害事实仍承载实际结果；快照沿旧状态身份恢复，已消费摘要不重放，也没有新增客户端计时或伤害计算。两份[四人配置](../guides/config-cookbook.md#combat-rules)reaction-a.json)/[八人配置](../guides/config-cookbook.md#combat-rules)reaction-b.json)用不同模式、比例及profile点数验证25/67预算。
 
 ## 生命阈值终结与配置组替代
 
@@ -463,7 +463,7 @@ execute策略只有mode字段；其原始真伤预算为当前HP加全部未到�
 
 两种模式均从原来源进入统一真伤管线，消耗盾并尊重每实体代致死保护，不直接写HP=0。真伤按原规则绕过护甲/抗性/减伤，不闪避或暴击，不吸血/附带状态，也不生成普通伤害/命中/击杀触发或记录；真实致死仅可由下述显式finisher_kill选择后置叶子。终结尝试可能因致死保护而存活；有限替代伤害也可以正常击杀低血目标。原死亡/击杀归属、掉落与清理保持，终结专用奖励/连携及原功法完整阶段不由此隐式启用。
 
-私有`finisher_resolved:{trigger_id,source,target,mode,raw_damage,hp_damage,absorbed,lethal}`向来源/持有者合法观察者发布；NPC来源针对成员时仅该成员接收，不向旁观者泄漏原始HP+盾预算。mode为execute或power_damage，lethal按实际结算后生命判定。Node/H5采用原权威伤害/死亡与快照，摘要只用于显示；重连不再执行、重放或奖励，没有新增延迟任务。[四人示例](../../examples/combat-host/finisher-a.json)/[八人示例](../../examples/combat-host/finisher-b.json)分别验证50%/25%阈值、100%/150%威力替代、普通死亡及保命留1HP；原系数仅局部绑定，不代替原永久威力、阶段及全部投放。
+私有`finisher_resolved:{trigger_id,source,target,mode,raw_damage,hp_damage,absorbed,lethal}`向来源/持有者合法观察者发布；NPC来源针对成员时仅该成员接收，不向旁观者泄漏原始HP+盾预算。mode为execute或power_damage，lethal按实际结算后生命判定。Node/H5采用原权威伤害/死亡与快照，摘要只用于显示；重连不再执行、重放或奖励，没有新增延迟任务。[四人示例](../guides/config-cookbook.md#combat-rules)finisher-a.json)/[八人示例](../guides/config-cookbook.md#combat-rules)finisher-b.json)分别验证50%/25%阈值、100%/150%威力替代、普通死亡及保命留1HP；原系数仅局部绑定，不代替原永久威力、阶段及全部投放。
 
 
 ## 终结成功后的有界联动
@@ -486,7 +486,7 @@ execute策略只有mode字段；其原始真伤预算为当前HP加全部未到�
 }
 ```
 
-Node/H5继续读取finisher_resolved、combat_trigger_fired、原状态/资源快照、skill_cooldowns_reduced与chain_damage_resolved；无第二套权威状态或新增结果协议。私有明细沿原权限路由。[配置A](../../examples/combat-host/followup-a.json)与[配置B](../../examples/combat-host/followup-b.json)验证四人/八人：保命/非致死无奖励→真实终结→自身临时复合属性、按当前灵力上限回灵、当前冷却返还及一次追击→重连恢复→提前普通攻击击杀不重奖→状态自然到期→每成员一次结算。两样例的追击基数显式为终结实际HP损失，不代表原技能功法威力；原30%/8%/80%/60%只绑定显式输入下的局部系数算例，完整功法威力、阶段、独尊强化消费及内容投放继续开放。
+Node/H5继续读取finisher_resolved、combat_trigger_fired、原状态/资源快照、skill_cooldowns_reduced与chain_damage_resolved；无第二套权威状态或新增结果协议。私有明细沿原权限路由。[配置A](../guides/config-cookbook.md#combat-rules)followup-a.json)与[配置B](../guides/config-cookbook.md#combat-rules)followup-b.json)验证四人/八人：保命/非致死无奖励→真实终结→自身临时复合属性、按当前灵力上限回灵、当前冷却返还及一次追击→重连恢复→提前普通攻击击杀不重奖→状态自然到期→每成员一次结算。两样例的追击基数显式为终结实际HP损失，不代表原技能功法威力；原30%/8%/80%/60%只绑定显式输入下的局部系数算例，完整功法威力、阶段、独尊强化消费及内容投放继续开放。
 
 
 ## 按动作消费增强与终结防自刷新
@@ -507,7 +507,7 @@ finish_other.rule可配置`consumed_status_bonus:{definition_id:"next-boost",hp_
 
 成功结果的finisher选择器可配置`enhanced:false`或true，必须引用带上述增强的finish_other；null拒绝。判定来自实际结算上下文，不从当前状态反推。缺省保持原core-24语义。典型组合为enhanced=false、counting=action授予下一次增益；同次未增强施法后续目标保持0快照并去重授予，增强施法的全部成功结果保持true，即使多目标击杀也不自刷新。其它按动作回灵/冷却等叶子继续沿既有预算、模式/提供者筛选、条件和私有路由。
 
-[配置A](../../examples/combat-host/enhancement-a.json)与[配置B](../../examples/combat-host/enhancement-b.json)演示四人/八人：未增强终结获临时复合增益并重连→贯穿动作只消费一次，用5500/6000阈值击杀两目标→命中第一个后在途重连、第二个仍增强→增益不自刷新，回灵/冷却按动作一次→另一独立未增强施法再次获增益→原期限到期及一次结算。主弹道在提交时冻结450/460预算，消费后ATK降低不会重算在途主伤害；终结的威力替代仍按原消费后实时有效威力。客户端继续使用状态消费、终结、冷却与原快照，不新增权威计算或DTO。原5%/25%/30秒只是局部原生算例，完整功法威力、全属性派生、独尊阶段与所有投放另行验收。
+[配置A](../guides/config-cookbook.md#combat-rules)enhancement-a.json)与[配置B](../guides/config-cookbook.md#combat-rules)enhancement-b.json)演示四人/八人：未增强终结获临时复合增益并重连→贯穿动作只消费一次，用5500/6000阈值击杀两目标→命中第一个后在途重连、第二个仍增强→增益不自刷新，回灵/冷却按动作一次→另一独立未增强施法再次获增益→原期限到期及一次结算。主弹道在提交时冻结450/460预算，消费后ATK降低不会重算在途主伤害；终结的威力替代仍按原消费后实时有效威力。客户端继续使用状态消费、终结、冷却与原快照，不新增权威计算或DTO。原5%/25%/30秒只是局部原生算例，完整功法威力、全属性派生、独尊阶段与所有投放另行验收。
 
 周期载体可附带 `modifiers`，与 DOT/HOT 共用同一实例、来源、期限和槽位。数值会参加原属性管线；消耗、驱散或首次免控消耗会移除整个实例。非叠层 HOT 可附带 `control_immunity`、`damage_immunity`、`first_control_immunity`，仍走原生免疫门禁；不接受周期敌对控制或带免疫的叠层周期组合。
 
@@ -517,7 +517,7 @@ finish_other.rule可配置`consumed_status_bonus:{definition_id:"next-boost",hp_
 
 复合 `modifiers` 支持真正的 `movement_haste`（1..10000bps）和逐层 `movement_slow`。同类沿原移动规则取最强，叠层后减速保底1bps；加速封顶10000bps。它们不改敏捷或最大生命。旧内容按文字解释的裁定见[六项映射记录](../decisions/SDK-5-88-extra-movement-status-mapping.md)，功法条件与投放仍须独立绑定。
 
-可运行样例：[四人成员的实时取值](../../examples/combat-host/composed-a.json)与[八人成员的冻结取值](../../examples/combat-host/composed-b.json)，目录别名为 `composed-four`、`composed-eight`。它们使用同一 Rust 构建，演示 NPC 加层、复合 HOT、持续伤害转移、重连与到期净化。拥有属性增益的 HOT 和普通状态都由同一个属性管线计算；“每层基数”只用于展示，实际每跳结果以服务端事件为准。
+可运行样例：[四人成员的实时取值](../guides/config-cookbook.md#combat-rules)composed-a.json)与[八人成员的冻结取值](../guides/config-cookbook.md#combat-rules)composed-b.json)，目录别名为 `composed-four`、`composed-eight`。它们使用同一 Rust 构建，演示 NPC 加层、复合 HOT、持续伤害转移、重连与到期净化。拥有属性增益的 HOT 和普通状态都由同一个属性管线计算；“每层基数”只用于展示，实际每跳结果以服务端事件为准。
 
 SDK 0.99.0 候选补充：严格单位提交、可信阶段上下界、双方状态原子组合、消费前资源倍率和只延长既有数值状态期限见 [conditional-activation-v1](conditional-activation-v1.md)。跨引用/模型范围及可达倍率由Rust冷装载最终核验。
 
@@ -527,7 +527,7 @@ SDK 0.100.0 候选：显式计数器支持可选zero_policy=keep/remove，缺省
 
 ## NPC 移动区域进入
 
-SDK 0.119.0 在协议 6 的机制 105 提供 `combat_rules.npc_enter_areas`。键对应 NPC 的 `combat.projectile.id`。该技能使用原选敌、准备、打断、费用、冷却及 `on_hit_target_statuses`。绑定区域时将该技能的 `damage_bps` 设为 0，伤害改由区域配置的 `target_max_hp_bps` 计算。把样例的 `npc_ability`、`npc_enter_areas` 和 `status_definitions` 分别合入 NPC 施法配置、战斗规则和 PVE 状态表。区域占用 `members.area_capacity`，样例每实例预算 32 次，区域容量至多 4 份。 [配置样例](../../examples/combat-host/moving-enter-area.json) · [配置 Schema](combat-rules-v1.schema.json)
+SDK 0.119.0 在协议 6 的机制 105 提供 `combat_rules.npc_enter_areas`。键对应 NPC 的 `combat.projectile.id`。该技能使用原选敌、准备、打断、费用、冷却及 `on_hit_target_statuses`。绑定区域时将该技能的 `damage_bps` 设为 0，伤害改由区域配置的 `target_max_hp_bps` 计算。把样例的 `npc_ability`、`npc_enter_areas` 和 `status_definitions` 分别合入 NPC 施法配置、战斗规则和 PVE 状态表。区域占用 `members.area_capacity`，样例每实例预算 32 次，区域容量至多 4 份。 [配置样例](../guides/config-cookbook.md#combat-rules)moving-enter-area.json) · [配置 Schema](combat-rules-v1.schema.json)
 
 `areas` 中的 `moving_enter` 发布圆心、半径、期限、接触预算和 `movement`。后者包含冻结的原点、单位方向、速度、经边界裁剪的路线长度及 `committed`。进入结算发布 `area_entered`，有效击退发布 `forced_displacement`，包含实际起点、终点和滑移倍率。伤害与状态沿用原事件。区域拥有自己的进入和再进入记录，持续重叠不会产生周期伤害。 [协议 Schema](publications-v6.schema.json)
 
@@ -537,7 +537,7 @@ SDK 0.120.0 起，准备中的区域随来源失效而回收。已释放区域�
 
 ## NPC 固定地面领域
 
-SDK 0.121.0、机制 105、协议 6 的 `combat_rules.npc_ground_fields` 按 NPC 技能 ID 配置。把样例的 `npc_ability` 合入 NPC 施法配置，`status_definitions` 合入 PvE 状态表，其余三个表合入战斗规则。技能的 `damage_bps` 为 0，伤害由领域的 `target_max_hp_bps` 决定。领域与其他技能共享 `members.area_capacity`，单个技能只能绑定一种区域机制。 [配置样例](../../examples/combat-host/npc-ground-field.json) · [配置 Schema](combat-rules-v1.schema.json)
+SDK 0.121.0、机制 105、协议 6 的 `combat_rules.npc_ground_fields` 按 NPC 技能 ID 配置。把样例的 `npc_ability` 合入 NPC 施法配置，`status_definitions` 合入 PvE 状态表，其余三个表合入战斗规则。技能的 `damage_bps` 为 0，伤害由领域的 `target_max_hp_bps` 决定。领域与其他技能共享 `members.area_capacity`，单个技能只能绑定一种区域机制。 [配置样例](../guides/config-cookbook.md#combat-rules)npc-ground-field.json) · [配置 Schema](combat-rules-v1.schema.json)
 
 火海样例引用 `fire` 元素。宿主在 `combat_rules.elements` 注册该元素，并按本项目配表决定元素倍率。
 
@@ -547,7 +547,7 @@ SDK 0.121.0、机制 105、协议 6 的 `combat_rules.npc_ground_fields` 按 NPC
 
 ## NPC 固定落点单次打击
 
-SDK 0.122.0、机制 105、协议 6 的 `combat_rules.npc_ground_strikes` 按 NPC 技能 ID 配置 `radius`、`target_max_hp_bps` 和 `hit_status_chance_bps`。样例的 `npc_ability` 合入 NPC 施法配置，`status_definitions` 合入 PvE 状态表。技能的 `damage_bps` 为 0。单次打击和固定领域共享 `members.area_capacity`，两类绑定合计最多 16 个技能，单个技能只绑定一种区域机制。 [配置样例](../../examples/combat-host/npc-ground-strike.json) · [配置 Schema](combat-rules-v1.schema.json)
+SDK 0.122.0、机制 105、协议 6 的 `combat_rules.npc_ground_strikes` 按 NPC 技能 ID 配置 `radius`、`target_max_hp_bps` 和 `hit_status_chance_bps`。样例的 `npc_ability` 合入 NPC 施法配置，`status_definitions` 合入 PvE 状态表。技能的 `damage_bps` 为 0。单次打击和固定领域共享 `members.area_capacity`，两类绑定合计最多 16 个技能，单个技能只绑定一种区域机制。 [配置样例](../guides/config-cookbook.md#combat-rules)npc-ground-strike.json) · [配置 Schema](combat-rules-v1.schema.json)
 
 提交时取固定落点内最近的合格成员，等距按成员 ID 排序。选中后沿用伤害免疫和闪避判定，一次打击最多命中一人。全盾吸收仍计成功接触，且两端存活时对 `on_hit_target_statuses` 整组判定一次。概率以基点表示，0 跳过，10000 必定尝试施加。免控与容量由状态链裁决。来源失效时撤销准备中的打击。
 
@@ -557,7 +557,7 @@ SDK 0.122.0、机制 105、协议 6 的 `combat_rules.npc_ground_strikes` 按 NP
 
 ## 成员地面陷阱
 
-SDK 0.124.0、机制 105、协议 6 支持 `combat_rules.member_ground_traps`。以不带蓄力或引导的 `ground_circle` 技能 ID 为键，配置 `duration_ms` 和 `contact_policy`。技能的 `warning_ms` 是提交后的启动延迟，`radius` 是固定圆半径。样例的技能、伤害规则及状态分别合入技能目录、`combat_rules.skills` 和 PvE 状态表。 [配置样例](../../examples/combat-host/member-ground-trap.json) · [配置 Schema](combat-rules-v1.schema.json)
+SDK 0.124.0、机制 105、协议 6 支持 `combat_rules.member_ground_traps`。以不带蓄力或引导的 `ground_circle` 技能 ID 为键，配置 `duration_ms` 和 `contact_policy`。技能的 `warning_ms` 是提交后的启动延迟，`radius` 是固定圆半径。样例的技能、伤害规则及状态分别合入技能目录、`combat_rules.skills` 和 PvE 状态表。 [配置样例](../guides/config-cookbook.md#combat-rules)member-ground-trap.json) · [配置 Schema](combat-rules-v1.schema.json)
 
 客户端继续提交 `cast_ground`。陷阱占用 `members.area_capacity`，提交成功时扣一次资源并开始冷却。启动后每个固定步检查进入圆内且无地图遮挡的敌对 NPC，按距离、ID 和代次排序。持续留在圆内只尝试一次，重复进入还须通过该目标代次的冷却和总预算。免疫或闪避保留次数，全盾吸收仍计成功接触。被当步上限跳过的目标需要重新进入才有新机会。
 
@@ -565,7 +565,7 @@ SDK 0.124.0、机制 105、协议 6 支持 `combat_rules.member_ground_traps`。
 
 ## 成员施法锚点
 
-SDK 0.125.0、机制 105、协议 6 支持 `combat_rules.member_cast_anchors`。键为零伤害、零提交后预警的普通 `ground_circle` 布置技能，值声明 `duration_ms`、`max_use_distance` 和 `consumer_skill_ids`。使用普通 `cast_ground` 布置。每个成员的同一布置技能保留一个点，替换时复用区域槽，并为新点生成新 ID。 [配置样例](../../examples/combat-host/member-cast-anchor.json) · [配置 Schema](combat-rules-v1.schema.json)
+SDK 0.125.0、机制 105、协议 6 支持 `combat_rules.member_cast_anchors`。键为零伤害、零提交后预警的普通 `ground_circle` 布置技能，值声明 `duration_ms`、`max_use_distance` 和 `consumer_skill_ids`。使用普通 `cast_ground` 布置。每个成员的同一布置技能保留一个点，替换时复用区域槽，并为新点生成新 ID。 [配置样例](../guides/config-cookbook.md#combat-rules)member-cast-anchor.json) · [配置 Schema](combat-rules-v1.schema.json)
 
 对自己的锚点发送 `cast_at_anchor`，携带 `skill_id` 和 `anchor_id`。普通弹道还需非零 `direction`，圆形区域省略方向。Rust 在接受及提交校验归属、配置距离、视线和足迹。配置的锚点使用距离独立于弹道射程及常规地面施法距离。冷却、费用与伤害归属仍由原成员技能承担。提交生成的区域和弹道保持各自的物化位置与生命周期。
 
@@ -587,7 +587,7 @@ SDK 0.126.0 在布置技能的锚点配置中增加可选的 `recast`。例如�
 
 ### 跟随锚点的领域
 
-SDK 0.127.0 支持在锚点规则中配置 `following_field_skill_ids`。把样例的 `skill` 合入技能目录，将其 ID 加入同一锚点的 `consumer_skill_ids`，再配置 `following_field_skill_ids`。需要迁移锚点时，在同一规则中启用上一节的 `recast`。普通 `cast_ground` 和未启用跟随的 `cast_at_anchor` 沿用固定中心。 [配置样例](../../examples/combat-host/anchor-following-field.json)
+SDK 0.127.0 支持在锚点规则中配置 `following_field_skill_ids`。把样例的 `skill` 合入技能目录，将其 ID 加入同一锚点的 `consumer_skill_ids`，再配置 `following_field_skill_ids`。需要迁移锚点时，在同一规则中启用上一节的 `recast`。普通 `cast_ground` 和未启用跟随的 `cast_at_anchor` 沿用固定中心。 [配置样例](../guides/config-cookbook.md#combat-rules)anchor-following-field.json)
 
 已启用的领域通过 `cast_at_anchor` 绑定当前锚点。迁移会同步更新领域中心，包括预警期间，并保留原跳数、命中预算和接触间隔。每跳用当前中心结算。锚点失效的固定步先回收绑定领域，再处理周期命中。锚点到期或替换时领域结束原因为 `anchor_invalid`。穷举匹配 `AreaEndReason` 的 Rust 消费方需处理 `AnchorInvalid`。
 
@@ -607,7 +607,7 @@ SDK 0.128.0 可在 `recast` 中选择启用的行为。示例同时启用迁移�
 
 ## 状态易伤
 
-SDK 0.129.0 的 `combat_rules.status_damage_taken_bps` 以有害数值或复合状态 ID 为键，配置 1～10000 基点，最多 16 项。结算时取目标最高有效易伤，在配置化物理与元素伤害的原取整前乘以对应倍率，护盾随后吸收实际伤害。多个来源各保留状态和期限。真伤沿用既有数值，固定终局与独立资源转移沿用各自路径。 [配置样例](../../examples/combat-host/source-wushi-shu.json) · [配置 Schema](combat-rules-v1.schema.json)
+SDK 0.129.0 的 `combat_rules.status_damage_taken_bps` 以有害数值或复合状态 ID 为键，配置 1～10000 基点，最多 16 项。结算时取目标最高有效易伤，在配置化物理与元素伤害的原取整前乘以对应倍率，护盾随后吸收实际伤害。多个来源各保留状态和期限。真伤沿用既有数值，固定终局与独立资源转移沿用各自路径。 [配置样例](../guides/config-cookbook.md#combat-rules)source-wushi-shu.json) · [配置 Schema](combat-rules-v1.schema.json)
 
 ## 受击反制窗口
 
@@ -624,7 +624,7 @@ SDK 0.129.0 的 `combat_rules.status_damage_taken_bps` 以有害数值或复合�
 
 同场景最多配置 16 个定义。普通直接命中完成减伤、吸盾、扣血及保命后，若实际扣血或消耗护盾且持有者仍可战斗，才有反制机会。全盾吸收属于有效接触。零伤害且未吸盾、闪避、免伤、保护、DOT 和致死均跳过。窗口截止时已经失去新反制资格，只对已记录且仍符合条件的攻击者处理到期效果。记录按攻击者实体和代次隔离。刷新开启新窗口，忽略重复施加保留原记录。同 World 重连后仍沿用原窗口。自然到期重新校验目标敌对关系和代次，并与其他状态结束效果共用步级预算。宿主和客户端沿用现有状态发布协议，反制记录由 Rust 保存。
 
-[配置样例](../../examples/combat-host/source-xianwang-jiufeng.json) · [配置 Schema](combat-rules-v1.schema.json)
+[配置样例](../guides/config-cookbook.md#combat-rules)source-xianwang-jiufeng.json) · [配置 Schema](combat-rules-v1.schema.json)
 
 ## 按熟练阶段组合友方治疗
 
@@ -636,9 +636,9 @@ SDK 0.129.0 的 `combat_rules.status_damage_taken_bps` 以有害数值或复合�
 - `overheal_shield` 按已有规则将即时治疗的实际溢出授予到同来源盾及共享盾池。处理单个目标时，先结算即时治疗，再尝试施加 HOT，最后处理溢出盾。
 - `mark` 引用不可转移的来源隔离增益叠层状态，按 `owner` 选择 `caster` 或 `primary_target`，每次提交给该持有者增加 `stacks` 层并刷新期限。可选的 `at_cap_heal` 在本次达到上限时消费全部层数，对同局仍有效的成员逐个执行恢复公式。范围内其他治疗目标沿用原效果，叠层每次提交只执行一次。
 
-组合 HOT 的发布携带 `periodic.tick_on_expiry: true`。最后一跳与截止时间相同，达到期限的首个 World 步结算该跳后移除。重连沿用原状态实例及剩余跳数。客户端需使用能识别该字段的协议 6 解码器。 [配置样例](../../examples/combat-host/source-ally-recovery.json) · [配置 Schema](combat-rules-v1.schema.json)
+组合 HOT 的发布携带 `periodic.tick_on_expiry: true`。最后一跳与截止时间相同，达到期限的首个 World 步结算该跳后移除。重连沿用原状态实例及剩余跳数。客户端需使用能识别该字段的协议 6 解码器。 [配置样例](../guides/config-cookbook.md#combat-rules)source-ally-recovery.json) · [配置 Schema](combat-rules-v1.schema.json)
 
-`combat_rules.ally_self_target_skills` 可列出最多 64 个允许自选主目标的即时 `ally_heal` 技能。输入继续使用 `cast_unit` 和本人的显式 ID、代次。选本人时，私有 `pending_action` 同时携带 `ally_target` 和 `ally_target_is_self: true`。完整与增量解码器会校验该标记、主目标身份和同一代次。 [自选与叠纹样例](../../examples/combat-host/source-ally-self-and-marks.json)
+`combat_rules.ally_self_target_skills` 可列出最多 64 个允许自选主目标的即时 `ally_heal` 技能。输入继续使用 `cast_unit` 和本人的显式 ID、代次。选本人时，私有 `pending_action` 同时携带 `ally_target` 和 `ally_target_is_self: true`。完整与增量解码器会校验该标记、主目标身份和同一代次。 [自选与叠纹样例](../guides/config-cookbook.md#combat-rules)source-ally-self-and-marks.json)
 
 ## 有界成员召唤
 

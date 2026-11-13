@@ -4,7 +4,7 @@
 
 ## 配置
 
-完整样例：[arena.json](../../examples/status-host/arena.json)、[清单](../../examples/status-host/catalog.json)、[账户](../../examples/status-host/account.json)。已有配置的增量片段：
+完整样例：[arena.json](../guides/config-cookbook.md#statuses)arena.json)、[清单](../guides/config-cookbook.md#statuses)catalog.json)、[账户](../guides/config-cookbook.md#statuses)account.json)。已有配置的增量片段：
 
 ```json
 {

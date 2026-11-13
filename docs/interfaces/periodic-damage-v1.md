@@ -44,7 +44,7 @@ next_tick_at_ms为null表示无后续计划；ticks_done包括跳过的计划点
 
 Node/H5只发送意图、处理存储证明、展示进度和实际扣盾/血；不设置周期时点或计算伤害。同World重连保留实例和节拍，进度随Rust时钟继续；旧连接拒绝。进程重启只履行原冻结资产责任，清除临时DOT，不恢复World或按新配置补跳。0.8.0新增公开Rust DTO字段、事件及枚举，源码消费方需适配；六类Client、协议1/2/3、恢复schema不变。
 
-完整[配置](../../examples/dot-host/arena.json)、[清单](../../examples/dot-host/catalog.json)、[账户](../../examples/dot-host/account.json)。实时验证：
+完整[配置](../guides/config-cookbook.md#statuses)arena.json)、[清单](../guides/config-cookbook.md#statuses)catalog.json)、[账户](../guides/config-cookbook.md#statuses)account.json)。实时验证：
 
 ```sh
 cargo build --locked --features replay --bin kernel-host

@@ -25,6 +25,6 @@ cargo build --locked --features replay --bin kernel-host
 node adapters/h5/server.mjs --port 4186 --state .local/sdk-5-13-demo.sqlite --configs examples/contact-host/catalog.json --account examples/contact-host/account.json
 ```
 
-[完整配置](../../examples/contact-host/arena.json)：点选/触摸地图后Q建区，2自身状态。示例每周期最多1目标、总共3次接触、同一身份间隔1200ms；H5显示Rust预算和历史，Node仅提交坐标并记录Rust目标/余量，客户端不裁决接触。独立包samples/contacts可复制到包外，验收包含一次性与正间隔重复两套配置。
+[完整配置](../guides/config-cookbook.md#statuses)arena.json)：点选/触摸地图后Q建区，2自身状态。示例每周期最多1目标、总共3次接触、同一身份间隔1200ms；H5显示Rust预算和历史，Node仅提交坐标并记录Rust目标/余量，客户端不裁决接触。独立包samples/contacts可复制到包外，验收包含一次性与正间隔重复两套配置。
 
 本批不含弹道/陷阱/其它形状的策略接入、来源保留可选策略、周期费用/引导、多人、完整接触家族/器型/技能目录或完整M05。
