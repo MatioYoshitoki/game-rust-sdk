@@ -956,13 +956,15 @@
     },
     {
       "id": "D-05",
-      "status": "open",
+      "status": "resolved",
       "affectedWorkPackages": [
         "R5.1"
       ],
       "mappingLedger": "docs/audits/sdk-5-17/rule-gates.json",
       "sdkScopeEvidence": "docs/evidence/SDK-5-92-stack-flows-2026-11-10.md",
-      "remaining": "宿主确认旧字段在展示和计奖分别读取的事实。"
+      "remaining": "宿主确认旧字段在展示和计奖分别读取的事实。",
+      "resolvedAt": "2026-11-13",
+      "resolution": "itemsGained 采用经手总量语义（kept+dropped 合并，含战备携带）；分字段 carriedIn/looted/consumed/kept/dropped 为可选增强不影奖励金额；enterInventory 兼容字段结算不读取；未采用净探索所得口径。记录见 docs/decisions/D-05-items-gained-semantics.md"
     },
     {
       "id": "G-01",
