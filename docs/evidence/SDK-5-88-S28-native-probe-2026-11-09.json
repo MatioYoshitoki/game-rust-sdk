@@ -1,0 +1,30 @@
+{
+  "scenario": "S28",
+  "sourceFile": "rust-match-kernel-v1.1/scenarios.json",
+  "sourceFileSha256": "84d5e7f8ac78f1fb478bf1ff5ab446527f3ed4d6b1623782b2e7badd0e981a00",
+  "sourcePointer": "/scenarios/27",
+  "sourceDeadlineMs": 915000,
+  "baseSdkCandidate": "0.102.0",
+  "baseRuntimeSourceSha256": "e8f376dc3fb1f265a3cc58d8147e3101c04deda2970f2984d5e66becb16d98f7",
+  "testOnlyDiff": "SDK-5-88-S28-native-probe.patch",
+  "testOnlyDiffSha256": "b012ab40953fe18322b55543b71cfe1c8094295585580568de56175a52851a80",
+  "assertions": {
+    "protected": true,
+    "damageImmunityAtDeadline": true,
+    "oneNativeStepBeforeDeadlineAlive": true,
+    "deathTerminalSubjects": [
+      "A",
+      "B"
+    ],
+    "sameDeadline": true,
+    "deathIntents": 2,
+    "repeatExtraIntents": 0,
+    "bothDeadDomainState": true,
+    "statusesCleared": true
+  },
+  "runtimeBytesUnchanged": true,
+  "nativeDomainProofPassed": true,
+  "includedInFrozenPackageTestSuite": false,
+  "productionSettlementAccepted": false,
+  "scope": "native exact domain fixture, no host/database acceptance"
+}

@@ -1,0 +1,88 @@
+{
+  "batch": "SDK-5-15",
+  "scope": "moving projectile repeat contacts; not full M05",
+  "criteria": {
+    "RP01": {
+      "rustTests": [
+        "config::skill_wire::repeat_tests::projectile_repeat_config_both_slots_and_normalization",
+        "config::skill_wire::repeat_tests::projectile_repeat_config_gates_all_old_versions_and_wrong_mechanisms",
+        "config::skill_wire::repeat_tests::projectile_repeat_config_omission_retains_old_wire_and_once_semantics",
+        "config::skill_wire::repeat_tests::projectile_repeat_config_preserves_reference_and_total_budget_validation",
+        "config::skill_wire::repeat_tests::projectile_repeat_config_strict_types_and_inclusive_bounds"
+      ]
+    },
+    "RP02": {
+      "rustTests": [
+        "world::pve::projectile_repeat_tests::projectile_repeat_equal_interval_updates_latest_time_and_shared_total",
+        "world::pve::projectile_repeat_tests::projectile_repeat_exit_reentry_does_not_reset_interval",
+        "world::pve::projectile_repeat_tests::projectile_repeat_intervals_are_per_identity_and_order_stays_stable",
+        "world::pve::projectile_repeat_tests::projectile_repeat_misaligned_interval_uses_next_contacting_step",
+        "world::pve::projectile_repeat_tests::projectile_repeat_new_generation_has_independent_eligibility",
+        "world::pve::projectile_repeat_tests::projectile_repeat_no_contact_does_not_schedule_damage_or_catch_up",
+        "world::pve::projectile_repeat_tests::projectile_repeat_smaller_than_step_never_hits_twice_in_one_step",
+        "world::pve::projectile_repeat_tests::projectile_repeat_zero_hits_once_for_the_full_flight"
+      ]
+    },
+    "RP03": {
+      "rustTests": [
+        "world::pve::projectile_repeat_tests::projectile_repeat_attack_frozen_defense_read_on_each_success",
+        "world::pve::projectile_repeat_tests::projectile_repeat_budget_stops_before_extra_target_or_status",
+        "world::pve::projectile_repeat_tests::projectile_repeat_disabled_target_does_not_refresh_elapsed_clock",
+        "world::pve::projectile_repeat_tests::projectile_repeat_dodge_does_not_consume_or_refresh_success_clock",
+        "world::pve::projectile_repeat_tests::projectile_repeat_kill_and_drop_once_with_no_post_death_tick",
+        "world::pve::projectile_repeat_tests::projectile_repeat_rejects_old_version_in_memory_gate",
+        "world::pve::projectile_repeat_tests::projectile_repeat_ttl_excludes_due_repeat_and_keeps_end_reason",
+        "world::pve::projectile_repeat_tests::projectile_repeat_wall_blocks_before_repeat_even_if_due",
+        "world::pve::projectile_repeat_tests::projectile_repeat_zero_hp_loss_shield_counts_and_hit_status_reapplies"
+      ]
+    },
+    "RP04": {
+      "rustTests": [
+        "world::pve::projectile_repeat_tests::projectile_repeat_flights_have_independent_history_and_charge_only_on_commit",
+        "world::pve::projectile_repeat_tests::projectile_repeat_interval_and_budget_frozen_at_acceptance",
+        "world::pve::projectile_repeat_tests::projectile_repeat_terminal_death_close_clear_history_without_refund",
+        "world::pve::reset_tests::projectile_repeat_actual_reset_cancels_preparing_and_committed_plans_without_new_round_damage"
+      ],
+      "reports": [
+        "artifacts/sdk-5-15/capacity-verification.json"
+      ]
+    },
+    "RP05": {
+      "rustTests": [
+        "world::pve::projectile_repeat_tests::projectile_repeat_128_successes_use_one_history_slot_and_release",
+        "world::pve::projectile_repeat_tests::projectile_repeat_hundred_closes_release_repeated_plans_and_assets",
+        "world::pve::projectile_repeat_tests::projectile_repeat_peak_output_fault_releases_world_preserves_assets",
+        "world::pve::projectile_repeat_tests::projectile_repeat_public_reconnect_dedup_keeps_real_history"
+      ]
+    },
+    "RP06": {
+      "rustTests": [],
+      "reports": [
+        "artifacts/sdk-5-15/verification.json",
+        "artifacts/sdk-5-15/capacity-verification.json"
+      ]
+    },
+    "RP07": {
+      "rustTests": [],
+      "reports": [
+        "artifacts/sdk-5-15/verification.json"
+      ]
+    },
+    "RP08": {
+      "rustTests": [
+        "world::pve::projectile_repeat_tests::projectile_repeat_old_and_omitted_shapes_have_no_new_fields"
+      ],
+      "reports": [
+        "artifacts/sdk-5-15/verification.json",
+        "artifacts/sdk-5-15/baseline-verification.json"
+      ]
+    },
+    "RP09": {
+      "rustTests": [],
+      "reports": [
+        "artifacts/sdk-5-15/delivery/independent-verification.json",
+        "artifacts/sdk-5-15/delivery/source-verification.json"
+      ]
+    }
+  }
+}

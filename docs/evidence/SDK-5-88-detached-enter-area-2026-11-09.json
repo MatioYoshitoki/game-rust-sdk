@@ -1,0 +1,89 @@
+{
+  "batch": "SDK-5-88",
+  "delivery": "DELIVERY-01",
+  "crossPackage": "R3.4",
+  "sdkVersion": "0.120.0",
+  "date": "2026-11-09",
+  "mechanismVersion": 105,
+  "protocolVersion": 6,
+  "spec": "docs/batches/SDK-5-88-detached-enter-area.md",
+  "runtimeSourceSha256": "65c3d8271b74048a5341c0823a6814912f2c8059b68d8406508ce3c4d4c4c1c9",
+  "sample": {
+    "file": "examples/combat-host/moving-enter-area.json",
+    "sha256": "78a9f0bba93c5a590e1701c89d41ed337b190c91387fd927588275247c63060d",
+    "skillId": "tribulation-wind-blade"
+  },
+  "sourceBinding": {
+    "tableFile": "rust-match-kernel-v1.1/source-config.json",
+    "tableFileSha256": "7df9854739b72904fd55d93f4a0e0a0fb0b19026a21b37346d2a0f544704da66",
+    "skillRowSha256": "fa03d4a3e9c0026be66408940697a1022aaf4208ee053b27df552e02574b1a82",
+    "runtimeRowSha256": "9a735b578dc3cecc97912dac573123421688dea3ba80605e90cd1d7f1b690487",
+    "windboundStatusSha256": "397f80852fbd5a6c7bcb80fd3be86c1b31db5fad1daa8179b8e769979465eb8c",
+    "rulesFile": "rust-match-kernel-v1.1/source-rules.json",
+    "rulesFileSha256": "e7fd565d8144b6e6344db4ea136b6a526f9ded7986b13d296103c6debc041469",
+    "sourceDocuments": [
+      {
+        "path": "docs/designs/skill-runtime.DESIGN.md",
+        "sha256": "556aa9683e6f0d8e9ad44a36ae0aaab76e7b4a6261b290251b3f9c7a340316db",
+        "lines": [
+          145,
+          149,
+          157,
+          163,
+          167
+        ]
+      },
+      {
+        "path": "docs/interfaces/skill-runtime.INTERFACE.md",
+        "sha256": "886544c59b05b0f22690157d862652fc6cea8d84683d63be8b7ccff9f3920729",
+        "lines": [
+          60,
+          64
+        ]
+      },
+      {
+        "path": "docs/interfaces/tribulation-trial.INTERFACE.md",
+        "sha256": "296e3dd73c0dd634ab1613271a0722f5c457b9a0e6d22940158390604e01f34e",
+        "lines": [
+          33,
+          36
+        ]
+      }
+    ]
+  },
+  "contractFilesSha256": {
+    "docs/interfaces/combat-rules-v1.schema.json": "a1998220550eaab5265da37c57d11d6c23c57516cead0e86635554ce61562670",
+    "docs/interfaces/member-piercing-v1.schema.json": "3ca7cb59acba90cd72ae404da3f15b1e5350bc3de6790d3f231f2b7fab5da1db",
+    "docs/interfaces/publications-v6.schema.json": "7b75b4b2d249ac59e99971ec3b1ef05c76218c628d17b1b0ef2da20b6f1a2f3b"
+  },
+  "scopeDecisions": {
+    "sourceLifetime": "A released area may keep its original source reference after death or replacement. A pending area and a configured end-on-invalid area terminate.",
+    "hitQualification": "Avoidable detached hits use the released source hit rating and the target current dodge. Current protection and damage immunity reject contact.",
+    "damage": "Reuse the shared reduction, shield, death guard, HP, event and terminal flow. Reflections and actor-pair triggers require their original live actors.",
+    "retainedStatus": "An opt-in finite source-scoped movement slow remains under the original NPC generation. Shared immunity, duration, capacity, dispel and target lifetime rules apply. Retained status transfer is excluded.",
+    "scratch": "One reused batch scratch directory. Cargo used the shared build cache."
+  },
+  "checks": {
+    "rustDefault": 2698,
+    "rustAllFeatures": 2698,
+    "rustFocused": 9,
+    "nodeAndH5Adapters": 201,
+    "clippy": true,
+    "format": true,
+    "schemas": true,
+    "publicH5": {
+      "transport": "Node/H5 HTTP/SSE and SQLite",
+      "seats": 2,
+      "sourceKilled": true,
+      "detachedDamage": 50,
+      "detachedDisplacement": 200,
+      "retainedStatusMs": 3000,
+      "retainedStatusRehydrated": true,
+      "hitHistory": 2,
+      "settlements": 2
+    }
+  },
+  "openInR3.4": [
+    "Remaining world effects and production geometry integration"
+  ]
+}

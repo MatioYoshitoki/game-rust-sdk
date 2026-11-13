@@ -1,0 +1,199 @@
+{
+  "batch": "SDK-5-88",
+  "checkpoint": "core-38",
+  "sdkVersion": "0.101.0",
+  "scope": "native cast interception, confirmed relative stack multiplier and original numeric route execution",
+  "runtimeSourceSha256": "c6f782ed3ab6ff4ca6d1356bb0df458bd29c3806eb73136afb35c2a1a28ecf74",
+  "archiveSha256": "a0f441f658ae9b9348a4dcb604a643a5c532db3d8218fb1b267ca7b2b97815f6",
+  "sourceCrateSha256": "5f8d85b2085a4427ba382af11fcade72f6d0d077ad38a85ad99c3e6684b941ee",
+  "binarySha256": "6faf06e7256c97e12d877288e97dbee16f6a9e38ee54521dbd75cb43b4f3d5c2",
+  "packageFiles": 2858,
+  "checks": {
+    "rustDefault": 2574,
+    "rustAllFeatures": 2574,
+    "newRustCases": 16,
+    "focusedRustCases": 563,
+    "node": 187,
+    "clippy": true,
+    "format": true,
+    "offlineIndependentDelivery": true,
+    "publicNodeMembers": [
+      4,
+      8
+    ],
+    "browserMembers": [
+      4,
+      8
+    ],
+    "legacy104": true,
+    "comparedSourceFiles": 458,
+    "consumedSampleCopiesCompared": 86,
+    "schemaRuntimeFragments": 236,
+    "schemaConfigFragments": 352,
+    "invalidFollowupFragmentsRejected": 26,
+    "invalidEnhancementFragmentsRejected": 36
+  },
+  "browserRooms": 50,
+  "castInterception": {
+    "spec": "docs/interfaces/cast-interception-v1.md",
+    "publicNode": [
+      {
+        "scenario": "interception-four",
+        "members": 4,
+        "sealMs": 700,
+        "slowMs": 1200,
+        "slowBps": -2500,
+        "cost": 8,
+        "outcomes": 4,
+        "duplicateFree": true,
+        "reconnected": true,
+        "private": true,
+        "settled": 4
+      },
+      {
+        "scenario": "interception-eight",
+        "members": 8,
+        "sealMs": 900,
+        "slowMs": 1500,
+        "slowBps": -2000,
+        "cost": 12,
+        "outcomes": 4,
+        "duplicateFree": true,
+        "reconnected": true,
+        "private": true,
+        "settled": 8
+      }
+    ],
+    "publicH5": [
+      {
+        "scenario": "interception-four",
+        "members": 4,
+        "sealMs": 700,
+        "slowMs": 1200,
+        "slowBps": -2500,
+        "cost": 8,
+        "outcomes": 4,
+        "silenceVisible": true,
+        "reconnected": true,
+        "private": true,
+        "settled": 4
+      },
+      {
+        "scenario": "interception-eight",
+        "members": 8,
+        "sealMs": 900,
+        "slowMs": 1500,
+        "slowBps": -2000,
+        "cost": 12,
+        "outcomes": 4,
+        "silenceVisible": true,
+        "reconnected": true,
+        "private": true,
+        "settled": 8
+      }
+    ],
+    "focusedRustCases": 10,
+    "source": {
+      "sourceConfig": {
+        "file": "rust-match-kernel-v1.1/source-config.json",
+        "fileSha256": "7df9854739b72904fd55d93f4a0e0a0fb0b19026a21b37346d2a0f544704da66",
+        "rows": [
+          {
+            "pointer": "/tables/skills/realm-divine-lock",
+            "sha256": "c746c5c285e8508f7297dfe553b31f464c23f5b85f772a7eddf5eccdf8f82385"
+          },
+          {
+            "pointer": "/tables/status-effects/effect_realm_divine_lock",
+            "sha256": "d521bc7ea277ec1c369b639b56070678ff11c32c1b6b2bec1c0877ed15b6c5fc"
+          },
+          {
+            "pointer": "/tables/status-effects/effect_realm_divine_lock_boss_slow",
+            "sha256": "675b1d736af8b40fd091f1a13dc3f5993faef4c6a3fff1d401fb8feb233d631c"
+          },
+          {
+            "pointer": "/tables/factors/factor_realm_cast_lock",
+            "sha256": "1ce7add8c0e444112ec92668b818cb10ac8817235596803ff30c15a298e6af1d"
+          }
+        ]
+      },
+      "sourceRules": {
+        "file": "rust-match-kernel-v1.1/source-rules.json",
+        "fileSha256": "e7fd565d8144b6e6344db4ea136b6a526f9ded7986b13d296103c6debc041469",
+        "documents": [
+          {
+            "document": "docs/designs/realm-technique-loadout.DESIGN.md",
+            "documentSha256": "05f55416b7a9b0b8511449d02e92178eb2a07ef0d3ac255d3e092a471a17aa52",
+            "row": "| 化神 | 神念锁   | 反制     | 标记一个敌人 5 秒；其下一次普通功法被截断并短暂封脉，首领改为减速      | 单目标、可见、一次性；60 秒冷却                  |",
+            "rowSha256": "45f0578cd53b8fd6e9ca3cea9a4ca32b52cead48bf544e2a24a2f4a6094a936c"
+          },
+          {
+            "document": "docs/designs/factor-system.DESIGN.md",
+            "documentSha256": "6c8c337d624c8ee72f077335df0105709b0d962016538469003fc084787fe429",
+            "row": "普通施法的神念锁预检按 native-combat-core 契约转入最终提交点，核读取并消费当前完整锁、控制免疫标记及Buff；不再由扣费后旧原语近似。`createStatusEffectInstance` 只按正式定义构造实例，供manager与native模板共享，不修改单位、不分配全局ID、不推进生命周期或重复策略。首领迟滞的属性读取/实际减速仍待后续触发链验收。",
+            "rowSha256": "c64b5208a824779b1b9646ec021d8298ca4713af0f1143c30512379a1b1bdef2"
+          }
+        ]
+      },
+      "markMs": 5000,
+      "sealMs": 700,
+      "bossSlowMs": 1200,
+      "bossSlowBps": -2500,
+      "immunity": {
+        "consumeMark": true,
+        "allowCommit": true,
+        "applyFollowup": false
+      },
+      "sealAttribute": "silence",
+      "decision": "docs/decisions/SDK-5-88-cast-interception-policy.md",
+      "fullOriginalRealmTechniqueAccepted": false
+    },
+    "schemaFragments": {
+      "config": 18,
+      "node": 32,
+      "h5States": 24,
+      "h5Events": 8,
+      "invalid": 20
+    }
+  },
+  "sourceExecution": {
+    "routes": "src/verification/source_execution_routes.json",
+    "numericRows": 50,
+    "exactNative": 27,
+    "numericScenario": [
+      "S08"
+    ],
+    "openExactScenarios": [
+      "S10",
+      "S11",
+      "S12",
+      "S20",
+      "S28"
+    ],
+    "focusedRustCases": 5
+  },
+  "confirmedMultiplierBps": [
+    1000,
+    1100,
+    1200,
+    1300
+  ],
+  "pendingOriginalHpPolicy": true,
+  "evidenceDirectory": "/tmp/sdk88-proof-v101/checkpoints/core-38",
+  "evidenceManifestSha256": "16f3d287a25a4928aad9c9b02bf7c8ae07dc37b0c6816027e9c4863bc5b1822a",
+  "evidenceFiles": 70,
+  "historicalCleanupBaseline": "docs/evidence/SDK-5-88-cleanup-baseline.json",
+  "priorEvidence": {
+    "previousCheckpointAvailable": true,
+    "previousCheckpointManifest": "/tmp/sdk88-proof-v100/checkpoints/core-37-sha256.json",
+    "previousFilesChecked": 63,
+    "previousManifestSha256": "7db947f0efb7c41cf6da6f8d80269ffe8364c4e35f3091030304805a42497c37",
+    "earlierCleanupBaseline": "docs/evidence/SDK-5-88-cleanup-baseline.json",
+    "historicalFilesRecreated": false
+  },
+  "candidatePassed": true,
+  "wholeTaskAccepted": false,
+  "h5Retry": {
+    "first": "steal-four cancel reached native server after second pulse at 3900ms",
+    "final": "foreground actor, first-pulse UI reaction, same archive and unchanged clock; full 50-room pass"
+  }
+}

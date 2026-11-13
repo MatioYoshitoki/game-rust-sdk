@@ -1,0 +1,175 @@
+{
+  "batch": "SDK-5-88",
+  "delivery": "DELIVERY-01",
+  "workPackages": [
+    "R3.1",
+    "R3.2",
+    "R3.3"
+  ],
+  "sdkVersion": "0.128.0",
+  "date": "2026-11-09",
+  "mechanismVersion": 105,
+  "protocolVersion": 6,
+  "spec": "docs/batches/SDK-5-88-source-time-current.md",
+  "runtimeSourceSha256": "a50c7a4e26a4852d97491fb264fe89324ff07c533022801b88cc3640c6cb36bf",
+  "probeBinarySha256": "b17a04092fdff3327f1d673104e46b606870c49677ff1ff3eb95ea17765bf6f1",
+  "sample": {
+    "file": "examples/combat-host/source-suiyue-ruge.json",
+    "sha256": "472afd657a4b8e36a22fdfce1edca9e64155899d97a6621c45177b4d88ecf391",
+    "baseFile": "examples/combat-host/mastery-stages.json",
+    "baseSha256": "f9e8ef814f21c5900f1ce109094144d7ef809ba3e20ac2c619accb182584ca55",
+    "skillId": "suiyue-ruge",
+    "stages": [
+      {
+        "stageIndex": 0,
+        "sourceProfile": "suiyue-ruge:stage-1",
+        "status": "effect_suiyue_immunity",
+        "durationMs": 10000
+      },
+      {
+        "stageIndex": 1,
+        "sourceProfile": "suiyue-ruge:stage-2",
+        "status": "effect_suiyue_immunity_stage_2",
+        "durationMs": 12000
+      },
+      {
+        "stageIndex": 2,
+        "sourceProfile": "suiyue-ruge:stage-3",
+        "status": "effect_suiyue_immunity_stage_3",
+        "durationMs": 12000
+      },
+      {
+        "stageIndex": 3,
+        "sourceProfile": "suiyue-ruge:stage-4",
+        "status": "effect_suiyue_immunity_stage_4",
+        "durationMs": 12000
+      },
+      {
+        "stageIndex": 4,
+        "sourceProfile": "suiyue-ruge:stage-5",
+        "status": "effect_suiyue_immunity_stage_5",
+        "durationMs": 12000
+      }
+    ],
+    "nativeTest": "src/two_members/source_time_current_tests.rs"
+  },
+  "sourceBinding": {
+    "sourceConfig": {
+      "file": "rust-match-kernel-v1.1/source-config.json",
+      "sha256": "7df9854739b72904fd55d93f4a0e0a0fb0b19026a21b37346d2a0f544704da66",
+      "rows": [
+        {
+          "pointer": "/tables/skills/suiyue-ruge",
+          "rowSha256": "0e57825fffa8575ac724ed032ec969668e9ea46a0da2eb119a100c86644557e1"
+        },
+        {
+          "pointer": "/tables/skill-cast-lifecycle/suiyue-ruge",
+          "rowSha256": "3ae61a2154566bec942a78cb4d9756a25e4e814d5efd6f7ff353cee07d228c38"
+        },
+        {
+          "pointer": "/tables/cultivations/suiyue-ruge",
+          "rowSha256": "cc74e4b3ba116f47394bdea2e65799e1522de4cb6eb8816ef0900702633366b3"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-identities/suiyue-ruge",
+          "rowSha256": "ceae023633967d8bc0c074302df4ff6d053e4e0bb5a476f777df96476b39fd70"
+        },
+        {
+          "pointer": "/tables/status-effects/effect_suiyue_immunity",
+          "rowSha256": "162b1f41be15a71c8bbc2eacc63f445d38da8030e6a37cf33c5f079b6802a810"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/suiyue-ruge:stage-1",
+          "rowSha256": "c1160a1e1a763f0df5d8e7188551b3e8669e91c521859af6dd76af58315923dc"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/suiyue-ruge:stage-2",
+          "rowSha256": "ad6537d0cf8a9924ae572951c92edb6cc43b75041018d19c77e9ef9139bd1e0f"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/suiyue-ruge:stage-3",
+          "rowSha256": "907f38cd1d38aeb179d776392bc7b6296912678986246c1157d4ae14ee0cb05f"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/suiyue-ruge:stage-4",
+          "rowSha256": "4629a08b86951e5b27d4ed5f9bd06af76afffb305857b4d5b6995fdf702c6137"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/suiyue-ruge:stage-5",
+          "rowSha256": "fefd3cd97df862330e38e9d7c98c6e231ecf61494313b145e6952c0bc1538615"
+        }
+      ]
+    },
+    "sourceRules": {
+      "file": "rust-match-kernel-v1.1/source-rules.json",
+      "sha256": "e7fd565d8144b6e6344db4ea136b6a526f9ded7986b13d296103c6debc041469",
+      "documents": [
+        {
+          "path": "docs/designs/cultivation-combat-identity.DESIGN.md",
+          "sha256": "318480dc7cd726c7aea49cbace50e8c196de95d2914c9df033e6bd0f3a73e322",
+          "lines": [
+            324,
+            344,
+            392,
+            393,
+            394
+          ]
+        },
+        {
+          "path": "docs/interfaces/cultivation-combat-identity.INTERFACE.md",
+          "sha256": "9c1323fc11b84a49b7a13e40dc3f28fef85dc2fea389b527543ec1093f45b3b7",
+          "lines": [
+            138,
+            258
+          ]
+        }
+      ]
+    }
+  },
+  "scopeDecisions": {
+    "profile": "Map the five active stages to trusted mastery rows using the same skill and existing runtime definitions.",
+    "clock": "Use 1 second periods before the SDK exclusive expiry boundary. Source rows leave the expiry-coincident tick open.",
+    "status": "Block newly applied or refreshed dispellable harmful effects. Keep the native same-step selector and bounded expiry cleanse.",
+    "growth": "Use the trusted mastery index. Permanent mastery, raw proficiency derivation and insights remain separate.",
+    "scratch": "Use one batch scratch directory and shared Cargo cache."
+  },
+  "checks": {
+    "rustDefault": 2751,
+    "rustAllFeatures": 2751,
+    "rustFocused": 3,
+    "nodeAndH5Adapters": 210,
+    "format": true,
+    "clippy": true,
+    "sourceRowsVerified": 10,
+    "publicH5": {
+      "sdk": "0.128.0",
+      "transport": "Node/H5 HTTP/SSE and SQLite",
+      "seats": 2,
+      "stageIndices": [
+        0,
+        4
+      ],
+      "durationsMs": [
+        10000,
+        12000
+      ],
+      "ticks": [
+        9,
+        11
+      ],
+      "finalSpirit": [
+        3700000,
+        4900275
+      ],
+      "spiritCost": 5000000,
+      "baseSpiritPerTick": 300000,
+      "fullHpConversionPerTick": 25,
+      "expirySpirit": 600000,
+      "blockedRefresh": true,
+      "expiryCleanse": true,
+      "reconnectRestored": true,
+      "settlements": 2
+    }
+  },
+  "wholeDelivery01Accepted": false
+}

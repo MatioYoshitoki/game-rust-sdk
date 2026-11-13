@@ -1,0 +1,117 @@
+{
+  "batch": "SDK-5-88",
+  "delivery": "DELIVERY-01",
+  "crossPackage": "R3.4",
+  "sdkVersion": "0.124.0",
+  "date": "2026-11-09",
+  "mechanismVersion": 105,
+  "protocolVersion": 6,
+  "spec": "docs/batches/SDK-5-88-member-ground-traps.md",
+  "runtimeSourceSha256": "1c8f1affe29a237a3a08a1df9ec2ccf2f696c6a67f78a0d9abcd7cd81e18ea5d",
+  "sample": {
+    "file": "examples/combat-host/member-ground-trap.json",
+    "sha256": "57b299891b9421cc7de57570fba3b6bd3eace895929b91bd6b48f273588932c8",
+    "skillId": "test-ground-trap",
+    "role": "generic fixture"
+  },
+  "sourceBinding": {
+    "rulesFile": "rust-match-kernel-v1.1/source-rules.json",
+    "rulesFileSha256": "e7fd565d8144b6e6344db4ea136b6a526f9ded7986b13d296103c6debc041469",
+    "sourceDocuments": [
+      {
+        "path": "docs/designs/skill-runtime.DESIGN.md",
+        "sha256": "556aa9683e6f0d8e9ad44a36ae0aaab76e7b4a6261b290251b3f9c7a340316db",
+        "lines": [
+          46,
+          49,
+          65,
+          79,
+          83,
+          89,
+          97,
+          99,
+          109,
+          111,
+          148
+        ]
+      },
+      {
+        "path": "docs/interfaces/skill-runtime.INTERFACE.md",
+        "sha256": "886544c59b05b0f22690157d862652fc6cea8d84683d63be8b7ccff9f3920729",
+        "lines": [
+          15,
+          23,
+          45,
+          49,
+          50,
+          62,
+          63,
+          64
+        ]
+      }
+    ]
+  },
+  "contractFilesSha256": {
+    "docs/interfaces/combat-rules-v1.schema.json": "b5612d2757b0e0a444a2fb634998a4463742149c3b19bc4fa275fa8765a1be52",
+    "docs/interfaces/member-piercing-v1.schema.json": "5429b0858bad098d6a66e64e969d57d5e2c6671859b3bd1ccc2b4f6d5b1447f4",
+    "docs/interfaces/publications-v6.schema.json": "805e648e6235ffcffb935147031606a721c6e508d42a9a83461a420c4a7e43d8"
+  },
+  "scopeDecisions": {
+    "placement": "Bind an ordinary ground circle to a trap using trusted combat rules. Preserve accepted placement, commit transaction and action identity.",
+    "arming": "Use the configured warning as activation delay. Zero delay can contact in the commit step. The active deadline is exclusive.",
+    "contact": "Use eligible hostile NPC occupancy at fixed-step end and the existing circle/obstruction rules. Each new entry gets one opportunity. Continuous occupancy and capped candidates wait for a subsequent entry.",
+    "budget": "Reuse normal area contact and damage handling. Store successful contacts by full identity and configured repeat interval.",
+    "lifetime": "Retain committed plans while an owner is protected. End on source invalid, budget exhaustion or expiry. Departed frozen views omit traps.",
+    "scratch": "Use one batch scratch directory and the project Cargo cache."
+  },
+  "checks": {
+    "rustDefault": 2726,
+    "rustAllFeatures": 2726,
+    "rustFocused": 8,
+    "nodeAndH5Adapters": 205,
+    "clippy": true,
+    "format": true,
+    "schemas": true,
+    "publicH5": {
+      "sdk": "0.124.0",
+      "transport": "Node/H5 HTTP/SSE and SQLite",
+      "seats": 2,
+      "armingMs": 600,
+      "durationMs": 4500,
+      "damagePerTrap": 100,
+      "restoredContacts": 1,
+      "perTrapHits": [
+        1,
+        1
+      ],
+      "ownerExitIsolated": true,
+      "survivorExpired": true,
+      "settlements": 2,
+      "chase": {
+        "sdk": "0.124.0",
+        "transport": "Node/H5 HTTP/SSE and SQLite",
+        "seats": 2,
+        "armingMs": 600,
+        "durationMs": 4500,
+        "damagePerTrap": 100,
+        "restoredContacts": 1,
+        "perTrapHits": [
+          1,
+          1
+        ],
+        "hostileMovedIntoArmedTrap": true,
+        "contactPosition": [
+          559.0000000000003,
+          400
+        ],
+        "ownerExitIsolated": true,
+        "survivorExpired": true,
+        "settlements": 2
+      }
+    }
+  },
+  "openInR3.4": [
+    "Spell anchors and remaining world effects",
+    "Production geometry integration"
+  ]
+}

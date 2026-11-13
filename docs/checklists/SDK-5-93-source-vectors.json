@@ -1,0 +1,637 @@
+{
+  "batch": "SDK-5-93",
+  "source": "rust-match-kernel-v1.1/numeric-vectors.json",
+  "sha256": "99c1b38821356d9a7d553a3e746764c4c2d472b80700a5041582f225c8dda6c6",
+  "executedSourceVectors": 44,
+  "completeOriginalSet": 50,
+  "test": "world::two_members::mechanism_contract_tests::source_vector_oracle_tests",
+  "counts": {
+    "executed": 35,
+    "executed-formula": 2,
+    "executed-prior": 7,
+    "pending": 2,
+    "domain-rejected": 2,
+    "divergence": 2
+  },
+  "findings": [
+    {
+      "id": "tail-tick-rounding",
+      "vectors": [
+        "ticks-101-100",
+        "ticks-151-30"
+      ],
+      "issue": "source oracle rounds duration up to a whole tick (ceil); frozen SDK-5-6 semantics keep planned ticks strictly before expiry and drop the partial tail",
+      "handling": "kernel value asserted and recorded; needs product arbitration before any mechanism change"
+    },
+    {
+      "id": "pvp-multicast-unwritten",
+      "vectors": [
+        "pvp-extra",
+        "pvp-inherent"
+      ],
+      "issue": "share rule absent from behavior.md; belongs to tournament mode settlement",
+      "handling": "pending with M12/R6.2 named orchestration"
+    }
+  ],
+  "bindings": [
+    {
+      "id": "realm-0",
+      "status": "executed",
+      "note": "real hit chain, tier-difference table entry 0",
+      "input": {
+        "levelDifference": 0
+      },
+      "expected": 1
+    },
+    {
+      "id": "realm-2",
+      "status": "executed",
+      "note": "real hit chain, tier-difference table entry +2",
+      "input": {
+        "levelDifference": 2
+      },
+      "expected": 1.2
+    },
+    {
+      "id": "realm--2",
+      "status": "executed",
+      "note": "real hit chain, tier-difference table entry -2",
+      "input": {
+        "levelDifference": -2
+      },
+      "expected": 0.25
+    },
+    {
+      "id": "defense-basic",
+      "status": "executed",
+      "note": "real hit chain: floor(100x(1-100/300))=66",
+      "input": {
+        "raw": 100,
+        "armor": 100,
+        "defenderRealmBaseAtk": 100,
+        "pierceBps": 0,
+        "irreducible": false,
+        "critMultiplier": 1
+      },
+      "expected": 66
+    },
+    {
+      "id": "defense-pierce",
+      "status": "executed",
+      "note": "real hit chain, 50% pierce halves armor",
+      "input": {
+        "raw": 100,
+        "armor": 100,
+        "defenderRealmBaseAtk": 100,
+        "pierceBps": 5000,
+        "irreducible": false,
+        "critMultiplier": 1
+      },
+      "expected": 80
+    },
+    {
+      "id": "defense-cap",
+      "status": "executed",
+      "note": "real hit chain, reduction capped at 0.7",
+      "input": {
+        "raw": 100,
+        "armor": 10000,
+        "defenderRealmBaseAtk": 100,
+        "pierceBps": 0,
+        "irreducible": false,
+        "critMultiplier": 1
+      },
+      "expected": 30
+    },
+    {
+      "id": "defense-negative",
+      "status": "executed-formula",
+      "note": "config schema keeps DEF non-negative; bound at combat_math::defense_damage clamp",
+      "input": {
+        "raw": 100,
+        "armor": -100,
+        "defenderRealmBaseAtk": 100,
+        "pierceBps": 0,
+        "irreducible": false,
+        "critMultiplier": 1
+      },
+      "expected": 100
+    },
+    {
+      "id": "defense-true",
+      "status": "executed",
+      "note": "real hit chain, ignore_armor skips reduction",
+      "input": {
+        "raw": 100,
+        "armor": 100,
+        "defenderRealmBaseAtk": 100,
+        "pierceBps": 0,
+        "irreducible": true,
+        "critMultiplier": 1
+      },
+      "expected": 100
+    },
+    {
+      "id": "defense-crit",
+      "status": "executed",
+      "note": "real hit chain, deterministic crit x1.5",
+      "input": {
+        "raw": 100,
+        "armor": 100,
+        "defenderRealmBaseAtk": 100,
+        "pierceBps": 0,
+        "irreducible": false,
+        "critMultiplier": 1.5
+      },
+      "expected": 100
+    },
+    {
+      "id": "defense-minimum",
+      "status": "executed",
+      "note": "real hit chain, minimum_damage floor 1",
+      "input": {
+        "raw": 0,
+        "armor": 100,
+        "defenderRealmBaseAtk": 100,
+        "pierceBps": 0,
+        "irreducible": false,
+        "critMultiplier": 1
+      },
+      "expected": 1
+    },
+    {
+      "id": "dodge-half",
+      "status": "executed",
+      "note": "authoritative dodge_probability min(cap, max(0,dodge-penalty)/(1+hit))",
+      "input": {
+        "dodge": 60,
+        "hit": 100,
+        "penalty": 0
+      },
+      "expected": 30
+    },
+    {
+      "id": "dodge-cap",
+      "status": "executed",
+      "note": "authoritative dodge_probability 50% cap",
+      "input": {
+        "dodge": 200,
+        "hit": 0,
+        "penalty": 0
+      },
+      "expected": 50
+    },
+    {
+      "id": "dodge-penalty",
+      "status": "executed",
+      "note": "authoritative dodge_probability penalty subtraction",
+      "input": {
+        "dodge": 50,
+        "hit": 0,
+        "penalty": 40
+      },
+      "expected": 10
+    },
+    {
+      "id": "speed-0-1",
+      "status": "executed-formula",
+      "note": "movement.speed(0)=0; live entities floor SPD at 1 so no real step",
+      "input": {
+        "spd": 0,
+        "rankMultiplier": 1
+      },
+      "expected": 0
+    },
+    {
+      "id": "speed-1-1",
+      "status": "executed",
+      "note": "curve {180,120,8,100} plus real 30ms step",
+      "input": {
+        "spd": 1,
+        "rankMultiplier": 1
+      },
+      "expected": 180
+    },
+    {
+      "id": "speed-8-1",
+      "status": "executed",
+      "note": "curve clamp at lower anchor plus real step",
+      "input": {
+        "spd": 8,
+        "rankMultiplier": 1
+      },
+      "expected": 180
+    },
+    {
+      "id": "speed-80-1",
+      "status": "executed",
+      "note": "curve ln(10)/ln(100)=0.5 plus real step",
+      "input": {
+        "spd": 80,
+        "rankMultiplier": 1
+      },
+      "expected": 240
+    },
+    {
+      "id": "speed-800-1",
+      "status": "executed",
+      "note": "curve clamp at upper anchor plus real step",
+      "input": {
+        "spd": 800,
+        "rankMultiplier": 1
+      },
+      "expected": 300
+    },
+    {
+      "id": "speed-800-1.1",
+      "status": "executed",
+      "note": "rank 1.1 flows through the kernel multiplier channel (terrain/status); unit-class constant is host config",
+      "input": {
+        "spd": 800,
+        "rankMultiplier": 1.1
+      },
+      "expected": 330
+    },
+    {
+      "id": "heal-cap",
+      "status": "executed",
+      "note": "real heal chain: adjusted 120, restored clamped to missing 50",
+      "input": {
+        "hp": 950,
+        "maxHp": 1000,
+        "base": 100,
+        "receivedPercent": 20,
+        "allowOverheal": false
+      },
+      "expected": 50
+    },
+    {
+      "id": "heal-normal",
+      "status": "executed",
+      "note": "real heal chain: restored 120",
+      "input": {
+        "hp": 700,
+        "maxHp": 1000,
+        "base": 100,
+        "receivedPercent": 20,
+        "allowOverheal": false
+      },
+      "expected": 120
+    },
+    {
+      "id": "heal-full",
+      "status": "executed",
+      "note": "real heal chain: full HP restores 0",
+      "input": {
+        "hp": 1000,
+        "maxHp": 1000,
+        "base": 100,
+        "receivedPercent": 0,
+        "allowOverheal": false
+      },
+      "expected": 0
+    },
+    {
+      "id": "heal-over",
+      "status": "executed",
+      "note": "real heal chain: authoritative adjusted 120 under allowOverheal; overflow-to-shield is a declared policy channel",
+      "input": {
+        "hp": 950,
+        "maxHp": 1000,
+        "base": 100,
+        "receivedPercent": 20,
+        "allowOverheal": true
+      },
+      "expected": 120
+    },
+    {
+      "id": "death-slots-0",
+      "status": "executed",
+      "note": "params.death.count ceil via the real drop-chain function",
+      "input": {
+        "eligibleSlots": 0,
+        "rate": 0.5
+      },
+      "expected": 0
+    },
+    {
+      "id": "death-slots-1",
+      "status": "executed",
+      "note": "ceil(0.5)=1",
+      "input": {
+        "eligibleSlots": 1,
+        "rate": 0.5
+      },
+      "expected": 1
+    },
+    {
+      "id": "death-slots-3",
+      "status": "executed",
+      "note": "ceil(1.5)=2",
+      "input": {
+        "eligibleSlots": 3,
+        "rate": 0.5
+      },
+      "expected": 2
+    },
+    {
+      "id": "death-slots-8",
+      "status": "executed",
+      "note": "4",
+      "input": {
+        "eligibleSlots": 8,
+        "rate": 0.5
+      },
+      "expected": 4
+    },
+    {
+      "id": "death-quantity-1-99",
+      "status": "executed",
+      "note": "floor(0.5)=0 lifted by minimum_quantity 1 via the real drop-chain function",
+      "input": {
+        "quantity": 1,
+        "stackLimit": 99,
+        "rate": 0.5
+      },
+      "expected": 1
+    },
+    {
+      "id": "death-quantity-5-99",
+      "status": "executed",
+      "note": "floor(2.5)=2",
+      "input": {
+        "quantity": 5,
+        "stackLimit": 99,
+        "rate": 0.5
+      },
+      "expected": 2
+    },
+    {
+      "id": "death-quantity-1-1",
+      "status": "executed",
+      "note": "minimum_quantity keeps 1",
+      "input": {
+        "quantity": 1,
+        "stackLimit": 1,
+        "rate": 0.5
+      },
+      "expected": 1
+    },
+    {
+      "id": "hp-ratio",
+      "status": "executed-prior",
+      "note": "SDK-5-28 real commits",
+      "input": {
+        "hp": 99,
+        "cost": 0.05,
+        "mode": "current_hp_ratio",
+        "minimum": 1
+      },
+      "expected": 4
+    },
+    {
+      "id": "hp-min",
+      "status": "executed-prior",
+      "note": "SDK-5-28 real commits",
+      "input": {
+        "hp": 1,
+        "cost": 0.05,
+        "mode": "current_hp_ratio",
+        "minimum": 1
+      },
+      "expected": 0
+    },
+    {
+      "id": "hp-clamped",
+      "status": "executed-prior",
+      "note": "SDK-5-28 real commits",
+      "input": {
+        "hp": 50,
+        "cost": 100,
+        "mode": "fixed",
+        "minimum": 1
+      },
+      "expected": 49
+    },
+    {
+      "id": "pvp-extra",
+      "status": "pending",
+      "note": "pvp_multicast share rule not in behavior.md; ties to tournament settlement M12/R6.2 named orchestration",
+      "input": {
+        "total": 3,
+        "inherent": 1
+      },
+      "expected": 0.43333333333333335
+    },
+    {
+      "id": "pvp-inherent",
+      "status": "pending",
+      "note": "same as pvp-extra",
+      "input": {
+        "total": 3,
+        "inherent": 3
+      },
+      "expected": 1
+    },
+    {
+      "id": "ticks-1-100",
+      "status": "domain-rejected",
+      "note": "kernel requires duration > tick_interval; config rejection asserted",
+      "input": {
+        "milliseconds": 1,
+        "stepMs": 100
+      },
+      "expected": 1
+    },
+    {
+      "id": "ticks-100-100",
+      "status": "domain-rejected",
+      "note": "duration == interval rejected; config rejection asserted",
+      "input": {
+        "milliseconds": 100,
+        "stepMs": 100
+      },
+      "expected": 1
+    },
+    {
+      "id": "ticks-101-100",
+      "status": "divergence",
+      "note": "frozen SDK-5-6 [start,end) truncation fires 1; source oracle ceil expects 2; recorded for arbitration",
+      "input": {
+        "milliseconds": 101,
+        "stepMs": 100
+      },
+      "expected": 2
+    },
+    {
+      "id": "ticks-150-30",
+      "status": "executed",
+      "note": "real periodic status fires exactly 5 ticks",
+      "input": {
+        "milliseconds": 150,
+        "stepMs": 30
+      },
+      "expected": 5
+    },
+    {
+      "id": "ticks-151-30",
+      "status": "divergence",
+      "note": "frozen truncation fires 5; source oracle ceil expects 6; recorded for arbitration",
+      "input": {
+        "milliseconds": 151,
+        "stepMs": 30
+      },
+      "expected": 6
+    },
+    {
+      "id": "orb-normal",
+      "status": "executed",
+      "note": "real monster-orb drop: ratios x maxHp/maxSpirit",
+      "input": {
+        "maxHp": 1000,
+        "maxSpirit": 200,
+        "hpRatio": 0.03,
+        "spiritRatio": 0.15
+      },
+      "expected": {
+        "hp": 30,
+        "spirit": 30
+      }
+    },
+    {
+      "id": "orb-boss",
+      "status": "executed",
+      "note": "real monster-orb drop",
+      "input": {
+        "maxHp": 1000,
+        "maxSpirit": 200,
+        "hpRatio": 0.15,
+        "spiritRatio": 0.6
+      },
+      "expected": {
+        "hp": 150,
+        "spirit": 120
+      }
+    },
+    {
+      "id": "shield-cap",
+      "status": "executed",
+      "note": "real shared shield pool: 30% cap leaves room 50",
+      "input": {
+        "maxHp": 1000,
+        "otherShields": 250,
+        "requested": 100
+      },
+      "expected": 50
+    },
+    {
+      "id": "shield-full",
+      "status": "executed",
+      "note": "pool at cap grants 0",
+      "input": {
+        "maxHp": 1000,
+        "otherShields": 300,
+        "requested": 100
+      },
+      "expected": 0
+    },
+    {
+      "id": "ordinary-step",
+      "status": "executed",
+      "note": "real 30ms move commit 5.4",
+      "input": {
+        "speed": 180,
+        "dtMs": 30,
+        "direction": [
+          1,
+          0
+        ],
+        "start": [
+          0,
+          0
+        ]
+      },
+      "expected": [
+        5.4,
+        0
+      ]
+    },
+    {
+      "id": "diagonal-step",
+      "status": "executed",
+      "note": "real move commit with normalized [3,4] direction",
+      "input": {
+        "speed": 180,
+        "dtMs": 30,
+        "direction": [
+          3,
+          4
+        ],
+        "start": [
+          0,
+          0
+        ]
+      },
+      "expected": [
+        3.24,
+        4.32
+      ]
+    },
+    {
+      "id": "cultivation-qi-extract",
+      "status": "executed-prior",
+      "note": "SDK-5-92 GP03 reward channel, ledger 127",
+      "input": {
+        "killScore": 140,
+        "extraction": true,
+        "entryYears": 1,
+        "realmCoefficient": 0.75,
+        "extractionBase": 30,
+        "multiplier": 1
+      },
+      "expected": 127
+    },
+    {
+      "id": "cultivation-qi-death",
+      "status": "executed-prior",
+      "note": "SDK-5-92, 52",
+      "input": {
+        "killScore": 140,
+        "extraction": false,
+        "entryYears": 1,
+        "realmCoefficient": 0.75,
+        "extractionBase": 30,
+        "multiplier": 0.5
+      },
+      "expected": 52
+    },
+    {
+      "id": "cultivation-foundation-extract",
+      "status": "executed-prior",
+      "note": "SDK-5-92, 210",
+      "input": {
+        "killScore": 40,
+        "extraction": true,
+        "entryYears": 2,
+        "realmCoefficient": 1.5,
+        "extractionBase": 30,
+        "multiplier": 1
+      },
+      "expected": 210
+    },
+    {
+      "id": "cultivation-empty-extract",
+      "status": "executed-prior",
+      "note": "SDK-5-92, 22",
+      "input": {
+        "killScore": 0,
+        "extraction": true,
+        "entryYears": 1,
+        "realmCoefficient": 0.75,
+        "extractionBase": 30,
+        "multiplier": 1
+      },
+      "expected": 22
+    }
+  ]
+}

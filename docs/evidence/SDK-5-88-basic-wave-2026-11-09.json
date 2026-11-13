@@ -1,0 +1,201 @@
+{
+  "batch": "SDK-5-88",
+  "delivery": "DELIVERY-01",
+  "crossPackage": "R3.4",
+  "sdkVersion": "0.106.0",
+  "mechanismVersion": 105,
+  "date": "2026-11-09",
+  "scope": "Configuration-driven directional and radial PvE basic waves with release-frozen targets, native terminal settlement and protocol 6 reconstruction.",
+  "spec": "docs/batches/SDK-5-88-basic-wave.md",
+  "runtimeSourceSha256": "971cef788cf0486804dc7cf65bcc45aed14326dc3758bde33e3e020acaa4a7f6",
+  "sourceBinding": {
+    "rulesFile": "rust-match-kernel-v1.1/source-rules.json",
+    "rulesSha256": "e7fd565d8144b6e6344db4ea136b6a526f9ded7986b13d296103c6debc041469",
+    "document": "docs/designs/combat-engine.DESIGN.md",
+    "documentSha256": "2b1a9cd20e3cc79e8ab158879e59ff68f807c63ab93c27ae0b40a46aa144d558",
+    "ruleRowSha256": {
+      "181": "9fb166aaad315222ee093d797d32b064b9a88069ea54a64e4235fa328699d9d7",
+      "182": "1fff2729ee178e358277c58184e9aceaaac3255faf2c8f295dfbd5b0c0923028",
+      "183": "3b146fd410871562d7e25974b9ca9b207c9ea2405d6795c1e2519a04267ed886",
+      "184": "0bf392c37987410ba9e639f8532e293be13632b02b7b04afe57831ead80be814",
+      "185": "0318a639428564e3f20dad80fafbefcf0c2fdb1b9e74eb0e1785fb2980e5dda1",
+      "186": "47c61c477af16e8d34e7246cff98ac5e7ee8b811f4331264820694f8dfc1d6c8",
+      "187": "1a7a46d91263aaab1cc39086e9020954009b3e626fc0e037d676219a60b706ee",
+      "188": "679214317a65b6bc4dc4ca22a164756501a63e3d8225c0a879175debf239dee3"
+    },
+    "configFile": "rust-match-kernel-v1.1/resolved-config.json",
+    "configSha256": "6f730cf5a4844f3f67870a720b4fd0ce024f53e6905714344bebb52f53df8e0a",
+    "sourceRows": {
+      "/tables/data~1weapon-basic-attacks/WEAPON_BASIC_ATTACK_PROFILES/fan": "ff4226404967ad5a974ae4488d5994231ecb67f979f1b9568bc547d712a24ad7",
+      "/tables/data~1weapon-basic-attacks/WEAPON_BASIC_ATTACK_PROFILES/shield": "02c8deff4fc6df665fa43258e3db329100a9b4df1ed6b10bb248251bc0f28673",
+      "/tables/data~1weapon-basic-attacks/WEAPON_BASIC_ATTACK_PROFILES/tower": "f6ae26160b8966ef00bdd412556d3af06e4d95b758afb852556ec9a2fd2eefa1",
+      "/tables/data~1combat/COMBAT_CONFIG/playerCombat": "8ee4c4654a2eceb528c9f685f12478b096a0bc5adafb157eb42c36ec50aac0f3"
+    }
+  },
+  "package": {
+    "archive": "/private/tmp/sdk88-wave-v106/delivery-final/match-kernel-0.106.0-aarch64-apple-darwin.tar.gz",
+    "target": "aarch64-apple-darwin",
+    "sha256": "65896b6cc7ae58d781f643765c49ced33fc853c7feee3e658e2dc7984055ba07",
+    "sourceCrateSha256": "82f55f6a3eb41726d48eafc425fc2ee46f20f1bdc0952015dc4153f531f314d7",
+    "binarySha256": "dda846f07203f33eb2cc992da5b60ffc74e55792c7d5608aa144e66d9167be9c",
+    "packageFiles": 2877
+  },
+  "sample": {
+    "file": "examples/combat-host/basic-wave-profiles.json",
+    "sha256": "7145885cd2343fd66be4fbeda22128c8e0270dc26120c32adffb1a86e508d87f",
+    "configuredProfiles": [
+      "fan",
+      "shield",
+      "tower"
+    ],
+    "sourceParametersMatched": [
+      "windup",
+      "range",
+      "interval",
+      "speed",
+      "target_cap",
+      "cone_or_pulse",
+      "primary_bps",
+      "additional_bps"
+    ]
+  },
+  "scopeDecisions": {
+    "deliveryGeometry": "freeze candidates and schedule at release; exact projectile line of sight",
+    "contact": "revalidate live hostile generation, then use ordinary direct damage pipeline",
+    "sourceLifecycle": "protection cancels recovery; departure clears remaining schedule",
+    "publication": "optional public list; whole-array replacement delta; no projectile slot",
+    "weaponSelection": "scenario-level basic configuration"
+  },
+  "checks": {
+    "rustDefault": {
+      "passed": 2611,
+      "logSha256": "35d4fa311ec32aa0c071ab6a6d844fcf1c3678544e50c6c05f2e9bad53885b59"
+    },
+    "rustAllFeatures": {
+      "passed": 2611,
+      "logSha256": "58b5590fb2e82bf355289f08d26a452d8bbb85b43bf3f3533b523086708de042"
+    },
+    "rustPackagedEmptyCache": {
+      "passed": 7,
+      "logSha256": "bacdf6babfe626785b9f604806980d407e8bca07e2d8f4d930c4b6f542713f8f"
+    },
+    "nodeAndH5Adapters": {
+      "passed": 188,
+      "logSha256": "28a235cab7653998d5367c3ab34997cd0c686f79eb026aa7b163e206af511289"
+    },
+    "clippy": true,
+    "format": true,
+    "schema": {
+      "configAccepted": 3,
+      "configRejected": 5,
+      "publicationAccepted": 4,
+      "publicationRejected": 8
+    },
+    "publicNodeAndSqlite": [
+      {
+        "family": "fan",
+        "protocol": 6,
+        "geometry": "directional",
+        "offsets": [
+          100,
+          100,
+          160,
+          260
+        ],
+        "damage": [
+          80,
+          72,
+          72,
+          72,
+          0,
+          0
+        ],
+        "rawLifeSteal": 44,
+        "spiritRestored": 2,
+        "cooldownIntervalMs": 800,
+        "peerProjection": true,
+        "settled": 2
+      },
+      {
+        "family": "shield",
+        "protocol": 6,
+        "geometry": "directional",
+        "offsets": [
+          34,
+          100
+        ],
+        "damage": [
+          72,
+          0,
+          62
+        ],
+        "rawLifeSteal": 20,
+        "spiritRestored": 2,
+        "cooldownIntervalMs": 1000,
+        "peerProjection": true,
+        "settled": 2
+      },
+      {
+        "family": "tower",
+        "protocol": 6,
+        "geometry": "radial",
+        "offsets": [
+          40,
+          50,
+          105,
+          140
+        ],
+        "damage": [
+          65,
+          65,
+          65,
+          65,
+          0
+        ],
+        "rawLifeSteal": 39,
+        "spiritRestored": 2,
+        "cooldownIntervalMs": 1100,
+        "peerProjection": true,
+        "settled": 2
+      }
+    ],
+    "legacy104PublicNode": [
+      {
+        "scenario": "four",
+        "members": 4,
+        "source": "P00",
+        "target": "power-target",
+        "powerBps": 5000,
+        "damage": [
+          66,
+          100,
+          66,
+          66
+        ],
+        "settled": 4
+      },
+      {
+        "scenario": "eight",
+        "members": 8,
+        "source": "P00",
+        "target": "power-target",
+        "powerBps": 10000,
+        "damage": [
+          66,
+          133,
+          66,
+          66
+        ],
+        "settled": 8
+      }
+    ],
+    "packagedRuntimeFilesCompared": 379,
+    "sampleCopiesCompared": 6
+  },
+  "open": [
+    "Remaining weapon deliveries, equipment-selected profiles and named morph deployment (R3.4)",
+    "Shield contact grant, tower commit reduction and tower suppression binding",
+    "Other source cultivation recipes and original resource-steal HP policy",
+    "Deployed client, database and transport acceptance"
+  ]
+}

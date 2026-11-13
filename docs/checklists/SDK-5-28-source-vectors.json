@@ -1,0 +1,59 @@
+{
+  "batch": "SDK-5-28",
+  "source": "rust-match-kernel-v1.1/numeric-vectors.json",
+  "sha256": "99c1b38821356d9a7d553a3e746764c4c2d472b80700a5041582f225c8dda6c6",
+  "executedSourceVectors": 3,
+  "completeOriginalSet": 50,
+  "test": "world::two_members::hp_cost_tests::hp_cost_original_three_vectors_execute_real_commits",
+  "sourceFixture": "src/verification/source_hp_cost_vectors.json",
+  "bindings": [
+    {
+      "id": "hp-ratio",
+      "input": {
+        "hp": 99,
+        "cost": 0.05,
+        "mode": "current_hp_ratio",
+        "minimum": 1
+      },
+      "expected": 4,
+      "assertions": [
+        "actual private commit hp_cost",
+        "actual caster HP difference",
+        "minimum surviving HP"
+      ],
+      "scope": "HP cost only; not complete skill/cultivation behavior"
+    },
+    {
+      "id": "hp-min",
+      "input": {
+        "hp": 1,
+        "cost": 0.05,
+        "mode": "current_hp_ratio",
+        "minimum": 1
+      },
+      "expected": 0,
+      "assertions": [
+        "actual private commit hp_cost",
+        "actual caster HP difference",
+        "minimum surviving HP"
+      ],
+      "scope": "HP cost only; not complete skill/cultivation behavior"
+    },
+    {
+      "id": "hp-clamped",
+      "input": {
+        "hp": 50,
+        "cost": 100,
+        "mode": "fixed",
+        "minimum": 1
+      },
+      "expected": 49,
+      "assertions": [
+        "actual private commit hp_cost",
+        "actual caster HP difference",
+        "minimum surviving HP"
+      ],
+      "scope": "HP cost only; not complete skill/cultivation behavior"
+    }
+  ]
+}

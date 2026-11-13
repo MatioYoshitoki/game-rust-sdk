@@ -1,0 +1,87 @@
+{
+  "batch": "SDK-5-88",
+  "delivery": "DELIVERY-01",
+  "crossPackage": "R3.4",
+  "sdkVersion": "0.121.0",
+  "date": "2026-11-09",
+  "mechanismVersion": 105,
+  "protocolVersion": 6,
+  "spec": "docs/batches/SDK-5-88-npc-ground-field.md",
+  "runtimeSourceSha256": "3049a870c968e971a36ec66e5755240ab1c997ef300b9527ec03119021ffc645",
+  "sample": {
+    "file": "examples/combat-host/npc-ground-field.json",
+    "sha256": "69562b6c6aec58d00116bd4523eb102cc821d484556d9510c3507b1a0b9e9759",
+    "skillId": "tribulation-fire-pool"
+  },
+  "sourceBinding": {
+    "tableFile": "rust-match-kernel-v1.1/source-config.json",
+    "tableFileSha256": "7df9854739b72904fd55d93f4a0e0a0fb0b19026a21b37346d2a0f544704da66",
+    "skillRowSha256": "e604cf923e7bfd0d8cc7cd68e35e4a3b33b8f9ef2c36064a6a1010734e561b39",
+    "lifecycleRowSha256": "942715491eabbcceedfac149ccd2bda335a836a69b4059570fb1b7a4f2a50752",
+    "runtimeRowSha256": "a091b707eea99ebd107f9bcda3cbe7c57d90e34f47afe4d39d961008af10b3a5",
+    "burnStatusSha256": "40b77fee9dbcb7e6d4b4d8e6db8520411c6082699ccd4caa29c75a3fd443ca0f",
+    "rulesFile": "rust-match-kernel-v1.1/source-rules.json",
+    "rulesFileSha256": "e7fd565d8144b6e6344db4ea136b6a526f9ded7986b13d296103c6debc041469",
+    "sourceDocuments": [
+      {
+        "path": "docs/designs/skill-runtime.DESIGN.md",
+        "sha256": "556aa9683e6f0d8e9ad44a36ae0aaab76e7b4a6261b290251b3f9c7a340316db",
+        "lines": [
+          99,
+          149,
+          150,
+          163,
+          167
+        ]
+      },
+      {
+        "path": "docs/interfaces/tribulation-trial.INTERFACE.md",
+        "sha256": "296e3dd73c0dd634ab1613271a0722f5c457b9a0e6d22940158390604e01f34e",
+        "lines": [
+          29,
+          33
+        ]
+      }
+    ]
+  },
+  "contractFilesSha256": {
+    "docs/interfaces/combat-rules-v1.schema.json": "b4688576e287244c35aeaa5cbb355aaee5e01ab96dcd6279531d2f00babd733d",
+    "docs/interfaces/member-piercing-v1.schema.json": "431679492a0e064232573c4af9d124c8d1967c2f354491075e7921637f3d8109",
+    "docs/interfaces/publications-v6.schema.json": "7c5dd55d00420edb93b901a81b1664144a9aaa0482c9a4cf132aef6243b48aef"
+  },
+  "scopeDecisions": {
+    "warning": "Use the structured NPC preparation of 750 ms. Preserve the committed world point and recheck range, visibility and ground at release.",
+    "separateClocks": "Attempt the configured entry statuses once per eligible target per instance. Periodic area damage starts after one interval and includes the scheduled expiry pulse.",
+    "pulseDamage": "Read current target maximum HP, then share the reduction, shield and HP chain used by the NPC moving area. The fire-pool sample sets unavoidable contact.",
+    "burnDeadline": "Ordinary DOT is end-exclusive. A 3000 ms application with 1000 ms intervals schedules two status ticks.",
+    "sourceLoss": "The configured area can keep pulsing under the released NPC identity. Entry burn follows ordinary source lifetime and status removal.",
+    "history": "Keep one pulse contact-history row per member identity while separately counting successful pulses.",
+    "scratch": "Use one shared batch scratch directory and the project Cargo cache."
+  },
+  "checks": {
+    "rustDefault": 2704,
+    "rustAllFeatures": 2704,
+    "rustFocused": 6,
+    "nodeAndH5Adapters": 202,
+    "clippy": true,
+    "format": true,
+    "schemas": true,
+    "publicH5": {
+      "sdk": "0.121.0",
+      "transport": "Node/H5 HTTP/SSE and SQLite",
+      "seats": 2,
+      "warningMs": 750,
+      "radius": 140,
+      "entryBurnMs": 3000,
+      "firstPulseHits": 2,
+      "pulses": 8,
+      "detachedDamage": 10,
+      "sourceKilled": true,
+      "restoredContacts": 3,
+      "settlements": 2
+    }
+  },
+  "openInR3.4": [
+    "Fixed-point instant strikes, other world effects and production geometry integration"
+  ]
+}

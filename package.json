@@ -1,0 +1,8 @@
+{
+  "name": "match-kernel-h5-lab",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "h5": "cargo build --locked --features replay --bin kernel-host && node adapters/h5/server.mjs"
+  }
+}

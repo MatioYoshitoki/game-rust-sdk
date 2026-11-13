@@ -1,0 +1,210 @@
+{
+  "batch": "SDK-5-88",
+  "delivery": "DELIVERY-01",
+  "crossPackage": "R3.4",
+  "sdkVersion": "0.112.0",
+  "mechanismVersion": 105,
+  "date": "2026-11-09",
+  "scope": "Configuration-driven physical projectile followups on one basic action, with companion retargeting and hit-accumulated volleys.",
+  "spec": "docs/batches/SDK-5-88-basic-projectile-followups.md",
+  "runtimeSourceSha256": "e67bd319891d8b662779e88efd8926cc8c0c2b8cdf17665ea23d5cc8adeb6462",
+  "sourceBinding": {
+    "table": "data/weapon-attack-morphs/WEAPON_ATTACK_MORPHS",
+    "tableFile": "rust-match-kernel-v1.1/resolved-config.json",
+    "tableFileSha256": "6f730cf5a4844f3f67870a720b4fd0ce024f53e6905714344bebb52f53df8e0a",
+    "rowSha256": {
+      "sword_dual_strike": "86ec3de0dca19de151907b9522f45e79a77d2229b99413f21e8b8fbf5b912d92",
+      "sword_triple_chase": "df80207ff0647f12081578bcc0d92b000dce031ec30c31ae586076f85ae3cbd6"
+    },
+    "rulesFile": "rust-match-kernel-v1.1/source-rules.json",
+    "rulesFileSha256": "e7fd565d8144b6e6344db4ea136b6a526f9ded7986b13d296103c6debc041469",
+    "sourceDocuments": [
+      {
+        "path": "docs/designs/combat-engine.DESIGN.md",
+        "sha256": "2b1a9cd20e3cc79e8ab158879e59ff68f807c63ab93c27ae0b40a46aa144d558",
+        "lines": [
+          167,
+          198,
+          209,
+          238
+        ]
+      },
+      {
+        "path": "docs/interfaces/combat-engine.INTERFACE.md",
+        "sha256": "36c7d30dc1f9b490692d3b7d5ef1fde79cfeaaafef1973e0dcf854d6656b2ed8",
+        "lines": [
+          110,
+          115,
+          988
+        ]
+      }
+    ]
+  },
+  "package": {
+    "archive": "/private/tmp/sdk88-basic-projectile-followups-v112/delivery/match-kernel-0.112.0-aarch64-apple-darwin.tar.gz",
+    "target": "aarch64-apple-darwin",
+    "sha256": "5f955453195245bb5d6ee0c685caa30c1f3ffa09802ef0d79502d74aededbf16",
+    "sourceCrateSha256": "41c5d32393377a9e7116390b28fdddd581145181c11878851fadaef9a2d52e2d",
+    "binarySha256": "98612069fe1b67b5fd1c71156a376e778779de6d1cec22c4db90182938dc511a",
+    "packageFiles": 2896
+  },
+  "sample": {
+    "file": "examples/combat-host/basic-weapon-profiles.json",
+    "sha256": "6bc2a588fff44a3f1a414d0519e798c343150f4fe73fbb2c10313bef61035817",
+    "profiles": {
+      "sword_dual_strike": {
+        "mechanism": "projectile",
+        "windup_ms": 100,
+        "interval_ms": 700,
+        "range": 330,
+        "projectile_speed": 1500,
+        "settle_on_end": true,
+        "projectile_followup": {
+          "plan_id": "sword_dual_strike",
+          "primary_damage_bps": 10500,
+          "pattern": {
+            "kind": "companion",
+            "delay_ms": 90,
+            "damage_bps": 3500
+          }
+        }
+      },
+      "sword_triple_chase": {
+        "mechanism": "projectile",
+        "windup_ms": 100,
+        "interval_ms": 700,
+        "range": 330,
+        "projectile_speed": 1500,
+        "settle_on_end": true,
+        "projectile_followup": {
+          "plan_id": "sword_triple_chase",
+          "primary_damage_bps": 10000,
+          "pattern": {
+            "kind": "volley",
+            "hits": 6,
+            "interval_ms": 55,
+            "damage_bps": 3500,
+            "attack_speed_bps_per_hit": 800
+          }
+        }
+      }
+    }
+  },
+  "scopeDecisions": {
+    "selection": "trusted per-seat basic profile; original attack input",
+    "contact": "a qualified primary contact arms followups; wall, expiry, invalid target, dodge and immunity do not arm",
+    "companion": "after configured delay launch from the current owner position; use original target or nearest legal target within range",
+    "volley": "first shot at the triggering fixed step; other launches use one anchored schedule; aim from the primary launch point to the target center sampled at the trigger",
+    "invalidTarget": "locked volley continues toward the frozen point; no collateral contacts and no damage to other generations",
+    "progress": "one store per successful primary contact; apply configured speed in the existing attack clock; reset after the final segment ends",
+    "capacity": "reserve the maximum simultaneous slots needed for the round before release; free on terminal or source exit",
+    "reconnect": "live World retains flights and progress; public segment metadata and private progress are reconstructed by full publication"
+  },
+  "checks": {
+    "rustDefault": {
+      "passed": 2654,
+      "logSha256": "8055c90a6f54d11fd49b3a834a238a683895cc1b6a5877e0ad0148b145134b35"
+    },
+    "rustAllFeatures": {
+      "passed": 2654,
+      "logSha256": "ec24256fa8a16d14426d39fa836e989ac8cd9d4377e2a54ffde7aae031c555d5"
+    },
+    "rustPackagedEmptyCache": {
+      "passed": 6,
+      "logSha256": "c489a6e18ff12d0343b8b8456bd34f9951348de9b0543447b6c4573f5f619810"
+    },
+    "nodeAndH5Adapters": {
+      "passed": 193,
+      "logSha256": "bba5e800c263890a36ee38c1a90b1c8deb6ee0cb2221d64a8a0b46a7c6c2e8e2"
+    },
+    "clippy": true,
+    "format": true,
+    "schema": {
+      "profileTableAccepted": 1,
+      "profileTableRejected": 5,
+      "projectileWireAccepted": 2,
+      "projectileWireRejected": 6
+    },
+    "publicH5HttpSseAndSqlite": {
+      "sdk": "0.112.0",
+      "transport": "H5 HTTP/SSE + Node + SQLite",
+      "companionDamage": [
+        105,
+        35
+      ],
+      "volleyDamage": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        35,
+        35,
+        35,
+        35,
+        35,
+        35
+      ],
+      "volleySegments": 6,
+      "resumedFlights": 1,
+      "progressReset": true,
+      "settled": 2
+    },
+    "legacy104PublicNode": [
+      {
+        "scenario": "four",
+        "members": 4,
+        "source": "P00",
+        "target": "power-target",
+        "powerBps": 5000,
+        "damage": [
+          66,
+          100,
+          66,
+          66
+        ],
+        "settled": 4
+      },
+      {
+        "scenario": "eight",
+        "members": 8,
+        "source": "P00",
+        "target": "power-target",
+        "powerBps": 10000,
+        "damage": [
+          66,
+          133,
+          66,
+          66
+        ],
+        "settled": 8
+      }
+    ],
+    "existingWaveControlsPublicH5": {
+      "sdk": "0.112.0",
+      "transport": "H5 HTTP/SSE + Node + SQLite",
+      "wallEnd": 625.999999,
+      "pullEnd": 620,
+      "fanDamage": [
+        70
+      ],
+      "gateDamage": [
+        50,
+        87
+      ],
+      "reconnectedPhase": "alternate",
+      "phasePrivate": true,
+      "settled": 2
+    },
+    "packagedRuntimeFilesCompared": 390,
+    "sampleCopiesCompared": 90,
+    "h5AdapterSha256": "88ba13e36896eebed9ca0cd63df14f6a5ec3b42b560ec70b2eaa0a34da24e295",
+    "bundleVerification": "Package files verified: 2896"
+  },
+  "open": [
+    "The other eleven named morphs",
+    "Equipment-instance morph resolution, in-match weapon changes, skill-based wind-blade push and remaining world effects",
+    "Original resource-steal HP policy and remaining production mode/host acceptance"
+  ]
+}

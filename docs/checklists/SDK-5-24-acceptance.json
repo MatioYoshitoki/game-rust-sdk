@@ -1,0 +1,152 @@
+{
+  "batch": "SDK-5-24",
+  "crate": "0.26.0",
+  "protocol": 6,
+  "schema": 7,
+  "mechanism": 41,
+  "criteria": {
+    "GA01": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::areas::member_areas_configuration_capacity_policy_and_output_budget_reject_before_io"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json"
+      ]
+    },
+    "GA02": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::areas::member_areas_duplicate_ground_input_only_commits_and_charges_once",
+        "two_members::tests::capacity::delta::areas::member_areas_public_bad_ground_coordinate_and_wrong_input_kind_do_not_pay",
+        "two_members::tests::capacity::delta::areas::member_areas_public_one_two_four_eight_circle_commit_and_independent_cost",
+        "world::two_members::area_tests::area_accept_rejects_nonfinite_outside_unwalkable_range_and_vision",
+        "world::two_members::area_tests::area_commit_revalidates_position_resource_status_and_slot_atomically",
+        "world::two_members::area_tests::area_global_slot_race_does_not_charge_loser_or_block_self_and_projectiles",
+        "world::two_members::area_tests::area_one_two_four_eight_share_world_capacity_and_actual_sources"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json"
+      ]
+    },
+    "GA03": {
+      "rustTests": [
+        "world::two_members::area_tests::area_attack_frozen_but_current_defense_and_shield_are_resolved_per_contact",
+        "world::two_members::area_tests::area_circle_warning_and_zero_warning_resolve_once_after_commit_step",
+        "world::two_members::area_tests::area_empty_and_moving_targets_are_read_at_each_pulse",
+        "world::two_members::area_tests::area_field_first_tick_end_exclusive_and_non_aligned_schedule",
+        "world::two_members::area_tests::area_same_due_creation_order_and_catchup_keep_scheduled_timestamps"
+      ],
+      "reports": [
+        "native-verification.json",
+        "interop-verification.json"
+      ]
+    },
+    "GA04": {
+      "rustTests": [
+        "world::two_members::area_tests::area_circle_edge_footprint_and_projectile_wall_are_shared_geometry",
+        "world::two_members::area_tests::area_dodge_does_not_consume_budget_full_absorption_does_and_keeps_bindings",
+        "world::two_members::area_tests::area_overlapping_lethal_contacts_credit_and_drop_only_once",
+        "world::two_members::area_tests::area_returning_dead_and_friendly_targets_are_never_contacted",
+        "world::two_members::area_tests::area_targets_sort_by_center_distance_then_identity_and_obey_per_tick_limit"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json"
+      ]
+    },
+    "GA05": {
+      "rustTests": [
+        "world::two_members::area_tests::area_hit_budget_exhaustion_and_expiry_end_exactly_once",
+        "world::two_members::area_tests::area_positive_repeat_uses_scheduled_inclusive_time_not_execution_time",
+        "world::two_members::area_tests::area_zero_repeat_allows_new_generation_but_never_reuses_old_identity"
+      ],
+      "reports": [
+        "native-verification.json",
+        "interop-verification.json"
+      ]
+    },
+    "GA06": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::areas::member_areas_public_field_reconnect_preserves_plan_deadline_budget_and_old_connection_fences",
+        "world::two_members::area_tests::area_background_move_cancel_keep_committed_center_and_budget",
+        "world::two_members::area_tests::area_prepare_cancel_and_protect_leave_cost_and_plan_unchanged"
+      ],
+      "reports": [
+        "native-verification.json",
+        "browser/report.json"
+      ]
+    },
+    "GA07": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::areas::member_areas_unknown_settlement_cleans_owner_only_and_peers_continue",
+        "world::two_members::area_tests::area_absolute_terminal_clears_all_without_late_contacts",
+        "world::two_members::area_tests::area_source_exit_cleans_only_owner_without_waiting_for_finance"
+      ],
+      "reports": [
+        "native-verification.json",
+        "crashes/report.json",
+        "public/report.json"
+      ]
+    },
+    "GA08": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::areas::member_areas_malformed_full_array_identity_schedule_budget_are_atomic",
+        "world::two_members::area_tests::area_public_plan_uses_kernel_id_and_never_exposes_private_request_or_stats"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json"
+      ]
+    },
+    "GA09": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::areas::member_areas_two_skill_shapes_full_delta_clear_and_cross_language_vectors"
+      ],
+      "reports": [
+        "interop-verification.json",
+        "native-verification.json"
+      ]
+    },
+    "GA10": {
+      "rustTests": [],
+      "reports": [
+        "public/report.json",
+        "browser/report.json"
+      ]
+    },
+    "GA11": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::areas::member_areas_recovery_closed_never_restores_plans_or_publications"
+      ],
+      "reports": [
+        "crashes/report.json",
+        "native-verification.json"
+      ]
+    },
+    "GA12": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::areas::member_areas_hundred_public_runtimes_with_committed_fields_release_all_responsibilities"
+      ],
+      "reports": [
+        "native-verification.json",
+        "delivery/source-verification.json",
+        "delivery/independent-verification.json",
+        "legacy4/report.json",
+        "legacy5/report.json",
+        "legacy6/report.json",
+        "legacy38/report.json",
+        "legacy39/report.json",
+        "legacy40/report.json",
+        "local-preview.json"
+      ]
+    }
+  },
+  "limitations": [
+    "Fixed 1-8 required PVE seats and player-owned fixed circular areas only; no PvP/friendly, line/moving areas, piercing or full modes",
+    "One shared plan/contact budget and direct-contact pipeline; historical single-member adapters remain supported",
+    "Whole-world area capacity 1-8 and bounded 128 contact-history engineering quota are initialized and validated from configuration",
+    "Restart closes frozen financial responsibility only, no World, areas, statuses, shields or publication baselines hot restored",
+    "Original 48 scenarios/50 numeric vectors have no new execution counts; historical artifact cleanup exception retained"
+  ]
+}

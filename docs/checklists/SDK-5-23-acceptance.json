@@ -1,0 +1,154 @@
+{
+  "batch": "SDK-5-23",
+  "crate": "0.25.0",
+  "protocol": 6,
+  "schema": 7,
+  "mechanism": 40,
+  "criteria": {
+    "UC01": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::combat::unified_public_config_rejects_legacy_versions_unsupported_actions_and_budgets"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json"
+      ]
+    },
+    "UC02": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::combat::unified_public_one_two_four_eight_unit_inputs_and_independent_members",
+        "world::two_members::combat_tests::unified_damage_rejects_friendly_and_stale_or_dead_sources",
+        "world::two_members::combat_tests::unified_entities_relations_one_two_four_eight_and_full_identity"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json"
+      ]
+    },
+    "UC03": {
+      "rustTests": [
+        "world::two_members::combat_tests::unified_damage_and_hot_share_actual_entity_base_and_preserve_formula",
+        "world::two_members::combat_tests::unified_damage_rejects_friendly_and_stale_or_dead_sources",
+        "world::two_members::combat_tests::unit_full_absorption_still_applies_hit_bindings"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json"
+      ]
+    },
+    "UC04": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::combat::unified_public_bad_identity_fails_without_cost_or_foreign_pending",
+        "world::two_members::combat_tests::unit_accept_rejects_unknown_zero_stale_friendly_dead_and_returning",
+        "world::two_members::combat_tests::unit_commit_revalidates_no_fee_cooldown_self_status_or_shot",
+        "world::two_members::combat_tests::unit_range_and_overlap_rejected_before_prepare",
+        "world::two_members::combat_tests::unit_vision_accept_and_commit_revalidation_are_atomic",
+        "world::two_members::combat_tests::unit_wrong_input_kind_and_wrong_skill_do_not_create_plan"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json"
+      ]
+    },
+    "UC05": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::combat::unified_public_duplicate_unit_cost_and_second_skill_slot_are_independent",
+        "world::two_members::combat_tests::unit_capacity_and_missing_spirit_at_commit_leave_no_partial_effect",
+        "world::two_members::combat_tests::unit_commit_aims_at_current_target_then_freezes_direction_and_attack",
+        "world::two_members::combat_tests::unit_prepare_cancel_and_protection_do_not_pay_or_spawn"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json"
+      ]
+    },
+    "UC06": {
+      "rustTests": [
+        "world::two_members::combat_tests::unit_full_absorption_still_applies_hit_bindings",
+        "world::two_members::combat_tests::unit_hits_only_selected_npc_and_applies_existing_dot_shield_bindings",
+        "world::two_members::combat_tests::unit_intervening_npc_blocks_without_damage_rng_status_or_spirit",
+        "world::two_members::combat_tests::unit_repeated_hits_cannot_double_defeat_drop_or_credit",
+        "world::two_members::combat_tests::unit_target_can_move_off_frozen_path_without_retargeting",
+        "world::two_members::combat_tests::unit_wall_wins_simultaneous_contact_without_random_or_hit_side_effects"
+      ],
+      "reports": [
+        "native-verification.json"
+      ]
+    },
+    "UC07": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::combat::unified_public_unit_plan_reconnect_keeps_identity_and_rejects_old_connection",
+        "two_members::tests::capacity::delta::combat::unified_public_unknown_settlement_clears_plan_and_other_member_continues",
+        "world::two_members::combat_tests::unit_dead_returning_and_new_generation_target_end_inflight_without_retarget",
+        "world::two_members::combat_tests::unit_npc_reset_invalidates_frozen_target_without_using_new_identity",
+        "world::two_members::combat_tests::unit_protection_preserves_committed_plan_while_source_exit_clears_it",
+        "world::two_members::combat_tests::unit_ttl_distance_close_and_absolute_terminal_release_plans"
+      ],
+      "reports": [
+        "native-verification.json",
+        "crashes/report.json",
+        "browser-final/report.json"
+      ]
+    },
+    "UC08": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::combat::unified_public_decoder_rejects_wrong_unit_target_atomically",
+        "world::two_members::combat_tests::unit_accepts_published_npc_and_exposes_only_own_pending_target",
+        "world::two_members::combat_tests::unit_projectile_view_names_target_ordinary_projectile_view_omits_it"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json"
+      ]
+    },
+    "UC09": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::combat::unified_public_unit_frames_decoder_resync_and_cross_language_vectors"
+      ],
+      "reports": [
+        "native-verification.json",
+        "interop-verification.json"
+      ]
+    },
+    "UC10": {
+      "rustTests": [],
+      "reports": [
+        "public/report.json",
+        "browser-final/report.json",
+        "http-adapter-verification.json"
+      ]
+    },
+    "UC11": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::combat::unified_public_financial_recovery_never_restores_unit_plans"
+      ],
+      "reports": [
+        "crashes/report.json",
+        "native-verification.json"
+      ]
+    },
+    "UC12": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::combat::unified_hundred_public_runtimes_with_live_unit_plans_release_all_responsibilities"
+      ],
+      "reports": [
+        "native-verification.json",
+        "delivery/source-verification.json",
+        "delivery/independent-verification.json",
+        "legacy4/report.json",
+        "legacy5/report.json",
+        "legacy6/report.json",
+        "legacy38/report.json",
+        "legacy39/report.json",
+        "local-preview.json"
+      ]
+    }
+  },
+  "limitations": [
+    "Fixed 1-8 required PVE seats; relations are self/friendly/hostile under PVE kind-group policy, no arbitrary team/faction configuration or PvP/friendly-target inputs",
+    "Unit projectiles target published NPC identities only; ground/area/piercing and other multiplayer action families remain pending",
+    "Historical single-member protocol adapters remain; this batch unifies the multiplayer entity/contact/damage/heal/status pipeline, not all historical runtimes",
+    "Restart restores frozen financial responsibility only, no World, unit plan, periodic status, shield or publication baseline hot restore",
+    "No new execution counts for original 48 scenarios or 50 numeric vectors; historical user artifact cleanup exception retained"
+  ]
+}

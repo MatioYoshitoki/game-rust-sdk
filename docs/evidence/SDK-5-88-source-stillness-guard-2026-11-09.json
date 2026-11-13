@@ -1,0 +1,191 @@
+{
+  "batch": "SDK-5-88",
+  "delivery": "DELIVERY-01",
+  "workPackages": [
+    "R3.1",
+    "R3.2",
+    "R3.3"
+  ],
+  "sdkVersion": "0.132.0",
+  "date": "2026-11-09",
+  "mechanismVersion": 105,
+  "protocolVersion": 6,
+  "spec": "docs/batches/SDK-5-88-source-stillness-guard.md",
+  "runtimeSourceSha256": "768cd3cba26b7c15f32ad8d168afda0cca6473a451425df2da4c51e6de12b004",
+  "probeBinarySha256": "8effeeb3fd4671f4fb937a0538a06f5fa2d3bdf6282ffccbe41c55cfe2d17cf2",
+  "sample": {
+    "file": "examples/combat-host/source-lin-mi.json",
+    "sha256": "f8ca5e90be80b78b45043712022474a635e1fdbdfbd78cb7457b6e1a153115ac",
+    "baseFile": "examples/combat-host/mastery-stages.json",
+    "baseSha256": "f9e8ef814f21c5900f1ce109094144d7ef809ba3e20ac2c619accb182584ca55",
+    "skillId": "lin-mi",
+    "damageReductionBps": 7000,
+    "guardInternalCooldownMs": 120000,
+    "nativeTests": [
+      "src/two_members/source_stillness_guard_tests.rs",
+      "src/world/two_members/stillness_guard_tests.rs"
+    ]
+  },
+  "sourceBinding": {
+    "sourceConfig": {
+      "file": "rust-match-kernel-v1.1/source-config.json",
+      "sha256": "7df9854739b72904fd55d93f4a0e0a0fb0b19026a21b37346d2a0f544704da66",
+      "rows": [
+        {
+          "pointer": "/tables/skills/lin-mi",
+          "rowSha256": "00cf723ca9e0e80b69cf5bf9a05f0334102cf4a4319d61971e5e12ce633cba48"
+        },
+        {
+          "pointer": "/tables/skill-cast-lifecycle/lin-mi",
+          "rowSha256": "3ae61a2154566bec942a78cb4d9756a25e4e814d5efd6f7ff353cee07d228c38"
+        },
+        {
+          "pointer": "/tables/skill-targeting/lin-mi",
+          "rowSha256": "7be3613c2328374422b199c94422987b4c20e06b19f16f603232afafe2e91c63"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-identities/lin-mi",
+          "rowSha256": "0584a4fea888206dfd10de27505b8ad0a1b8fddb96383f85f01e75307fc429e7"
+        },
+        {
+          "pointer": "/tables/status-effects/effect_lin_secret",
+          "rowSha256": "208ecb89f6a6346ce8afe4632495d96bc4c6252ef0ca09f6bc3a4789850ebb78"
+        },
+        {
+          "pointer": "/tables/status-effects/effect_lin_guardian",
+          "rowSha256": "193680fb415994713ce0de76df1356bcf8207888b99876af1203004ee06fe051"
+        },
+        {
+          "pointer": "/tables/status-effects/effect_lin_guardian_perfected",
+          "rowSha256": "9498a20ba4b1afd80054e4f9d0c24ef1937daeedb0c74d8d0dbc34df9c5f91da"
+        },
+        {
+          "pointer": "/tables/status-effects/effect_lin_linger_trigger",
+          "rowSha256": "fce61642a0f6660588d2d0b5bb43bfc60c7269460d46937efa1808832cc63a9c"
+        },
+        {
+          "pointer": "/tables/status-effects/effect_lin_guard",
+          "rowSha256": "b678df4d6611d1403791c7ca462941ee8cc7a9aa1877cbc90c29caf8dd53e43d"
+        },
+        {
+          "pointer": "/tables/factors/factor_cultivation_cooldown_modifier",
+          "rowSha256": "a60a4e28438d10c635d700a5d662b737ee600b8a69c642b97daa68636302e9c9"
+        },
+        {
+          "pointer": "/tables/factors/factor_cultivation_damage_reduction",
+          "rowSha256": "daa7d8c888d5c1ac0f1e2458ac6e866ea9595726522bda252f9ac8d63b865462"
+        },
+        {
+          "pointer": "/tables/factors/factor_cultivation_expire_linger",
+          "rowSha256": "4fc84bcf1db4d9dd069795afbce5f4cc309b2c388c141c945c9e6ecf6c3d3904"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/lin-mi:stage-1",
+          "rowSha256": "e1a5370e8eb129623fb0eb6642e78a8ad5dbb12d72171217f9351de1d6e4732c"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/lin-mi:stage-2",
+          "rowSha256": "dec7bc4529f6c1acd054da0d79600a60dc1a4f4a84caba5cce61404e4756e1e2"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/lin-mi:stage-3",
+          "rowSha256": "38049c08b97cfdc2e0ddf61e8b2917da0b034d68b8f3d307222d6e58dbd97979"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/lin-mi:stage-4",
+          "rowSha256": "7cb3accc103071fc872d07c5b290229a8768f2c21bf9588a6fccbd7e1d52529e"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/lin-mi:stage-5",
+          "rowSha256": "6fa2edfe29ceb5a09f36746d0d1fc8d7f784bb9857d3c2e6d2b57be94434632e"
+        }
+      ]
+    },
+    "sourceRules": {
+      "file": "rust-match-kernel-v1.1/source-rules.json",
+      "sha256": "e7fd565d8144b6e6344db4ea136b6a526f9ded7986b13d296103c6debc041469",
+      "documents": [
+        {
+          "path": "docs/designs/skill-roster-cast-redesign.DESIGN.md",
+          "sha256": "3007ac8d4b48ef67e30078a5eb83cd400ae08f263334356a60122ded2f9d364c",
+          "lines": [
+            174
+          ]
+        },
+        {
+          "path": "docs/designs/cultivation-combat-identity.DESIGN.md",
+          "sha256": "318480dc7cd726c7aea49cbace50e8c196de95d2914c9df033e6bd0f3a73e322",
+          "lines": [
+            311,
+            331
+          ]
+        }
+      ]
+    }
+  },
+  "contractFilesSha256": {
+    "docs/interfaces/combat-rules-v1.schema.json": "4cf5761f22d6dd986f8c4cea3d21c681a509c277fcb04428c3707f003cdd1cae"
+  },
+  "scopeDecisions": {
+    "cooldown": "Compose the trusted mastery factor with live status cooldown reduction and freeze the deadline at commit.",
+    "guard": "Use the first eligible live self-carrier by expiry, application and instance ID. Use the profile guard when no status guard is ready. Failed preflight publishes suppression without taking the group deadline.",
+    "immunity": "Use 2000 ms from the active stage and guardian factor. The separate three-second status text remains unresolved.",
+    "healing": "Use the current target maximum HP and native healing-received multiplier. Permanent growth and insights retain separate acceptance."
+  },
+  "checks": {
+    "rustDefault": 2772,
+    "rustAllFeatures": 2772,
+    "rustFocused": 6,
+    "nodeAndH5Adapters": 210,
+    "format": true,
+    "clippy": true,
+    "schemas": true,
+    "sourceRowsBound": 17,
+    "stagesVerified": 5,
+    "publicH5": {
+      "sdk": "0.132.0",
+      "transport": "Node/H5 HTTP/SSE and SQLite",
+      "seats": 2,
+      "stageIndices": [
+        2,
+        4
+      ],
+      "durationMs": 6000,
+      "skillCooldownMs": 36000,
+      "spiritCost": 1800000,
+      "protectedHp": [
+        1,
+        151
+      ],
+      "invulnerableMs": 2000,
+      "reconnectRestored": true,
+      "naturalLingerBps": 2000,
+      "guardActivations": [
+        1,
+        1
+      ],
+      "settlements": 2
+    },
+    "publicH5Reduction": {
+      "sdk": "0.132.0",
+      "seats": 2,
+      "rawNpcDamage": 100,
+      "damageWithinAndAfterWindow": [
+        [
+          30,
+          100
+        ],
+        [
+          30,
+          80
+        ]
+      ],
+      "guardActivations": [
+        0,
+        0
+      ],
+      "settlements": 2
+    }
+  },
+  "wholeDelivery01Accepted": false
+}

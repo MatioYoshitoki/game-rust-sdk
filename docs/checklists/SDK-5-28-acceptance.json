@@ -1,0 +1,125 @@
+{
+  "batch": "SDK-5-28",
+  "specifiedBeforeImplementation": true,
+  "spec": "docs/batches/SDK-5-28-skill-hp-cost.md",
+  "criteria": {
+    "HC01": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::hp_cost::hp_cost_config_strict_schema_last_slot_and_legacy_capability"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json"
+      ]
+    },
+    "HC02": {
+      "rustTests": [
+        "world::two_members::hp_cost_tests::hp_cost_original_three_vectors_execute_real_commits",
+        "world::two_members::hp_cost_tests::hp_cost_floor_ratio_extremes_minimum_and_maximum_hp"
+      ],
+      "reports": [
+        "native-verification.json"
+      ]
+    },
+    "HC03": {
+      "rustTests": [
+        "world::two_members::hp_cost_tests::hp_cost_all_seven_mechanisms_and_member_capacities_have_one_owner",
+        "world::two_members::hp_cost_tests::hp_cost_old_skills_and_basic_omit_cost_field",
+        "two_members::tests::capacity::delta::hp_cost::hp_cost_public_one_two_four_eight_members_and_private_costs"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json"
+      ]
+    },
+    "HC04": {
+      "rustTests": [
+        "world::two_members::hp_cost_tests::hp_cost_ratio_uses_commit_hp_after_damage_or_heal",
+        "world::two_members::hp_cost_tests::hp_cost_definition_is_frozen_at_acceptance",
+        "world::two_members::hp_cost_tests::hp_cost_cancel_protect_and_owner_exit_before_commit_are_free",
+        "two_members::tests::capacity::delta::hp_cost::hp_cost_reconnect_preserves_committed_hp_and_interrupts_unpaid_preparation"
+      ],
+      "reports": [
+        "native-verification.json",
+        "browser/report.json"
+      ]
+    },
+    "HC05": {
+      "rustTests": [
+        "world::two_members::hp_cost_tests::hp_cost_rejected_unit_targets_and_spirit_are_atomic",
+        "world::two_members::hp_cost_tests::hp_cost_plan_capacity_failure_does_not_charge_or_grant_status",
+        "world::two_members::hp_cost_tests::hp_cost_ground_origin_and_area_capacity_failures_are_atomic",
+        "world::two_members::hp_cost_tests::hp_cost_status_group_capacity_failure_is_atomic",
+        "two_members::tests::capacity::delta::hp_cost::hp_cost_input_cannot_override_amount_minimum_or_member"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json"
+      ]
+    },
+    "HC06": {
+      "rustTests": [
+        "world::two_members::hp_cost_tests::hp_cost_bypasses_shields_damage_and_credit_but_grants_self_status",
+        "world::two_members::hp_cost_tests::hp_cost_committed_flights_protection_and_cancel_never_refund_or_recharge",
+        "two_members::tests::capacity::delta::hp_cost::hp_cost_duplicate_public_input_charges_once_and_peer_is_independent",
+        "two_members::tests::capacity::delta::hp_cost::hp_cost_settling_cleans_owner_without_refund_or_blocking_peer"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json"
+      ]
+    },
+    "HC07": {
+      "rustTests": [
+        "world::two_members::hp_cost_tests::hp_cost_old_skills_and_basic_omit_cost_field",
+        "two_members::tests::capacity::delta::hp_cost::hp_cost_public_one_two_four_eight_members_and_private_costs",
+        "two_members::tests::capacity::delta::hp_cost::hp_cost_all_slots_hp_full_delta_precise_interop"
+      ],
+      "reports": [
+        "interop-verification.json",
+        "browser/report.json"
+      ]
+    },
+    "HC08": {
+      "rustTests": [],
+      "reports": [
+        "public/report.json",
+        "browser/report.json",
+        "visual-verification.json"
+      ]
+    },
+    "HC09": {
+      "rustTests": [],
+      "reports": [
+        "crashes/report.json",
+        "native-verification.json"
+      ]
+    },
+    "HC10": {
+      "rustTests": [],
+      "reports": [
+        "native-verification.json",
+        "legacy4/report.json",
+        "legacy5/report.json",
+        "legacy6/report.json",
+        "legacy38/report.json",
+        "legacy39/report.json",
+        "legacy40/report.json",
+        "legacy41/report.json",
+        "legacy42/report.json",
+        "legacy43/report.json",
+        "legacy44/report.json",
+        "delivery/source-verification.json",
+        "delivery/independent-verification.json",
+        "local-preview.json"
+      ]
+    }
+  },
+  "limitations": [
+    "fixed 1-8 required PVE members; static shared 1-8 skill definitions",
+    "fixed/current_hp_ratio HP costs only; no insight multipliers or multicast cost formula",
+    "no dynamic loadouts, full cast lifecycle, friendly/PvP, summons or full modes",
+    "only hp-ratio/hp-min/hp-clamped original numeric vectors executed this batch; original 48 scenarios unexecuted",
+    "history artifacts cleaned before SDK-5-17 are not fabricated; existing prior evidence is protected"
+  ]
+}

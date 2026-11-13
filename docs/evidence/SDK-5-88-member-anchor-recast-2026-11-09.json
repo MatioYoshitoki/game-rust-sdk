@@ -1,0 +1,134 @@
+{
+  "batch": "SDK-5-88",
+  "delivery": "DELIVERY-01",
+  "crossPackage": "R3.4",
+  "sdkVersion": "0.126.0",
+  "date": "2026-11-09",
+  "mechanismVersion": 105,
+  "protocolVersion": 6,
+  "spec": "docs/batches/SDK-5-88-member-anchor-recast.md",
+  "runtimeSourceSha256": "a0dc83140eb9eb9ea297b3ed91ff2db4b428235377b0d35177611f040fcfc68f",
+  "sample": {
+    "file": "examples/combat-host/member-cast-anchor.json",
+    "sha256": "4a8bde5c9faa655dd1e3abaaaaf8a7532a8eebe57874d3a008d717be11b0d6c0",
+    "producerSkillId": "anchor-place",
+    "recastOverlay": {
+      "window_ms": 1800,
+      "max_count": 2,
+      "spirit_cost": 4
+    },
+    "role": "generic fixture"
+  },
+  "sourceBinding": {
+    "rulesFile": "rust-match-kernel-v1.1/source-rules.json",
+    "rulesFileSha256": "e7fd565d8144b6e6344db4ea136b6a526f9ded7986b13d296103c6debc041469",
+    "sourceDocuments": [
+      {
+        "path": "docs/designs/skill-runtime.DESIGN.md",
+        "sha256": "556aa9683e6f0d8e9ad44a36ae0aaab76e7b4a6261b290251b3f9c7a340316db",
+        "lines": [
+          67,
+          180,
+          182,
+          185,
+          189
+        ]
+      },
+      {
+        "path": "docs/designs/skill-cast-lifecycle.DESIGN.md",
+        "sha256": "89980ef32683ce41f104a9105495e7f55748e90cdae74ffc44be470d0847be2f",
+        "lines": [
+          303,
+          304,
+          305,
+          306,
+          307,
+          308,
+          309,
+          310
+        ]
+      },
+      {
+        "path": "docs/interfaces/skill-runtime.INTERFACE.md",
+        "sha256": "886544c59b05b0f22690157d862652fc6cea8d84683d63be8b7ccff9f3920729",
+        "lines": [
+          54,
+          55,
+          56,
+          57
+        ]
+      },
+      {
+        "path": "docs/interfaces/skill-cast-lifecycle.INTERFACE.md",
+        "sha256": "0cb168d154a99de3bfae301fb78da2a1ce9cf483439c0867fd3d8970bade1c6a",
+        "lines": [
+          422,
+          423,
+          424,
+          798,
+          808,
+          809,
+          810
+        ]
+      }
+    ]
+  },
+  "contractFilesSha256": {
+    "docs/interfaces/combat-rules-v1.schema.json": "c65261dd0d2a8bd8af48415acb8d267b1969bf6ad117578e56b51f939f7d3752",
+    "docs/interfaces/member-piercing-v1.schema.json": "094d76494046fe29364c02996dcf2592a54f2ed6225a161c6adca343dce80159",
+    "docs/interfaces/publications-v6.schema.json": "512dde00fb4f9d7d0e305da23e830e08ab9743cf333289b561ddb5d6d8798020",
+    "adapters/h5/two-member-server.mjs": "87103a212138f67212b2fd0d5d8a164e6db0d795f8525329f96558e6f4a74086",
+    "web/replication.mjs": "4f6e3efa9993e6be8ad2b12ce2b629179cbd33b365b8a929f888a221e56132a3"
+  },
+  "scopeDecisions": {
+    "identity": "Mutate the existing point using its area ID, original action ID, owner generation and exact next recast index.",
+    "window": "Use an exclusive deadline from placement commit, bounded by the original anchor lifetime. The original cast cooldown and deadline stay in force.",
+    "validation": "Apply owned-anchor reach, standard placement geometry and ordinary control/action gates. Charge only the independent recast cost after all validation.",
+    "publication": "Publish one event per accepted move and keep center and cumulative recast count in the anchor view. Released area and projectile origins remain frozen.",
+    "scratch": "Use one batch scratch directory and the shared Cargo cache."
+  },
+  "checks": {
+    "rustDefault": 2739,
+    "rustAllFeatures": 2739,
+    "rustFocused": 13,
+    "nodeAndH5Adapters": 208,
+    "clippy": true,
+    "format": true,
+    "schemas": true,
+    "publicH5": {
+      "sdk": "0.126.0",
+      "transport": "Node/H5 HTTP/SSE and SQLite",
+      "seats": 2,
+      "centers": [
+        [
+          560,
+          400
+        ],
+        [
+          580,
+          400
+        ],
+        [
+          560,
+          400
+        ]
+      ],
+      "windowMs": 1800,
+      "durationMs": 3000,
+      "circleDamage": 100,
+      "projectileDamage": 100,
+      "spiritSpent": 16,
+      "sameIdentity": true,
+      "duplicateRejected": true,
+      "exhaustedRejected": true,
+      "foreignRejected": true,
+      "restoredAnchor": true,
+      "ownerExitIsolated": true,
+      "settlements": 2
+    }
+  },
+  "openInR3.4": [
+    "Additional world effects, including following or ending anchors",
+    "Production geometry integration"
+  ]
+}

@@ -1,0 +1,108 @@
+{
+  "batch": "SDK-5-8",
+  "scope": "M02 finite 1-2 configured projectile skills; shared preparation/recovery and independent costs/CD; not full M02",
+  "criteria": {
+    "MS01": {
+      "rustTests": [
+        "config::player_skills::tests::multi_config_normalizes_and_reloads_both_skills",
+        "config::player_skills::tests::multi_config_old_19_to_25_omit_new_field_and_reject_opt_in",
+        "config::player_skills::tests::multi_config_rejects_presence_count_version_schema_and_no_pve",
+        "config::player_skills::tests::multi_config_secondary_bindings_obey_scope_references_and_capacity",
+        "config::player_skills::tests::multi_config_validates_each_definition_and_unique_ids",
+        "config::player_skills::tests::multi_config_zero_timings_cost_and_single_skill_are_valid"
+      ]
+    },
+    "MS02": {
+      "rustTests": [
+        "world::pve::player_skills_tests::multi_each_skill_uses_its_own_bindings",
+        "world::pve::player_skills_tests::multi_in_flight_projectile_keeps_parameters_across_selection",
+        "world::pve::player_skills_tests::multi_precommit_attack_capture_uses_current_effective_atk",
+        "world::pve::player_skills_tests::multi_secondary_capacity_failure_preserves_cost_and_cooldown",
+        "world::pve::player_skills_tests::multi_selected_definition_is_frozen_until_commit"
+      ]
+    },
+    "MS03": {
+      "rustTests": [
+        "world::pve::player_skills_tests::multi_background_cancels_pending_but_preserves_committed_recovery",
+        "world::pve::player_skills_tests::multi_independent_costs_cooldowns_and_primary_alias",
+        "world::pve::player_skills_tests::multi_movement_navigation_stop_cancel_preserve_pending_and_recovery",
+        "world::pve::player_skills_tests::multi_pending_blocks_both_skills_and_basic_without_side_effects",
+        "world::pve::player_skills_tests::multi_recovery_cannot_be_bypassed_by_any_attack",
+        "world::pve::player_skills_tests::multi_same_skill_cooldown_rejects_at_minus_one_accepts_at_deadline",
+        "world::pve::player_skills_tests::multi_zero_timings_still_allow_only_one_pending"
+      ]
+    },
+    "MS04": {
+      "rustTests": [
+        "world::pve::player_skills_tests::multi_cancel_before_commit_is_free_for_each_skill",
+        "world::pve::player_skills_tests::multi_no_resource_at_acceptance_and_commit_is_atomic",
+        "world::pve::player_skills_tests::multi_post_commit_cancel_does_not_refund_or_remove_projectile",
+        "world::pve::player_skills_tests::multi_unknown_and_invalid_direction_have_no_effect"
+      ]
+    },
+    "MS05": {
+      "rustTests": [
+        "world::pve::player_skills_tests::multi_basic_pending_view_has_null_skill_id",
+        "world::pve::player_skills_tests::multi_pending_view_and_event_ids_follow_selected_skill",
+        "world::pve::player_skills_tests::multi_single_skill_26_keeps_primary_alias"
+      ]
+    },
+    "MS06": {
+      "rustTests": [
+        "world::pve::player_skills_tests::multi_hundred_closes_cancel_preparation_and_release_world",
+        "world::pve::player_skills_tests::multi_legal_output_peak_preserves_frozen_asset_responsibility",
+        "world::pve::player_skills_tests::multi_public_retry_and_reconnect_preserve_both_deadlines",
+        "world::pve::player_skills_tests::multi_terminal_cancels_secondary_before_commit_without_cost",
+        "world::pve::reset_tests::multi_reset_cancels_secondary_preparation_before_any_debit",
+        "world::pve::reset_tests::multi_cancelled_reset_countdown_keeps_same_round_preparation"
+      ]
+    },
+    "MS07": {
+      "rustTests": [],
+      "reports": [
+        "artifacts/sdk-5-8/verification.json"
+      ],
+      "nodeCases": [
+        "a-extraction",
+        "a-death",
+        "b-extraction",
+        "b-death"
+      ],
+      "touchCases": [
+        "extraction",
+        "death"
+      ],
+      "resourceRejection": "NO_RESOURCE; costs and both CD entries unchanged"
+    },
+    "MS08": {
+      "rustTests": [],
+      "reports": [
+        "artifacts/sdk-5-8/verification.json"
+      ],
+      "crashBoundaries": [
+        "active",
+        "after_intent_persist",
+        "after_storage_commit"
+      ],
+      "recoveriesPerBoundary": 2
+    },
+    "MS09": {
+      "rustTests": [
+        "world::pve::player_skills_tests::multi_old_19_to_25_events_views_and_recovery_policy_unchanged"
+      ],
+      "reports": [
+        "artifacts/sdk-5-8/baseline-verification.json",
+        "artifacts/sdk-5-8/verification.json",
+        "artifacts/sdk-5-8/delivery/independent-verification.json"
+      ]
+    },
+    "MS10": {
+      "rustTests": [],
+      "reports": [
+        "artifacts/sdk-5-8/delivery/independent-verification.json",
+        "artifacts/sdk-5-8/delivery/source-verification.json",
+        "artifacts/sdk-5-8/baseline-verification.json"
+      ]
+    }
+  }
+}

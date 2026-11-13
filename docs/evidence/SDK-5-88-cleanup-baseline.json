@@ -1,0 +1,42 @@
+{
+  "observedOn": "2026-11-09",
+  "status": "historical_files_removed_after_verification",
+  "missingHistoricalFiles": 769,
+  "lastKnownManifestSha256": "09801515168390f8efc83633ff4f55e47ffd06b72cd3a21e9b56143b90b7b20e",
+  "previouslyVerified": {
+    "core": "core-36",
+    "crateVersion": "0.99.0",
+    "runtimeSourceSha256": "01a13523329a8596d538773eb6bbb0ca124142381edee6acee8c2ac1d6b0a732",
+    "archiveSha256": "666b830a5347d99501091b22c13e3963a3b99c3d562d6f923354dbde5ed2c5fe",
+    "binarySha256": "c0c9176b3404a917074ce6d689eb4184a7850a65ef79b60e487981ae47a60f79",
+    "checks": {
+      "rustDefault": 2539,
+      "rustAllFeatures": 2539,
+      "newRustCases": 31,
+      "focusedRustCases": 563,
+      "node": 187,
+      "clippy": true,
+      "format": true,
+      "offlineIndependentDelivery": true,
+      "publicNodeMembers": [
+        4,
+        8
+      ],
+      "browserMembers": [
+        4,
+        8
+      ],
+      "legacy104": true,
+      "comparedSourceFiles": 438,
+      "consumedSampleCopiesCompared": 74,
+      "schemaRuntimeFragments": 236,
+      "schemaConfigFragments": 352,
+      "invalidFollowupFragmentsRejected": 26,
+      "invalidEnhancementFragmentsRejected": 36
+    },
+    "checksSummarySha256": "0dc7a53d7376851d852e7d8e9f7d33135b4f2377dacda387aeb2187fae37972f"
+  },
+  "historicalFilesRecheckedAfterRemoval": false,
+  "regeneratedHistoricalFiles": false,
+  "usage": "Known count baseline for comparing a new candidate. Does not restore or reaccept missing historical evidence."
+}

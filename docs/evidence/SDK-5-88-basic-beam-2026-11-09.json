@@ -1,0 +1,149 @@
+{
+  "batch": "SDK-5-88",
+  "delivery": "DELIVERY-01",
+  "crossPackage": "R3.4",
+  "sdkVersion": "0.110.0",
+  "mechanismVersion": 105,
+  "date": "2026-11-09",
+  "scope": "Open-ended basic attack direction session with per-step circle-rectangle contact, exact projectile sight and protected next-step termination.",
+  "spec": "docs/batches/SDK-5-88-basic-beam.md",
+  "runtimeSourceSha256": "3a7c3f0bb411b8ff79e0b6c7687e5e2766925a65b460001fd96a1abcab79169b",
+  "sourceBinding": {
+    "rulesFile": "rust-match-kernel-v1.1/source-rules.json",
+    "rulesSha256": "e7fd565d8144b6e6344db4ea136b6a526f9ded7986b13d296103c6debc041469",
+    "documents": {
+      "docs/designs/combat-engine.DESIGN.md": {
+        "sha256": "2b1a9cd20e3cc79e8ab158879e59ff68f807c63ab93c27ae0b40a46aa144d558",
+        "ruleRowSha256": {
+          "167": "81468a018a09c3e5231c3a32772942b6be0e622fdd708aee4be3b8f854890253",
+          "199": "0bafa60fe71f72bb0130949bfd0cde352f260d71bc4026665dbfe963efa64566"
+        }
+      },
+      "docs/interfaces/combat-engine.INTERFACE.md": {
+        "sha256": "36c7d30dc1f9b490692d3b7d5ef1fde79cfeaaafef1973e0dcf854d6656b2ed8",
+        "ruleRowSha256": {
+          "109": "1f12836738d90fb14ad8ab96cb6e7fe7c76d89fdb989978edf2e893285da5233",
+          "110": "0d170f8e14661950309c5b23931cf72258e6d07f3f509289a1fe94ed42eae808",
+          "111": "dd1a6b4147f44f20ee259b5692ea964ccf7c2b29af11ca11f7d2b08192aeecab",
+          "112": "799fab3ada1fef6c89cf18af5a75f2a06ed1721966451edd364fbb6e5401b45a",
+          "982": "f9cb14a3ad2077da83fc08f157ab01c8a747482919b880cc5be1d3c2ece1d298"
+        }
+      }
+    },
+    "resolvedConfig": "rust-match-kernel-v1.1/resolved-config.json",
+    "resolvedConfigSha256": "6f730cf5a4844f3f67870a720b4fd0ce024f53e6905714344bebb52f53df8e0a",
+    "morphRow": {
+      "pointer": "/tables/data~1weapon-attack-morphs/WEAPON_ATTACK_MORPHS/5",
+      "id": "mirror_world_beam",
+      "sha256": "dd4b382a2894e7816fb8b28e87dc192ca53fa784cd023ed6896e76d27697a93b"
+    }
+  },
+  "package": {
+    "archive": "/private/tmp/sdk88-basic-beam-v110/delivery/match-kernel-0.110.0-aarch64-apple-darwin.tar.gz",
+    "target": "aarch64-apple-darwin",
+    "sha256": "fc369290727f811b932360024f70c07eac04bd4666b624f828d40e79d91ac59f",
+    "sourceCrateSha256": "78fcd7e494598a27d474718c2483243cd24268cb48cc0c85483f8bd36cf6f23c",
+    "binarySha256": "43d3f7de1554ca4428f333e84483de8878f5fe43e5f7ce6abff9cea270782c47",
+    "packageFiles": 2890
+  },
+  "sample": {
+    "file": "examples/combat-host/basic-weapon-profiles.json",
+    "sha256": "7b34b5439f49df1f7d6d65f0e72494d79d3949f7e542c52a4738929e95ef0101",
+    "profileId": "mirror_world_beam",
+    "range": 440,
+    "beam": {
+      "plan_id": "mirror_world_beam",
+      "interval_ms": 150,
+      "half_width": 22,
+      "target_cap": 8,
+      "damage_bps": 1800
+    }
+  },
+  "scopeDecisions": {
+    "identity": "Rust generates an action id; only the owning seat with the current connection can aim or release that action",
+    "strongControl": "stun terminates; root and silence retain the SDK movement and skill semantics",
+    "pulse": "step-aligned interval with live source attack; one independent contact attempt per eligible target on each pulse",
+    "quickRelease": "retain final valid direction for the first pulse; release after a pulse stops further pulses",
+    "motion": "retain latest intent; movement resumes when the beam session is removed",
+    "protectedTermination": "hide projected session immediately, then end next step with no new contacts or terminal rewards"
+  },
+  "checks": {
+    "rustDefault": {
+      "passed": 2640,
+      "logSha256": "628303db57714a05e0bbff091a46887c48777b4db6f9e4febb7a63e656aba43e"
+    },
+    "rustAllFeatures": {
+      "passed": 2640,
+      "logSha256": "1a2e7d2a35693e4e939a98aab29eb7ff942420dd3486d962e743d8213d8430e2"
+    },
+    "rustPackagedEmptyCache": {
+      "passed": 7,
+      "logSha256": "50948099031518dc114df40eb835f4954f18966bd7b373ffe94cb126d2e81e9c"
+    },
+    "nodeAndH5Adapters": {
+      "passed": 191,
+      "logSha256": "617eff7fc114c7d4117b1bdf5e344d14df0675a8d0dbb9a0ccc66e122abb4fd0"
+    },
+    "clippy": true,
+    "format": true,
+    "schema": {
+      "profileTableAccepted": 1,
+      "profileTableRejected": 4,
+      "inputAccepted": 3,
+      "inputRejected": 3,
+      "publicationAccepted": 4,
+      "publicationRejected": 6
+    },
+    "publicH5HttpSseAndSqlite": {
+      "sdk": "0.110.0",
+      "transport": "H5 HTTP/SSE + Node + SQLite",
+      "pulses": 3,
+      "intervalMs": 150,
+      "lockedMovement": true,
+      "resumedMovement": true,
+      "quickTapPulses": 1,
+      "protectedTicks": 0,
+      "staleActionRejected": true,
+      "reconnectedWithoutBeam": true,
+      "settled": 2
+    },
+    "legacy104PublicNode": [
+      {
+        "scenario": "four",
+        "members": 4,
+        "source": "P00",
+        "target": "power-target",
+        "powerBps": 5000,
+        "damage": [
+          66,
+          100,
+          66,
+          66
+        ],
+        "settled": 4
+      },
+      {
+        "scenario": "eight",
+        "members": 8,
+        "source": "P00",
+        "target": "power-target",
+        "powerBps": 10000,
+        "damage": [
+          66,
+          133,
+          66,
+          66
+        ],
+        "settled": 8
+      }
+    ],
+    "packagedRuntimeFilesCompared": 386,
+    "sampleCopiesCompared": 6,
+    "h5AdapterSha256": "88ba13e36896eebed9ca0cd63df14f6a5ec3b42b560ec70b2eaa0a34da24e295"
+  },
+  "open": [
+    "The other fifteen named morphs",
+    "Equipment-instance morph resolution, in-match weapon changes and remaining world effects",
+    "Original resource-steal HP policy and remaining production mode/host acceptance"
+  ]
+}

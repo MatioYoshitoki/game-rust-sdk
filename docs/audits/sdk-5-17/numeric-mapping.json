@@ -1,0 +1,2350 @@
+{
+  "schemaVersion": 1,
+  "tolerance": 1e-09,
+  "vectors": [
+    {
+      "id": "realm-0",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/0",
+        "sha256": "a7346726229fbb55a26af391762bac75cecde962a9f78d857f861d2c4f872d27"
+      },
+      "original": {
+        "id": "realm-0",
+        "op": "realm_modifier",
+        "input": {
+          "levelDifference": 0
+        },
+        "expected": 1
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "完整境界等级差乘区",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [],
+      "existingCapabilities": [],
+      "missingCapabilities": [
+        "N07"
+      ],
+      "gapIds": [
+        "I05",
+        "M04"
+      ],
+      "workPackages": [
+        "R3.3",
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R3.3"
+    },
+    {
+      "id": "realm-2",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/1",
+        "sha256": "72027ede687f68ccedfeb9f40d6c46bf8f50b0759e47f9c818842c420d0966aa"
+      },
+      "original": {
+        "id": "realm-2",
+        "op": "realm_modifier",
+        "input": {
+          "levelDifference": 2
+        },
+        "expected": 1.2
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "完整境界等级差乘区",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [],
+      "existingCapabilities": [],
+      "missingCapabilities": [
+        "N07"
+      ],
+      "gapIds": [
+        "I05",
+        "M04"
+      ],
+      "workPackages": [
+        "R3.3",
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R3.3"
+    },
+    {
+      "id": "realm--2",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/2",
+        "sha256": "629aef14e335897a7ba86dd39719254b608cdf6a88f28ea015fc88dedaa13c80"
+      },
+      "original": {
+        "id": "realm--2",
+        "op": "realm_modifier",
+        "input": {
+          "levelDifference": -2
+        },
+        "expected": 0.25
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "完整境界等级差乘区",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [],
+      "existingCapabilities": [],
+      "missingCapabilities": [
+        "N07"
+      ],
+      "gapIds": [
+        "I05",
+        "M04"
+      ],
+      "workPackages": [
+        "R3.3",
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R3.3"
+    },
+    {
+      "id": "defense-basic",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/3",
+        "sha256": "84b1f307c56f0f9a5ae98f3fd91e8136f8917665e74a816ebfc1a474dd82a74d"
+      },
+      "original": {
+        "id": "defense-basic",
+        "op": "defense_damage",
+        "input": {
+          "raw": 100,
+          "armor": 100,
+          "defenderRealmBaseAtk": 100,
+          "pierceBps": 0,
+          "irreducible": false,
+          "critMultiplier": 1
+        },
+        "expected": 66
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "守方境界ATK基准/防御帽/最小伤害已有受控乘区，原暴击/破甲/真伤分支另判",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E15",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/evidence/B3-1-map-pve-2026-11-03.md",
+          "test": null,
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E15"
+      ],
+      "missingCapabilities": [],
+      "gapIds": [
+        "I05"
+      ],
+      "workPackages": [
+        "R6.2"
+      ],
+      "ruleGates": [
+        "D-02"
+      ],
+      "primaryWorkPackage": "R6.2"
+    },
+    {
+      "id": "defense-pierce",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/4",
+        "sha256": "dd9fc5409dc7dd9fcf09d57465851cd54d48c2f8ddccce4c50c8bafc80257b75"
+      },
+      "original": {
+        "id": "defense-pierce",
+        "op": "defense_damage",
+        "input": {
+          "raw": 100,
+          "armor": 100,
+          "defenderRealmBaseAtk": 100,
+          "pierceBps": 5000,
+          "irreducible": false,
+          "critMultiplier": 1
+        },
+        "expected": 80
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "守方境界ATK基准/防御帽/最小伤害已有受控乘区，原暴击/破甲/真伤分支另判；此行非平常伤害子集，必须补N07对应乘区。",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E15",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/evidence/B3-1-map-pve-2026-11-03.md",
+          "test": null,
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E15"
+      ],
+      "missingCapabilities": [
+        "N07"
+      ],
+      "gapIds": [
+        "I05",
+        "M04"
+      ],
+      "workPackages": [
+        "R3.3",
+        "R6.2"
+      ],
+      "ruleGates": [
+        "D-02"
+      ],
+      "primaryWorkPackage": "R3.3"
+    },
+    {
+      "id": "defense-cap",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/5",
+        "sha256": "a3591cc9d13c99715deb536d3d831311c368abe848000ccf2a03dee811181852"
+      },
+      "original": {
+        "id": "defense-cap",
+        "op": "defense_damage",
+        "input": {
+          "raw": 100,
+          "armor": 10000,
+          "defenderRealmBaseAtk": 100,
+          "pierceBps": 0,
+          "irreducible": false,
+          "critMultiplier": 1
+        },
+        "expected": 30
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "守方境界ATK基准/防御帽/最小伤害已有受控乘区，原暴击/破甲/真伤分支另判",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E15",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/evidence/B3-1-map-pve-2026-11-03.md",
+          "test": null,
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E15"
+      ],
+      "missingCapabilities": [],
+      "gapIds": [
+        "I05"
+      ],
+      "workPackages": [
+        "R6.2"
+      ],
+      "ruleGates": [
+        "D-02"
+      ],
+      "primaryWorkPackage": "R6.2"
+    },
+    {
+      "id": "defense-negative",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/6",
+        "sha256": "06f8401769b323767c04ea7ae0ad96ee48459bdce5b5aeb0f7522d70ae38f3ad"
+      },
+      "original": {
+        "id": "defense-negative",
+        "op": "defense_damage",
+        "input": {
+          "raw": 100,
+          "armor": -100,
+          "defenderRealmBaseAtk": 100,
+          "pierceBps": 0,
+          "irreducible": false,
+          "critMultiplier": 1
+        },
+        "expected": 100
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "守方境界ATK基准/防御帽/最小伤害已有受控乘区，原暴击/破甲/真伤分支另判",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E15",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/evidence/B3-1-map-pve-2026-11-03.md",
+          "test": null,
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E15"
+      ],
+      "missingCapabilities": [],
+      "gapIds": [
+        "I05"
+      ],
+      "workPackages": [
+        "R6.2"
+      ],
+      "ruleGates": [
+        "D-02"
+      ],
+      "primaryWorkPackage": "R6.2"
+    },
+    {
+      "id": "defense-true",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/7",
+        "sha256": "bd417d9768bf60e52177c5e7bc90c5dd2a8c023641a94e2bf9deba427b30ea7b"
+      },
+      "original": {
+        "id": "defense-true",
+        "op": "defense_damage",
+        "input": {
+          "raw": 100,
+          "armor": 100,
+          "defenderRealmBaseAtk": 100,
+          "pierceBps": 0,
+          "irreducible": true,
+          "critMultiplier": 1
+        },
+        "expected": 100
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "守方境界ATK基准/防御帽/最小伤害已有受控乘区，原暴击/破甲/真伤分支另判；此行非平常伤害子集，必须补N07对应乘区。",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E15",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/evidence/B3-1-map-pve-2026-11-03.md",
+          "test": null,
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E15"
+      ],
+      "missingCapabilities": [
+        "N07"
+      ],
+      "gapIds": [
+        "I05",
+        "M04"
+      ],
+      "workPackages": [
+        "R3.3",
+        "R6.2"
+      ],
+      "ruleGates": [
+        "D-02"
+      ],
+      "primaryWorkPackage": "R3.3"
+    },
+    {
+      "id": "defense-crit",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/8",
+        "sha256": "a07e52b20800da87ad0e03350d315c8a2a55605ca601a33dd033854926d9dc3d"
+      },
+      "original": {
+        "id": "defense-crit",
+        "op": "defense_damage",
+        "input": {
+          "raw": 100,
+          "armor": 100,
+          "defenderRealmBaseAtk": 100,
+          "pierceBps": 0,
+          "irreducible": false,
+          "critMultiplier": 1.5
+        },
+        "expected": 100
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "守方境界ATK基准/防御帽/最小伤害已有受控乘区，原暴击/破甲/真伤分支另判；此行非平常伤害子集，必须补N07对应乘区。",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E15",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/evidence/B3-1-map-pve-2026-11-03.md",
+          "test": null,
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E15"
+      ],
+      "missingCapabilities": [
+        "N07"
+      ],
+      "gapIds": [
+        "I05",
+        "M04"
+      ],
+      "workPackages": [
+        "R3.3",
+        "R6.2"
+      ],
+      "ruleGates": [
+        "D-02"
+      ],
+      "primaryWorkPackage": "R3.3"
+    },
+    {
+      "id": "defense-minimum",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/9",
+        "sha256": "8ba4183cc6c5a7216625b81d075272fd141c58069330b4a36adacb152caa9e78"
+      },
+      "original": {
+        "id": "defense-minimum",
+        "op": "defense_damage",
+        "input": {
+          "raw": 0,
+          "armor": 100,
+          "defenderRealmBaseAtk": 100,
+          "pierceBps": 0,
+          "irreducible": false,
+          "critMultiplier": 1
+        },
+        "expected": 1
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "守方境界ATK基准/防御帽/最小伤害已有受控乘区，原暴击/破甲/真伤分支另判",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E15",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/evidence/B3-1-map-pve-2026-11-03.md",
+          "test": null,
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E15"
+      ],
+      "missingCapabilities": [],
+      "gapIds": [
+        "I05"
+      ],
+      "workPackages": [
+        "R6.2"
+      ],
+      "ruleGates": [
+        "D-02"
+      ],
+      "primaryWorkPackage": "R6.2"
+    },
+    {
+      "id": "dodge-half",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/10",
+        "sha256": "e35b371f506453e6ee48dd4d717139140c56675d9d267c1607ccee2da4b31912"
+      },
+      "original": {
+        "id": "dodge-half",
+        "op": "dodge_percent",
+        "input": {
+          "dodge": 60,
+          "hit": 100,
+          "penalty": 0
+        },
+        "expected": 30
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "已有NPC概率闪避，不等价命中惩罚与派生闪避公式",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E15",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/evidence/B3-1-map-pve-2026-11-03.md",
+          "test": null,
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E15"
+      ],
+      "missingCapabilities": [
+        "N07",
+        "N16"
+      ],
+      "gapIds": [
+        "I05",
+        "M04",
+        "M13"
+      ],
+      "workPackages": [
+        "R3.3",
+        "R5.1",
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R3.3"
+    },
+    {
+      "id": "dodge-cap",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/11",
+        "sha256": "cf652504843db009429ebcd76bc905863620872d7f07baf7ea676f1f6bb4fb65"
+      },
+      "original": {
+        "id": "dodge-cap",
+        "op": "dodge_percent",
+        "input": {
+          "dodge": 200,
+          "hit": 0,
+          "penalty": 0
+        },
+        "expected": 50
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "已有NPC概率闪避，不等价命中惩罚与派生闪避公式",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E15",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/evidence/B3-1-map-pve-2026-11-03.md",
+          "test": null,
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E15"
+      ],
+      "missingCapabilities": [
+        "N07",
+        "N16"
+      ],
+      "gapIds": [
+        "I05",
+        "M04",
+        "M13"
+      ],
+      "workPackages": [
+        "R3.3",
+        "R5.1",
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R3.3"
+    },
+    {
+      "id": "dodge-penalty",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/12",
+        "sha256": "0e20aa2609d989366d0f98dc7c25f942d98e6314142ca0e5089fc9ddfbaa865b"
+      },
+      "original": {
+        "id": "dodge-penalty",
+        "op": "dodge_percent",
+        "input": {
+          "dodge": 50,
+          "hit": 0,
+          "penalty": 40
+        },
+        "expected": 10
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "已有NPC概率闪避，不等价命中惩罚与派生闪避公式",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E15",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/evidence/B3-1-map-pve-2026-11-03.md",
+          "test": null,
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E15"
+      ],
+      "missingCapabilities": [
+        "N07",
+        "N16"
+      ],
+      "gapIds": [
+        "I05",
+        "M04",
+        "M13"
+      ],
+      "workPackages": [
+        "R3.3",
+        "R5.1",
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R3.3"
+    },
+    {
+      "id": "speed-0-1",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/13",
+        "sha256": "6cb5e9b32a0f627377058d388727466b49efa38b2ebd417c154fba378721b720"
+      },
+      "original": {
+        "id": "speed-0-1",
+        "op": "movement_speed",
+        "input": {
+          "spd": 0,
+          "rankMultiplier": 1
+        },
+        "expected": 0
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "对数速度参数可配置；rank乘区另判",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E02",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/evidence/B1-completion-2026-11-02.md",
+          "test": "verification::tests::movement_is_normalized_and_one_step_is_exact",
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E02"
+      ],
+      "missingCapabilities": [],
+      "gapIds": [
+        "I05"
+      ],
+      "workPackages": [
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R6.2"
+    },
+    {
+      "id": "speed-1-1",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/14",
+        "sha256": "f5046b64e5b1578a994afa4fa929b5b8995b7d4d164a543a2477b17e840fc7e3"
+      },
+      "original": {
+        "id": "speed-1-1",
+        "op": "movement_speed",
+        "input": {
+          "spd": 1,
+          "rankMultiplier": 1
+        },
+        "expected": 180
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "对数速度参数可配置；rank乘区另判",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E02",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/evidence/B1-completion-2026-11-02.md",
+          "test": "verification::tests::movement_is_normalized_and_one_step_is_exact",
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E02"
+      ],
+      "missingCapabilities": [],
+      "gapIds": [
+        "I05"
+      ],
+      "workPackages": [
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R6.2"
+    },
+    {
+      "id": "speed-8-1",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/15",
+        "sha256": "184d6a722323a3c1d075b86cfd60581344d742bb52860f894f512a62010db6e0"
+      },
+      "original": {
+        "id": "speed-8-1",
+        "op": "movement_speed",
+        "input": {
+          "spd": 8,
+          "rankMultiplier": 1
+        },
+        "expected": 180
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "对数速度参数可配置；rank乘区另判",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E02",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/evidence/B1-completion-2026-11-02.md",
+          "test": "verification::tests::movement_is_normalized_and_one_step_is_exact",
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E02"
+      ],
+      "missingCapabilities": [],
+      "gapIds": [
+        "I05"
+      ],
+      "workPackages": [
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R6.2"
+    },
+    {
+      "id": "speed-80-1",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/16",
+        "sha256": "79f494de46edb3486784201c85a39db0630885134c650e3dea9bafbf68c5e0de"
+      },
+      "original": {
+        "id": "speed-80-1",
+        "op": "movement_speed",
+        "input": {
+          "spd": 80,
+          "rankMultiplier": 1
+        },
+        "expected": 240
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "对数速度参数可配置；rank乘区另判",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E02",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/evidence/B1-completion-2026-11-02.md",
+          "test": "verification::tests::movement_is_normalized_and_one_step_is_exact",
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E02"
+      ],
+      "missingCapabilities": [],
+      "gapIds": [
+        "I05"
+      ],
+      "workPackages": [
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R6.2"
+    },
+    {
+      "id": "speed-800-1",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/17",
+        "sha256": "c9a768216e78341657ab159bb732ce0cfd270532cddeb968b28af345f0240ce0"
+      },
+      "original": {
+        "id": "speed-800-1",
+        "op": "movement_speed",
+        "input": {
+          "spd": 800,
+          "rankMultiplier": 1
+        },
+        "expected": 300
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "对数速度参数可配置；rank乘区另判",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E02",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/evidence/B1-completion-2026-11-02.md",
+          "test": "verification::tests::movement_is_normalized_and_one_step_is_exact",
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E02"
+      ],
+      "missingCapabilities": [],
+      "gapIds": [
+        "I05"
+      ],
+      "workPackages": [
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R6.2"
+    },
+    {
+      "id": "speed-800-1.1",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/18",
+        "sha256": "a626cd0f30cd39014cf0c7bbc6ce46281a46c83e308b7221af838e2c8e15ff89"
+      },
+      "original": {
+        "id": "speed-800-1.1",
+        "op": "movement_speed",
+        "input": {
+          "spd": 800,
+          "rankMultiplier": 1.1
+        },
+        "expected": 330
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "对数速度参数可配置；rank乘区另判；rankMultiplier=1.1需要完整派生/等级倍率，不能直接声称匹配当前速度函数。",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E02",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/evidence/B1-completion-2026-11-02.md",
+          "test": "verification::tests::movement_is_normalized_and_one_step_is_exact",
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E02"
+      ],
+      "missingCapabilities": [
+        "N16"
+      ],
+      "gapIds": [
+        "I05",
+        "M13"
+      ],
+      "workPackages": [
+        "R5.1",
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R5.1"
+    },
+    {
+      "id": "heal-cap",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/19",
+        "sha256": "32dfd6a8225b8d3d15cf1aa4065dea1b4766bc46b953002b22a6ed32d842209e"
+      },
+      "original": {
+        "id": "heal-cap",
+        "op": "heal",
+        "input": {
+          "hp": 950,
+          "maxHp": 1000,
+          "base": 100,
+          "receivedPercent": 20,
+          "allowOverheal": false
+        },
+        "expected": 50
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "普通HP上限裁剪可复用；过量另判，不证明完整治疗来源公式",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E08",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/interfaces/periodic-healing-v1.md",
+          "test": null,
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        },
+        {
+          "capability": "E09",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/interfaces/healing-received-v1.md",
+          "test": null,
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        },
+        {
+          "capability": "E15",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/evidence/B3-1-map-pve-2026-11-03.md",
+          "test": null,
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E08",
+        "E09",
+        "E15"
+      ],
+      "missingCapabilities": [],
+      "gapIds": [
+        "I05"
+      ],
+      "workPackages": [
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R6.2"
+    },
+    {
+      "id": "heal-normal",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/20",
+        "sha256": "0d50f2fa0f2d37531287cddca0ad4845c457535e1fa3a4e2d78071d1b13a85cb"
+      },
+      "original": {
+        "id": "heal-normal",
+        "op": "heal",
+        "input": {
+          "hp": 700,
+          "maxHp": 1000,
+          "base": 100,
+          "receivedPercent": 20,
+          "allowOverheal": false
+        },
+        "expected": 120
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "普通HP上限裁剪可复用；过量另判，不证明完整治疗来源公式",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E08",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/interfaces/periodic-healing-v1.md",
+          "test": null,
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        },
+        {
+          "capability": "E09",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/interfaces/healing-received-v1.md",
+          "test": null,
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        },
+        {
+          "capability": "E15",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/evidence/B3-1-map-pve-2026-11-03.md",
+          "test": null,
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E08",
+        "E09",
+        "E15"
+      ],
+      "missingCapabilities": [],
+      "gapIds": [
+        "I05"
+      ],
+      "workPackages": [
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R6.2"
+    },
+    {
+      "id": "heal-full",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/21",
+        "sha256": "0063734d2632ded7d435d27a144e3df0c5766ebc12f8d6ebe694b3e2d76a27d7"
+      },
+      "original": {
+        "id": "heal-full",
+        "op": "heal",
+        "input": {
+          "hp": 1000,
+          "maxHp": 1000,
+          "base": 100,
+          "receivedPercent": 0,
+          "allowOverheal": false
+        },
+        "expected": 0
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "普通HP上限裁剪可复用；过量另判，不证明完整治疗来源公式",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E08",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/interfaces/periodic-healing-v1.md",
+          "test": null,
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        },
+        {
+          "capability": "E09",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/interfaces/healing-received-v1.md",
+          "test": null,
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        },
+        {
+          "capability": "E15",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/evidence/B3-1-map-pve-2026-11-03.md",
+          "test": null,
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E08",
+        "E09",
+        "E15"
+      ],
+      "missingCapabilities": [],
+      "gapIds": [
+        "I05"
+      ],
+      "workPackages": [
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R6.2"
+    },
+    {
+      "id": "heal-over",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/22",
+        "sha256": "673330d6e0096d1263826612884d5e6a8c771a25d3bfe8f4763e0821e4a2dae2"
+      },
+      "original": {
+        "id": "heal-over",
+        "op": "heal",
+        "input": {
+          "hp": 950,
+          "maxHp": 1000,
+          "base": 100,
+          "receivedPercent": 20,
+          "allowOverheal": true
+        },
+        "expected": 120
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "普通HP上限裁剪可复用；过量另判，不证明完整治疗来源公式；allowOverheal=true缺机制。",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E08",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/interfaces/periodic-healing-v1.md",
+          "test": null,
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        },
+        {
+          "capability": "E09",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/interfaces/healing-received-v1.md",
+          "test": null,
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        },
+        {
+          "capability": "E15",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/evidence/B3-1-map-pve-2026-11-03.md",
+          "test": null,
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E08",
+        "E09",
+        "E15"
+      ],
+      "missingCapabilities": [
+        "N08"
+      ],
+      "gapIds": [
+        "I05",
+        "M04"
+      ],
+      "workPackages": [
+        "R3.3",
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R3.3"
+    },
+    {
+      "id": "death-slots-0",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/23",
+        "sha256": "a51db3084790d3f233f8d1603ebbd427ad3e1713b966bf032a2d62472c7f999a"
+      },
+      "original": {
+        "id": "death-slots-0",
+        "op": "death_slots",
+        "input": {
+          "eligibleSlots": 0,
+          "rate": 0.5
+        },
+        "expected": 0
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "配置整数槽位损耗；需核对ceil与源slot语义",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E19",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/interfaces/assets-v2.md",
+          "test": "verification::tests::damage_and_leaving_range_interrupt_extraction",
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E19"
+      ],
+      "missingCapabilities": [],
+      "gapIds": [
+        "I05"
+      ],
+      "workPackages": [
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R6.2"
+    },
+    {
+      "id": "death-slots-1",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/24",
+        "sha256": "4deb2889c19012655e96acfc7d969294be5df44ac67f7254d70ff48e93f309e1"
+      },
+      "original": {
+        "id": "death-slots-1",
+        "op": "death_slots",
+        "input": {
+          "eligibleSlots": 1,
+          "rate": 0.5
+        },
+        "expected": 1
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "配置整数槽位损耗；需核对ceil与源slot语义",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E19",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/interfaces/assets-v2.md",
+          "test": "verification::tests::damage_and_leaving_range_interrupt_extraction",
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E19"
+      ],
+      "missingCapabilities": [],
+      "gapIds": [
+        "I05"
+      ],
+      "workPackages": [
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R6.2"
+    },
+    {
+      "id": "death-slots-3",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/25",
+        "sha256": "c19600939b014853fa3f340c475c0126033b8d72b77bee2ab7fbabd812eb0182"
+      },
+      "original": {
+        "id": "death-slots-3",
+        "op": "death_slots",
+        "input": {
+          "eligibleSlots": 3,
+          "rate": 0.5
+        },
+        "expected": 2
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "配置整数槽位损耗；需核对ceil与源slot语义",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E19",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/interfaces/assets-v2.md",
+          "test": "verification::tests::damage_and_leaving_range_interrupt_extraction",
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E19"
+      ],
+      "missingCapabilities": [],
+      "gapIds": [
+        "I05"
+      ],
+      "workPackages": [
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R6.2"
+    },
+    {
+      "id": "death-slots-8",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/26",
+        "sha256": "94dd37f46edf78220c3f60053cffa4ab0ab5a70e55cdb9990fad5d8c6de9076f"
+      },
+      "original": {
+        "id": "death-slots-8",
+        "op": "death_slots",
+        "input": {
+          "eligibleSlots": 8,
+          "rate": 0.5
+        },
+        "expected": 4
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "配置整数槽位损耗；需核对ceil与源slot语义",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E19",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/interfaces/assets-v2.md",
+          "test": "verification::tests::damage_and_leaving_range_interrupt_extraction",
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E19"
+      ],
+      "missingCapabilities": [],
+      "gapIds": [
+        "I05"
+      ],
+      "workPackages": [
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R6.2"
+    },
+    {
+      "id": "death-quantity-1-99",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/27",
+        "sha256": "b814217e3a70afabd4c305099b2eb5c8b14bc7c57f2c5813c79a50dce66f19dd"
+      },
+      "original": {
+        "id": "death-quantity-1-99",
+        "op": "death_quantity",
+        "input": {
+          "quantity": 1,
+          "stackLimit": 99,
+          "rate": 0.5
+        },
+        "expected": 1
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "整数物品quantity损耗/舍入及上限",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E19",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/interfaces/assets-v2.md",
+          "test": "verification::tests::damage_and_leaving_range_interrupt_extraction",
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E19"
+      ],
+      "missingCapabilities": [],
+      "gapIds": [
+        "I05"
+      ],
+      "workPackages": [
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R6.2"
+    },
+    {
+      "id": "death-quantity-5-99",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/28",
+        "sha256": "761432d4bc6586d2bd944a26252251485efa07f09fbecac915e6a6212d81c6a8"
+      },
+      "original": {
+        "id": "death-quantity-5-99",
+        "op": "death_quantity",
+        "input": {
+          "quantity": 5,
+          "stackLimit": 99,
+          "rate": 0.5
+        },
+        "expected": 2
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "整数物品quantity损耗/舍入及上限",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E19",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/interfaces/assets-v2.md",
+          "test": "verification::tests::damage_and_leaving_range_interrupt_extraction",
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E19"
+      ],
+      "missingCapabilities": [],
+      "gapIds": [
+        "I05"
+      ],
+      "workPackages": [
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R6.2"
+    },
+    {
+      "id": "death-quantity-1-1",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/29",
+        "sha256": "aa6d2327c37ce9afceabe20d2a6fb8c6e05beb9cd9c72bc78ea428c2c3afd904"
+      },
+      "original": {
+        "id": "death-quantity-1-1",
+        "op": "death_quantity",
+        "input": {
+          "quantity": 1,
+          "stackLimit": 1,
+          "rate": 0.5
+        },
+        "expected": 1
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "整数物品quantity损耗/舍入及上限",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E19",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/interfaces/assets-v2.md",
+          "test": "verification::tests::damage_and_leaving_range_interrupt_extraction",
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E19"
+      ],
+      "missingCapabilities": [],
+      "gapIds": [
+        "I05"
+      ],
+      "workPackages": [
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R6.2"
+    },
+    {
+      "id": "hp-ratio",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/30",
+        "sha256": "13845eda65303d9408240c9162ba60825bcce1e79b2fff3427285dae95edb860"
+      },
+      "original": {
+        "id": "hp-ratio",
+        "op": "hp_cost",
+        "input": {
+          "hp": 99,
+          "cost": 0.05,
+          "mode": "current_hp_ratio",
+          "minimum": 1
+        },
+        "expected": 4
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "HP成本与minHpAfterCost不是SP成本",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [],
+      "existingCapabilities": [],
+      "missingCapabilities": [
+        "N04"
+      ],
+      "gapIds": [
+        "I05",
+        "M02"
+      ],
+      "workPackages": [
+        "R3.1",
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R3.1"
+    },
+    {
+      "id": "hp-min",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/31",
+        "sha256": "26d458136cbff21470ec88bc5d95b05f30d986366a09856c3dc1a1c44cf2b20e"
+      },
+      "original": {
+        "id": "hp-min",
+        "op": "hp_cost",
+        "input": {
+          "hp": 1,
+          "cost": 0.05,
+          "mode": "current_hp_ratio",
+          "minimum": 1
+        },
+        "expected": 0
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "HP成本与minHpAfterCost不是SP成本",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [],
+      "existingCapabilities": [],
+      "missingCapabilities": [
+        "N04"
+      ],
+      "gapIds": [
+        "I05",
+        "M02"
+      ],
+      "workPackages": [
+        "R3.1",
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R3.1"
+    },
+    {
+      "id": "hp-clamped",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/32",
+        "sha256": "91cd33a72cd745387c185132661e19fdfa87354aa57f1a1f93444b3a04862880"
+      },
+      "original": {
+        "id": "hp-clamped",
+        "op": "hp_cost",
+        "input": {
+          "hp": 50,
+          "cost": 100,
+          "mode": "fixed",
+          "minimum": 1
+        },
+        "expected": 49
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "HP成本与minHpAfterCost不是SP成本",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [],
+      "existingCapabilities": [],
+      "missingCapabilities": [
+        "N04"
+      ],
+      "gapIds": [
+        "I05",
+        "M02"
+      ],
+      "workPackages": [
+        "R3.1",
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R3.1"
+    },
+    {
+      "id": "pvp-extra",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/33",
+        "sha256": "873a96b56956c4e2cf8d5831435fb030fa96e9dbfdc3824717a8095a398a9f1d"
+      },
+      "original": {
+        "id": "pvp-extra",
+        "op": "pvp_multicast",
+        "input": {
+          "total": 3,
+          "inherent": 1
+        },
+        "expected": 0.43333333333333335
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "对玩家额外段折损/固有段规则",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [],
+      "existingCapabilities": [],
+      "missingCapabilities": [
+        "N09",
+        "N18"
+      ],
+      "gapIds": [
+        "I05",
+        "M05",
+        "M12"
+      ],
+      "workPackages": [
+        "R3.4",
+        "R5.3",
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R3.4"
+    },
+    {
+      "id": "pvp-inherent",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/34",
+        "sha256": "3bacf4d0c085b4a77bd6e8b8e3b3b6bbadaa2edda2ea1056be60b408780608a8"
+      },
+      "original": {
+        "id": "pvp-inherent",
+        "op": "pvp_multicast",
+        "input": {
+          "total": 3,
+          "inherent": 3
+        },
+        "expected": 1
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "对玩家额外段折损/固有段规则",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [],
+      "existingCapabilities": [],
+      "missingCapabilities": [
+        "N09",
+        "N18"
+      ],
+      "gapIds": [
+        "I05",
+        "M05",
+        "M12"
+      ],
+      "workPackages": [
+        "R3.4",
+        "R5.3",
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R3.4"
+    },
+    {
+      "id": "ticks-1-100",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/35",
+        "sha256": "651005ee768520967a2b8e6cd9eacc14bca8e0f29f49bf4c6d61e946d3af9596"
+      },
+      "original": {
+        "id": "ticks-1-100",
+        "op": "duration_ticks",
+        "input": {
+          "milliseconds": 1,
+          "stepMs": 100
+        },
+        "expected": 1
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "原毫秒ceil到逻辑tick，测试专用时钟适配后验证；不把当前deadline视为相同执行结果",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E20",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/evidence/B2-4-flow-control-2026-11-03.md",
+          "test": "verification::tests::worker_shutdown_releases_each_of_one_hundred_runtime_threads",
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E20"
+      ],
+      "missingCapabilities": [],
+      "gapIds": [
+        "I05"
+      ],
+      "workPackages": [
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R6.2"
+    },
+    {
+      "id": "ticks-100-100",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/36",
+        "sha256": "db8923f45103cc82d7a841d97d28e8c01205f45671e3b1b560ae515f68cc2cb6"
+      },
+      "original": {
+        "id": "ticks-100-100",
+        "op": "duration_ticks",
+        "input": {
+          "milliseconds": 100,
+          "stepMs": 100
+        },
+        "expected": 1
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "原毫秒ceil到逻辑tick，测试专用时钟适配后验证；不把当前deadline视为相同执行结果",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E20",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/evidence/B2-4-flow-control-2026-11-03.md",
+          "test": "verification::tests::worker_shutdown_releases_each_of_one_hundred_runtime_threads",
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E20"
+      ],
+      "missingCapabilities": [],
+      "gapIds": [
+        "I05"
+      ],
+      "workPackages": [
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R6.2"
+    },
+    {
+      "id": "ticks-101-100",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/37",
+        "sha256": "10e5b4b621c903f24b65ed624359ef64ee6239802cbc6d29b96f68f4498d1f87"
+      },
+      "original": {
+        "id": "ticks-101-100",
+        "op": "duration_ticks",
+        "input": {
+          "milliseconds": 101,
+          "stepMs": 100
+        },
+        "expected": 2
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "原毫秒ceil到逻辑tick，测试专用时钟适配后验证；不把当前deadline视为相同执行结果",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E20",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/evidence/B2-4-flow-control-2026-11-03.md",
+          "test": "verification::tests::worker_shutdown_releases_each_of_one_hundred_runtime_threads",
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E20"
+      ],
+      "missingCapabilities": [],
+      "gapIds": [
+        "I05"
+      ],
+      "workPackages": [
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R6.2"
+    },
+    {
+      "id": "ticks-150-30",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/38",
+        "sha256": "87f571b34785e6464e5e93ef03328978242d61662e727c676eabe388c76fe5d3"
+      },
+      "original": {
+        "id": "ticks-150-30",
+        "op": "duration_ticks",
+        "input": {
+          "milliseconds": 150,
+          "stepMs": 30
+        },
+        "expected": 5
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "原毫秒ceil到逻辑tick，测试专用时钟适配后验证；不把当前deadline视为相同执行结果",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E20",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/evidence/B2-4-flow-control-2026-11-03.md",
+          "test": "verification::tests::worker_shutdown_releases_each_of_one_hundred_runtime_threads",
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E20"
+      ],
+      "missingCapabilities": [],
+      "gapIds": [
+        "I05"
+      ],
+      "workPackages": [
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R6.2"
+    },
+    {
+      "id": "ticks-151-30",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/39",
+        "sha256": "6f30784962befd3e2e11d82d8d1cd5265aec86da865954712477784989181a90"
+      },
+      "original": {
+        "id": "ticks-151-30",
+        "op": "duration_ticks",
+        "input": {
+          "milliseconds": 151,
+          "stepMs": 30
+        },
+        "expected": 6
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "原毫秒ceil到逻辑tick，测试专用时钟适配后验证；不把当前deadline视为相同执行结果",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E20",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/evidence/B2-4-flow-control-2026-11-03.md",
+          "test": "verification::tests::worker_shutdown_releases_each_of_one_hundred_runtime_threads",
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E20"
+      ],
+      "missingCapabilities": [],
+      "gapIds": [
+        "I05"
+      ],
+      "workPackages": [
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R6.2"
+    },
+    {
+      "id": "orb-normal",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/40",
+        "sha256": "bd31bdceca2797333b1fd2e86941a812399183d403e5ed0dd1eb8ddb931512cd"
+      },
+      "original": {
+        "id": "orb-normal",
+        "op": "orb",
+        "input": {
+          "maxHp": 1000,
+          "maxSpirit": 200,
+          "hpRatio": 0.03,
+          "spiritRatio": 0.15
+        },
+        "expected": {
+          "hp": 30,
+          "spirit": 30
+        }
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "普通/Boss光球按基准属性比例烘焙、拾取才恢复",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E15",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/evidence/B3-1-map-pve-2026-11-03.md",
+          "test": null,
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        },
+        {
+          "capability": "E18",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/evidence/B3-2-pouch-2026-11-03.md",
+          "test": "verification::tests::full_inventory_does_not_consume_ground_drop",
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E15",
+        "E18"
+      ],
+      "missingCapabilities": [],
+      "gapIds": [
+        "I05"
+      ],
+      "workPackages": [
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R6.2"
+    },
+    {
+      "id": "orb-boss",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/41",
+        "sha256": "125f13f5b2408198d03a65e0dc9ee785f100e9e7318da8ced155f89a8fe5741f"
+      },
+      "original": {
+        "id": "orb-boss",
+        "op": "orb",
+        "input": {
+          "maxHp": 1000,
+          "maxSpirit": 200,
+          "hpRatio": 0.15,
+          "spiritRatio": 0.6
+        },
+        "expected": {
+          "hp": 150,
+          "spirit": 120
+        }
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "普通/Boss光球按基准属性比例烘焙、拾取才恢复",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E15",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/evidence/B3-1-map-pve-2026-11-03.md",
+          "test": null,
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        },
+        {
+          "capability": "E18",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/evidence/B3-2-pouch-2026-11-03.md",
+          "test": "verification::tests::full_inventory_does_not_consume_ground_drop",
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E15",
+        "E18"
+      ],
+      "missingCapabilities": [],
+      "gapIds": [
+        "I05"
+      ],
+      "workPackages": [
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R6.2"
+    },
+    {
+      "id": "shield-cap",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/42",
+        "sha256": "d29c6fbc21704cdf610a0730b56168c84f99dac08d1486465307d487ed95386e"
+      },
+      "original": {
+        "id": "shield-cap",
+        "op": "shield_grant",
+        "input": {
+          "maxHp": 1000,
+          "otherShields": 250,
+          "requested": 100
+        },
+        "expected": 50
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "基础maxHP grant/cap及已满盾零grant，不包含反击记录",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E06",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/interfaces/absorption-shields-v1.md",
+          "test": null,
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E06"
+      ],
+      "missingCapabilities": [],
+      "gapIds": [
+        "I05"
+      ],
+      "workPackages": [
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R6.2"
+    },
+    {
+      "id": "shield-full",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/43",
+        "sha256": "0c350fd828dfdf1165dcd86cd166a57cd9340dab0938e6b63148c64237e0c60d"
+      },
+      "original": {
+        "id": "shield-full",
+        "op": "shield_grant",
+        "input": {
+          "maxHp": 1000,
+          "otherShields": 300,
+          "requested": 100
+        },
+        "expected": 0
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "基础maxHP grant/cap及已满盾零grant，不包含反击记录",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E06",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/interfaces/absorption-shields-v1.md",
+          "test": null,
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E06"
+      ],
+      "missingCapabilities": [],
+      "gapIds": [
+        "I05"
+      ],
+      "workPackages": [
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R6.2"
+    },
+    {
+      "id": "ordinary-step",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/44",
+        "sha256": "71981d261863e58af362422f4dac7e3bbdc8ad4a7a48276d9040779001ea484f"
+      },
+      "original": {
+        "id": "ordinary-step",
+        "op": "move_step",
+        "input": {
+          "speed": 180,
+          "dtMs": 30,
+          "direction": [
+            1,
+            0
+          ],
+          "start": [
+            0,
+            0
+          ]
+        },
+        "expected": [
+          5.4,
+          0
+        ]
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "归一化方向×速度×步长，实际位置断言",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E02",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/evidence/B1-completion-2026-11-02.md",
+          "test": "verification::tests::movement_is_normalized_and_one_step_is_exact",
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E02"
+      ],
+      "missingCapabilities": [],
+      "gapIds": [
+        "I05"
+      ],
+      "workPackages": [
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R6.2"
+    },
+    {
+      "id": "diagonal-step",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/45",
+        "sha256": "1a99143728a840d4eb52935f9f8bc16a931dade4f1475d2cc441782434cc8d2e"
+      },
+      "original": {
+        "id": "diagonal-step",
+        "op": "move_step",
+        "input": {
+          "speed": 180,
+          "dtMs": 30,
+          "direction": [
+            3,
+            4
+          ],
+          "start": [
+            0,
+            0
+          ]
+        },
+        "expected": [
+          3.24,
+          4.32
+        ]
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "归一化方向×速度×步长，实际位置断言",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E02",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/evidence/B1-completion-2026-11-02.md",
+          "test": "verification::tests::movement_is_normalized_and_one_step_is_exact",
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E02"
+      ],
+      "missingCapabilities": [],
+      "gapIds": [
+        "I05"
+      ],
+      "workPackages": [
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R6.2"
+    },
+    {
+      "id": "cultivation-qi-extract",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/46",
+        "sha256": "7e12a57138aadb2416e9e556aeb9b82975860cc036c10b3d479fcca3c5fc64e2"
+      },
+      "original": {
+        "id": "cultivation-qi-extract",
+        "op": "session_cultivation",
+        "input": {
+          "killScore": 140,
+          "extraction": true,
+          "entryYears": 1,
+          "realmCoefficient": 0.75,
+          "extractionBase": 30,
+          "multiplier": 1
+        },
+        "expected": 127
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "有限积分/带入年限/撤离乘区可配置，完整成长仍M13",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E19",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/interfaces/assets-v2.md",
+          "test": "verification::tests::damage_and_leaving_range_interrupt_extraction",
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E19"
+      ],
+      "missingCapabilities": [],
+      "gapIds": [
+        "I05"
+      ],
+      "workPackages": [
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R6.2"
+    },
+    {
+      "id": "cultivation-qi-death",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/47",
+        "sha256": "d6a6137c0945b9c3112c862dd9fb168cd2edac3503d8f73c326ebd62f3621e4b"
+      },
+      "original": {
+        "id": "cultivation-qi-death",
+        "op": "session_cultivation",
+        "input": {
+          "killScore": 140,
+          "extraction": false,
+          "entryYears": 1,
+          "realmCoefficient": 0.75,
+          "extractionBase": 30,
+          "multiplier": 0.5
+        },
+        "expected": 52
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "有限积分/带入年限/撤离乘区可配置，完整成长仍M13",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E19",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/interfaces/assets-v2.md",
+          "test": "verification::tests::damage_and_leaving_range_interrupt_extraction",
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E19"
+      ],
+      "missingCapabilities": [],
+      "gapIds": [
+        "I05"
+      ],
+      "workPackages": [
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R6.2"
+    },
+    {
+      "id": "cultivation-foundation-extract",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/48",
+        "sha256": "440afcd4703df99bed2deb56981cae4a3d76696d5e1323fb36f0214d70624dd8"
+      },
+      "original": {
+        "id": "cultivation-foundation-extract",
+        "op": "session_cultivation",
+        "input": {
+          "killScore": 40,
+          "extraction": true,
+          "entryYears": 2,
+          "realmCoefficient": 1.5,
+          "extractionBase": 30,
+          "multiplier": 1
+        },
+        "expected": 210
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "有限积分/带入年限/撤离乘区可配置，完整成长仍M13",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E19",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/interfaces/assets-v2.md",
+          "test": "verification::tests::damage_and_leaving_range_interrupt_extraction",
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E19"
+      ],
+      "missingCapabilities": [],
+      "gapIds": [
+        "I05"
+      ],
+      "workPackages": [
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R6.2"
+    },
+    {
+      "id": "cultivation-empty-extract",
+      "source": {
+        "file": "rust-match-kernel-v1.1/numeric-vectors.json",
+        "pointer": "/vectors/49",
+        "sha256": "57f986afa6a6f949cfa304dd787e013a9fe96e1b81fb3d214b9724db1012ac1a"
+      },
+      "original": {
+        "id": "cultivation-empty-extract",
+        "op": "session_cultivation",
+        "input": {
+          "killScore": 0,
+          "extraction": true,
+          "entryYears": 1,
+          "realmCoefficient": 0.75,
+          "extractionBase": 30,
+          "multiplier": 1
+        },
+        "expected": 22
+      },
+      "exactExecutionStatus": "not_run",
+      "explanation": "有限积分/带入年限/撤离乘区可配置，完整成长仍M13",
+      "acceptanceOwnerWorkPackage": "R6.2",
+      "adapter": "R6.2测试专用有类型公式/World执行绑定，按源tolerance核对原expected；不调用来源validate.py充当Rust执行",
+      "similarEvidence": [
+        {
+          "capability": "E19",
+          "report": "artifacts/sdk-5-16/acceptance.json",
+          "availability": "cleaned_by_user",
+          "contract": "docs/interfaces/assets-v2.md",
+          "test": "verification::tests::damage_and_leaving_range_interrupt_extraction",
+          "scope": "历史相近乘区/算法引用，报告已清理；尚未绑定此向量"
+        }
+      ],
+      "existingCapabilities": [
+        "E19"
+      ],
+      "missingCapabilities": [],
+      "gapIds": [
+        "I05"
+      ],
+      "workPackages": [
+        "R6.2"
+      ],
+      "ruleGates": [],
+      "primaryWorkPackage": "R6.2"
+    }
+  ]
+}

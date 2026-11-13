@@ -1,0 +1,271 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://match-kernel.local/interfaces/source-gates-v1.schema.json",
+  "title": "Native action selection and live source qualification fragments",
+  "$defs": {
+    "entity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "id",
+        "generation"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "participant",
+            "monster"
+          ]
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "filter": {
+      "type": "object",
+      "properties": {
+        "basic": {
+          "type": "boolean"
+        },
+        "skills": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "const": "any"
+                }
+              },
+              "required": [
+                "mode"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "const": "only"
+                },
+                "ids": {
+                  "type": "array",
+                  "minItems": 0,
+                  "maxItems": 64,
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64
+                  }
+                }
+              },
+              "required": [
+                "mode",
+                "ids"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "const": "except"
+                },
+                "ids": {
+                  "type": "array",
+                  "minItems": 0,
+                  "maxItems": 64,
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64
+                  }
+                }
+              },
+              "required": [
+                "mode",
+                "ids"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        }
+      },
+      "required": [
+        "basic",
+        "skills"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "basic": {
+                "const": false
+              },
+              "skills": {
+                "properties": {
+                  "mode": {
+                    "const": "only"
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "skills": {
+                "properties": {
+                  "ids": {
+                    "minItems": 1
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "self_statuses_by_mastery": {
+      "type": "object",
+      "maxProperties": 8,
+      "propertyNames": { "minLength": 1, "maxLength": 64 },
+      "additionalProperties": {
+        "type": "array",
+        "minItems": 1,
+        "maxItems": 16,
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["minimum_mastery", "statuses"],
+          "properties": {
+            "minimum_mastery": { "type": "integer", "minimum": 0, "maximum": 127 },
+            "statuses": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 2,
+              "uniqueItems": true,
+              "items": { "type": "string", "minLength": 1, "maxLength": 64 }
+            }
+          }
+        }
+      },
+      "$comment": "Rust enforces strictly increasing thresholds, known self-skill and status references, and configured mastery model bounds."
+    },
+    "requirement": {
+      "type": "object",
+      "properties": {
+        "skill_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "equipped_any_of": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          }
+        },
+        "minimum_mastery": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127
+        },
+        "maximum_mastery": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127
+        }
+      },
+      "required": [
+        "skill_id"
+      ],
+      "additionalProperties": false
+    },
+    "trigger_fields": {
+      "type": "object",
+      "properties": {
+        "action_filter": {
+          "$ref": "#/$defs/filter"
+        },
+        "owner_skill": {
+          "$ref": "#/$defs/requirement"
+        },
+        "maximum_per_action": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8
+        }
+      },
+      "required": [],
+      "additionalProperties": false,
+      "minProperties": 1
+    },
+    "reaction_fields": {
+      "type": "object",
+      "properties": {
+        "source_requirement": {
+          "$ref": "#/$defs/requirement"
+        }
+      },
+      "required": [
+        "source_requirement"
+      ],
+      "additionalProperties": false
+    },
+    "fired": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "combat_trigger_fired"
+        },
+        "source": {
+          "$ref": "#/$defs/entity"
+        },
+        "trigger_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        }
+      },
+      "required": [
+        "kind",
+        "source",
+        "trigger_id"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/filter"
+    },
+    {
+      "$ref": "#/$defs/requirement"
+    },
+    {
+      "$ref": "#/$defs/trigger_fields"
+    },
+    {
+      "$ref": "#/$defs/reaction_fields"
+    },
+    {
+      "$ref": "#/$defs/fired"
+    }
+  ]
+}

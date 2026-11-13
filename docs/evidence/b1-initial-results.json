@@ -1,0 +1,119 @@
+{
+  "date": "2026-11-02",
+  "platform": {
+    "system": "Darwin",
+    "machine": "arm64"
+  },
+  "scope": "B1 verification fixture and controlled memory storage; no production integration or capacity signoff",
+  "sourceSha256": {
+    "Cargo.toml": "b58b59a251ccb6f4e81d3134ecdbc461dff7bf6cc7c8dab1a00672c6aee5809c",
+    "Cargo.lock": "9dd3133465f823601794cebfd07bd2ae5cc0ae29f824b305a9b37c69f535be60",
+    "config/b1.json": "cb67c8fab4467f82b20af9cb1b0a259c642a6754b5cef62b0369e542caccca21",
+    "scripts/export_b1.py": "7d90d035157da562dc9484027001bfb895511a4c26a741d42dfcfed65fa74cd1",
+    "adapters/node/demo.mjs": "3b56fbe2d072c89cfc68ccd68814c56351ef19db005069035e15ab3775059d75",
+    "src/bin/kernel-host.rs": "695a5e1ee232cb3d6b421bc065df4f5aae54fe00bbd60bf52d42e4b458ccfac9",
+    "src/bin/replay.rs": "8ed63e52b2c65f38edcd37c8aa0d05624374ecd96ff9115b2c176cb7b2c42952",
+    "src/config.rs": "ad6f0e45c37315e5a7af95de6e8bf02ecc2d88b7e1f928c222f618626389f570",
+    "src/engine.rs": "009c35e8da7b4d34c7edfe3e8ddb225e4e64135c75c1c7dac11a2f1aee27b317",
+    "src/lib.rs": "aab065278a59c8e535390e589813d1405faa8750013fb0a2235ce049546ee78c",
+    "src/protocol.rs": "6f8fa0fbaeb918c44cd702a41e23b55534bebb0ba13d9c8a5d82cf752f075d0c",
+    "src/runtime.rs": "6a3a770c19661d9b596ce0711344ae0c3cfa5aa8c8fbbe06684b7b5ee8ddba2b",
+    "src/verification/tests.rs": "b04bddb446123dc51936715c54f047f1579610a71b597c8e384113b2029a9c34",
+    "src/verification.rs": "44a6270f153ea9a8e1f3b718f603e028ced2d610bcb64841ba80c0fff4758f2a",
+    "src/world.rs": "1fa751936467d11dbb3bd5dfa1e043ac8820f47330d8e142cafeaaad26901876"
+  },
+  "results": [
+    {
+      "command": [
+        "./target/debug/replay"
+      ],
+      "result": {
+        "evidence": "controlled-memory-storage; verification-fixture",
+        "outcome": "extraction",
+        "config_hash": "cb67c8fab4467f82b20af9cb1b0a259c642a6754b5cef62b0369e542caccca21",
+        "warehouse": 102,
+        "cultivation": 30,
+        "admission_commits": 1,
+        "settlement_commits": 1,
+        "charged_entry_years": 1,
+        "live_worlds": 0,
+        "phase": "closed",
+        "logical_ms": 185040,
+        "output_count": 705
+      }
+    },
+    {
+      "command": [
+        "./target/debug/replay",
+        "--death"
+      ],
+      "result": {
+        "evidence": "controlled-memory-storage; verification-fixture",
+        "outcome": "death",
+        "config_hash": "cb67c8fab4467f82b20af9cb1b0a259c642a6754b5cef62b0369e542caccca21",
+        "warehouse": 99,
+        "cultivation": 3,
+        "admission_commits": 1,
+        "settlement_commits": 1,
+        "charged_entry_years": 1,
+        "live_worlds": 0,
+        "phase": "closed",
+        "logical_ms": 1500,
+        "output_count": 25
+      }
+    },
+    {
+      "command": [
+        "node",
+        "adapters/node/demo.mjs"
+      ],
+      "result": {
+        "evidence": "Node JSONL + accelerated Rust worker + controlled memory storage",
+        "outcome": "extraction",
+        "warehouse": 102,
+        "cultivation": 30,
+        "admissions": 1,
+        "settlements": 1,
+        "chargedEntryYears": 1,
+        "unknownResultQueried": false,
+        "liveWorlds": 0
+      }
+    },
+    {
+      "command": [
+        "node",
+        "adapters/node/demo.mjs",
+        "--death"
+      ],
+      "result": {
+        "evidence": "Node JSONL + accelerated Rust worker + controlled memory storage",
+        "outcome": "death",
+        "warehouse": 99,
+        "cultivation": 3,
+        "admissions": 1,
+        "settlements": 1,
+        "chargedEntryYears": 1,
+        "unknownResultQueried": false,
+        "liveWorlds": 0
+      }
+    },
+    {
+      "command": [
+        "node",
+        "adapters/node/demo.mjs",
+        "--unknown"
+      ],
+      "result": {
+        "evidence": "Node JSONL + accelerated Rust worker + controlled memory storage",
+        "outcome": "extraction",
+        "warehouse": 102,
+        "cultivation": 30,
+        "admissions": 1,
+        "settlements": 1,
+        "chargedEntryYears": 1,
+        "unknownResultQueried": true,
+        "liveWorlds": 0
+      }
+    }
+  ]
+}

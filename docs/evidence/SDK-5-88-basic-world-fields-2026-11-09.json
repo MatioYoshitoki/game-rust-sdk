@@ -1,0 +1,248 @@
+{
+  "batch": "SDK-5-88",
+  "delivery": "DELIVERY-01",
+  "crossPackage": "R3.4",
+  "sdkVersion": "0.114.0",
+  "mechanismVersion": 105,
+  "date": "2026-11-09",
+  "scope": "Configuration-driven detached fixed fields materialized from a primary wave contact or a frozen landing, with shared area publication and owner-only mitigation.",
+  "spec": "docs/batches/SDK-5-88-basic-world-fields.md",
+  "runtimeSourceSha256": "06690730c4deed56a7da2af475bcc89be6c75c43aea1a30268c489f9886e67c9",
+  "sourceBinding": {
+    "table": "data/weapon-attack-morphs/WEAPON_ATTACK_MORPHS",
+    "tableFile": "rust-match-kernel-v1.1/resolved-config.json",
+    "tableFileSha256": "6f730cf5a4844f3f67870a720b4fd0ce024f53e6905714344bebb52f53df8e0a",
+    "rowSha256": {
+      "fan_echo_wave": "9efe7f21fcda43f5a1c4eb6f986e89f50499d4234a17c561e899e15b49abf1f5",
+      "tower_expanding_ring": "e71ce3232705a9b254ef9f81d5277cbd65b2fe3899a5503d550f6fcf9e3e4cac"
+    },
+    "rulesFile": "rust-match-kernel-v1.1/source-rules.json",
+    "rulesFileSha256": "e7fd565d8144b6e6344db4ea136b6a526f9ded7986b13d296103c6debc041469",
+    "sourceDocuments": [
+      {
+        "path": "docs/designs/combat-engine.DESIGN.md",
+        "sha256": "2b1a9cd20e3cc79e8ab158879e59ff68f807c63ab93c27ae0b40a46aa144d558",
+        "lines": [
+          202,
+          208,
+          209
+        ]
+      },
+      {
+        "path": "docs/interfaces/combat-engine.INTERFACE.md",
+        "sha256": "36c7d30dc1f9b490692d3b7d5ef1fde79cfeaaafef1973e0dcf854d6656b2ed8",
+        "lines": [
+          62,
+          63,
+          125,
+          128
+        ]
+      }
+    ]
+  },
+  "package": {
+    "archive": "/private/tmp/sdk88-basic-world-fields-v114/delivery/match-kernel-0.114.0-aarch64-apple-darwin.tar.gz",
+    "target": "aarch64-apple-darwin",
+    "sha256": "167222d38dc5870b109f55767bbde74f69c4bed3f009ab272de30088dd5b915e",
+    "sourceCrateSha256": "e76fc4c3f936e290d9a839172f3aea8e0e1cc82dc2596621b9746dccdcaf3e90",
+    "binarySha256": "75bf0c0ea63124a48a9e6b229f981802d098fa4271d79a31569f908661774ad0",
+    "packageFiles": 2902
+  },
+  "sample": {
+    "file": "examples/combat-host/basic-weapon-profiles.json",
+    "sha256": "c7695e72e6f001e2372288e3b41fbcbfbbfd17aca47d2e53000efb8007e2b133",
+    "basicFieldCapacity": 12,
+    "profiles": {
+      "fan_echo_wave": {
+        "windup_ms": 130,
+        "interval_ms": 800,
+        "range": 270,
+        "projectile_speed": 1500,
+        "mechanism": "projectile",
+        "settle_on_end": true,
+        "wave": {
+          "plan_id": "fan_echo_wave",
+          "geometry": {
+            "kind": "directional",
+            "cone_degrees": 84
+          },
+          "speed": 500,
+          "target_cap": 4,
+          "primary_damage_bps": 6500,
+          "additional_damage_bps": 5600,
+          "field": {
+            "plan_id": "fan-persistent-vortex",
+            "trigger": {
+              "kind": "primary_contact"
+            },
+            "sampling": "live",
+            "radius": 74,
+            "duration_ms": 10000,
+            "interval_ms": 1000,
+            "damage_bps": 1500,
+            "target_cap": 6,
+            "max_per_source": 12
+          }
+        }
+      },
+      "tower_expanding_ring": {
+        "windup_ms": 180,
+        "interval_ms": 1100,
+        "range": 320,
+        "projectile_speed": 1500,
+        "mechanism": "projectile",
+        "settle_on_end": true,
+        "wave": {
+          "plan_id": "tower_expanding_ring",
+          "geometry": {
+            "kind": "radial"
+          },
+          "speed": 1400,
+          "target_cap": 5,
+          "primary_damage_bps": 7200,
+          "additional_damage_bps": 6200,
+          "field": {
+            "plan_id": "tower-falling-field",
+            "trigger": {
+              "kind": "landing",
+              "impact_radius": 150
+            },
+            "sampling": "frozen",
+            "radius": 150,
+            "duration_ms": 6000,
+            "interval_ms": 1000,
+            "damage_bps": 1800,
+            "target_cap": 5,
+            "max_per_source": 1,
+            "owner_reduction_bps": 1200
+          }
+        },
+        "effects": {
+          "on_end_damage_target_status": {
+            "choices": [
+              "tower-movement",
+              "tower-attack-speed",
+              "tower-attack"
+            ],
+            "target_profile_bps": {
+              "elite": 7500,
+              "boss": 5000
+            }
+          }
+        }
+      }
+    }
+  },
+  "scopeDecisions": {
+    "selection": "trusted seat profile and original attack input",
+    "vortex": "spawn at the current position of the qualifying primary contact; independently capped fields sample live effective attack each pulse",
+    "landing": "freeze the target center, initial candidates and raw budget at release; revalidate remaining legal candidates at landing, then start the field even if the primary identity was lost",
+    "clock": "start at interval, include final scheduled boundary pulse, and preserve expiry under fixed-step rounding",
+    "reduction": "own active field and current owner position supply reduction before shield, with no after-exit grace",
+    "capacity": "separate 1-12 pool shares the native area runtime and publication; reserve before wave release and use only same-source field replacement",
+    "settlement": "fields never extend the basic action or repeat its spirit or life-steal reward; preserve receiver damage and actual kill attribution"
+  },
+  "checks": {
+    "rustDefault": {
+      "passed": 2666,
+      "logSha256": "285aaa2caaae64c1b08c29247c5d1fee17334f246aac5cfa0c27d2002f5eab3b"
+    },
+    "rustAllFeatures": {
+      "passed": 2666,
+      "logSha256": "354cb562b140cfac8a72630a75a5e151ee64a82d80e03d06efd0ebf85a9f2a0b"
+    },
+    "rustPackagedEmptyCache": {
+      "passed": 5,
+      "logSha256": "d05388624b7ca1a8bc146de0f00eef201721110e43d1a0e9f530819f11378732"
+    },
+    "nodeAndH5Adapters": {
+      "passed": 195,
+      "logSha256": "adc41b9e1043e3bf84c2182fb4b2d0d70936ad6b6e7d1e92344246c00a689dac"
+    },
+    "clippy": true,
+    "format": true,
+    "schema": {
+      "profileTableAccepted": 1,
+      "profileTableRejected": 6,
+      "capacityFragmentAccepted": 1,
+      "wireAccepted": 4,
+      "wireRejected": 6
+    },
+    "publicH5HttpSseAndSqlite": {
+      "sdk": "0.114.0",
+      "transport": "H5 HTTP/SSE + Node + SQLite",
+      "overlap": 2,
+      "reconnectedFields": 2,
+      "towerReplaced": true,
+      "intervalMs": 1000,
+      "vortexDamage": 15,
+      "towerDamage": 18,
+      "settled": 2
+    },
+    "publicH5Confirmation": {
+      "sdk": "0.114.0",
+      "transport": "H5 HTTP/SSE + Node + SQLite",
+      "overlap": 2,
+      "reconnectedFields": 2,
+      "towerReplaced": true,
+      "intervalMs": 1000,
+      "vortexDamage": 15,
+      "towerDamage": 18,
+      "settled": 2
+    },
+    "legacy104PublicNode": [
+      {
+        "scenario": "four",
+        "members": 4,
+        "source": "P00",
+        "target": "power-target",
+        "powerBps": 5000,
+        "damage": [
+          66,
+          100,
+          66,
+          66
+        ],
+        "settled": 4
+      },
+      {
+        "scenario": "eight",
+        "members": 8,
+        "source": "P00",
+        "target": "power-target",
+        "powerBps": 10000,
+        "damage": [
+          66,
+          133,
+          66,
+          66
+        ],
+        "settled": 8
+      }
+    ],
+    "existingRecallAndRicochetPublicH5": {
+      "sdk": "0.114.0",
+      "transport": "H5 HTTP/SSE + Node + SQLite",
+      "landed": 6,
+      "recallSegments": 6,
+      "recallContacts": 12,
+      "resumedFlights": 1,
+      "resumedSeals": 5,
+      "ricochetDamage": [
+        72,
+        84
+      ],
+      "returnShield": 50,
+      "settled": 2
+    },
+    "packagedRuntimeFilesCompared": 394,
+    "sampleCopiesCompared": 90,
+    "h5AdapterSha256": "88ba13e36896eebed9ca0cd63df14f6a5ec3b42b560ec70b2eaa0a34da24e295",
+    "bundleVerification": "Package files verified: 2902"
+  },
+  "open": [
+    "The other seven named morphs",
+    "Equipment-instance morph resolution, in-match weapon changes, skill-based wind-blade push and remaining world effects",
+    "Original resource-steal HP policy and remaining production mode/host acceptance"
+  ]
+}

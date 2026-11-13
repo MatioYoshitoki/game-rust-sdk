@@ -1,0 +1,211 @@
+{
+  "batch": "SDK-5-88",
+  "delivery": "DELIVERY-01",
+  "workPackages": [
+    "R3.1",
+    "R3.2",
+    "R3.3"
+  ],
+  "sdkVersion": "0.130.0",
+  "date": "2026-11-09",
+  "mechanismVersion": 105,
+  "protocolVersion": 6,
+  "spec": "docs/batches/SDK-5-88-source-retaliation-window.md",
+  "runtimeSourceSha256": "49abaffcee16fa384e718a82c4e9c6ea8697e813d5b2a08d8c81a15b09df0e32",
+  "probeBinarySha256": "b75ebe3177956faf5a9e9bf67b828ef572e02e5a2b5ebf6d8ea0a0786f5cb1b5",
+  "sample": {
+    "file": "examples/combat-host/source-xianwang-jiufeng.json",
+    "sha256": "eb5f58bf5dd360a9d7055864e3bca42fc373615652b9c3f2644d6e97b9c0d928",
+    "baseFile": "examples/combat-host/mastery-stages.json",
+    "baseSha256": "f9e8ef814f21c5900f1ce109094144d7ef809ba3e20ac2c619accb182584ca55",
+    "skillId": "xianwang-jiufeng",
+    "stages": [
+      {
+        "sourceProfile": "xianwang-jiufeng:stage-1",
+        "stageIndex": 0,
+        "carrier": "effect_xianwang_seal",
+        "sourceCooldownMs": 5000,
+        "dispelCount": 0,
+        "reductionBps": 0,
+        "expirySlowBps": 0
+      },
+      {
+        "sourceProfile": "xianwang-jiufeng:stage-2",
+        "stageIndex": 1,
+        "carrier": "effect_xianwang_seal_stage_2",
+        "sourceCooldownMs": 4000,
+        "dispelCount": 0,
+        "reductionBps": 0,
+        "expirySlowBps": 0
+      },
+      {
+        "sourceProfile": "xianwang-jiufeng:stage-3",
+        "stageIndex": 2,
+        "carrier": "effect_xianwang_seal_stage_3",
+        "sourceCooldownMs": 4000,
+        "dispelCount": 1,
+        "reductionBps": 0,
+        "expirySlowBps": 0
+      },
+      {
+        "sourceProfile": "xianwang-jiufeng:stage-4",
+        "stageIndex": 3,
+        "carrier": "effect_xianwang_seal_stage_4",
+        "sourceCooldownMs": 4000,
+        "dispelCount": 1,
+        "reductionBps": 2500,
+        "expirySlowBps": 0
+      },
+      {
+        "sourceProfile": "xianwang-jiufeng:stage-5",
+        "stageIndex": 4,
+        "carrier": "effect_xianwang_seal_stage_5",
+        "sourceCooldownMs": 4000,
+        "dispelCount": 1,
+        "reductionBps": 2500,
+        "expirySlowBps": 3000
+      }
+    ],
+    "nativeTests": [
+      "src/two_members/source_retaliation_tests.rs",
+      "src/world/two_members/retaliation_tests.rs"
+    ]
+  },
+  "sourceBinding": {
+    "sourceConfig": {
+      "file": "rust-match-kernel-v1.1/source-config.json",
+      "sha256": "7df9854739b72904fd55d93f4a0e0a0fb0b19026a21b37346d2a0f544704da66",
+      "rows": [
+        {
+          "pointer": "/tables/skills/xianwang-jiufeng",
+          "rowSha256": "d3a85a9692b559db3e271404a98384d65f5f0879440503c1aebd9c30def10b27"
+        },
+        {
+          "pointer": "/tables/skill-cast-lifecycle/xianwang-jiufeng",
+          "rowSha256": "3ae61a2154566bec942a78cb4d9756a25e4e814d5efd6f7ff353cee07d228c38"
+        },
+        {
+          "pointer": "/tables/skill-targeting/xianwang-jiufeng",
+          "rowSha256": "7be3613c2328374422b199c94422987b4c20e06b19f16f603232afafe2e91c63"
+        },
+        {
+          "pointer": "/tables/cultivations/xianwang-jiufeng",
+          "rowSha256": "512122da73f05f4ebc5ebdbf9631829b8255a9038221303bbbd7944e7a6cf356"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-identities/xianwang-jiufeng",
+          "rowSha256": "df6b6889a1e6d2694d2648e33309d242037c2b217127bbdcbe46d4442d97730e"
+        },
+        {
+          "pointer": "/tables/status-effects/effect_xianwang_seal",
+          "rowSha256": "e4d47f72c71bb666590a0e55d766c125ebc554e1b51f6d8408e365431786557a"
+        },
+        {
+          "pointer": "/tables/factors/factor_cultivation_retaliation_window",
+          "rowSha256": "d40932ab959e7ad9d8c9224ba62c27b87a8de93581948a8f68e64ff205a21598"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/xianwang-jiufeng:stage-1",
+          "rowSha256": "231facf1fee89b9ce41e121c92d799e201f085433679d0600a5b9441fd50857d"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/xianwang-jiufeng:stage-2",
+          "rowSha256": "08cf672eb98bfbfe296c4028e786989d63a32d2168f7e3c08d715f10901c8eb0"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/xianwang-jiufeng:stage-3",
+          "rowSha256": "6b871fe2daf0435b3572677ec5af2406f8f5c3f293888420b9bdc02869349dc0"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/xianwang-jiufeng:stage-4",
+          "rowSha256": "4041e3a44282490b0ce36bb515c078c41e5fa9a9d3d9f174f54ebffd45430d93"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/xianwang-jiufeng:stage-5",
+          "rowSha256": "b4fa9d1eb320a77af6564fb23816ef0077b584bc339312138c14505373cbcac8"
+        }
+      ]
+    },
+    "sourceRules": {
+      "file": "rust-match-kernel-v1.1/source-rules.json",
+      "sha256": "e7fd565d8144b6e6344db4ea136b6a526f9ded7986b13d296103c6debc041469",
+      "documents": [
+        {
+          "path": "docs/designs/skill-roster-cast-redesign.DESIGN.md",
+          "sha256": "3007ac8d4b48ef67e30078a5eb83cd400ae08f263334356a60122ded2f9d364c",
+          "lines": [
+            183
+          ]
+        },
+        {
+          "path": "docs/designs/cultivation-combat-identity.DESIGN.md",
+          "sha256": "318480dc7cd726c7aea49cbace50e8c196de95d2914c9df033e6bd0f3a73e322",
+          "lines": [
+            320,
+            340,
+            380,
+            381,
+            382,
+            405
+          ]
+        },
+        {
+          "path": "docs/interfaces/cultivation-combat-identity.INTERFACE.md",
+          "sha256": "9c1323fc11b84a49b7a13e40dc3f28fef85dc2fea389b527543ec1093f45b3b7",
+          "lines": [
+            134,
+            256
+          ]
+        }
+      ]
+    }
+  },
+  "contractFilesSha256": {
+    "docs/interfaces/combat-rules-v1.schema.json": "08e29471d6cd6a14411f723e6d9b35b394d59c8cb6198ac2e3cf50897c67b4ec"
+  },
+  "scopeDecisions": {
+    "reply": "Use a source-scoped, refreshable two-second silence as a sample mapping for the unspecified original seal.",
+    "damage": "Require an actual ordinary direct HP loss or shield absorption on a surviving holder. Original beforeBeAttack semantics for empty and lethal contacts remain unverified.",
+    "history": "Track up to 32 successful attacker identities and generations per instance. Reset on refresh and suppress all removals except natural expiry.",
+    "expiry": "On the first World step at or after the deadline, revalidate those identities and share the existing end budget.",
+    "growth": "Permanent growth and insights retain separate acceptance."
+  },
+  "checks": {
+    "rustDefault": 2761,
+    "rustAllFeatures": 2761,
+    "rustFocused": 6,
+    "nodeAndH5Adapters": 210,
+    "format": true,
+    "clippy": true,
+    "schemas": true,
+    "sourceRowsVerified": 12,
+    "publicH5": {
+      "sdk": "0.130.0",
+      "transport": "Node/H5 HTTP/SSE and SQLite",
+      "seats": 2,
+      "stageIndices": [
+        0,
+        4
+      ],
+      "durationsMs": [
+        8000,
+        8000
+      ],
+      "chanceBps": 4000,
+      "spiritCost": 4000000,
+      "damageBeforeAndAfterReduction": [
+        100,
+        75
+      ],
+      "privateReactionCounts": [
+        1,
+        1
+      ],
+      "expirySlowBps": 3000,
+      "reconnectRestored": true,
+      "entryRetainsBoonAndFinalDispels": true,
+      "settlements": 2
+    }
+  },
+  "wholeDelivery01Accepted": false
+}

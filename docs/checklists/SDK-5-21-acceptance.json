@@ -1,0 +1,150 @@
+{
+  "batch": "SDK-5-21",
+  "crate": "0.23.0",
+  "protocol": 6,
+  "schema": 7,
+  "mechanism": 38,
+  "criteria": {
+    "MP01": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::periodic::mp_periodic_configuration_rejects_wrong_version_bindings_budgets_before_io"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json"
+      ]
+    },
+    "MP02": {
+      "rustTests": [
+        "world::two_members::periodic_tests::mp_periodic_real_identity_and_independent_sources_for_one_two_four_eight",
+        "world::two_members::periodic_tests::mp_periodic_illegal_friendly_or_stale_target_does_not_apply",
+        "world::two_members::periodic_tests::mp_periodic_npc_commit_self_hot_and_hit_dot_use_npc_identity"
+      ],
+      "reports": [
+        "native-verification.json"
+      ]
+    },
+    "MP03": {
+      "rustTests": [
+        "world::two_members::periodic_tests::mp_periodic_refresh_transfers_owner_and_old_source_exit_keeps_new_instance",
+        "world::two_members::periodic_tests::mp_periodic_ignore_keeps_actual_owner_and_hides_its_instance_from_attempting_member",
+        "world::two_members::periodic_tests::mp_periodic_whole_group_capacity_rejection_does_not_refresh_or_charge",
+        "world::two_members::periodic_tests::mp_periodic_npc_self_capacity_fails_before_spirit_cooldown_and_projectile",
+        "two_members::tests::capacity::delta::periodic::mp_periodic_public_duplicate_cast_is_once_and_peer_hot_costs_remain_independent"
+      ],
+      "reports": [
+        "native-verification.json"
+      ]
+    },
+    "MP04": {
+      "rustTests": [
+        "world::two_members::periodic_tests::mp_periodic_dot_captures_each_effective_source_and_reads_current_defense",
+        "world::two_members::periodic_tests::mp_periodic_hot_freezes_individual_max_hp_and_clips_missing_hp",
+        "world::two_members::periodic_tests::mp_periodic_dot_does_not_consume_rng_or_repeat_direct_contact_rewards",
+        "world::two_members::periodic_tests::mp_periodic_zero_hot_and_zero_dot_use_existing_formula_boundaries",
+        "world::two_members::periodic_tests::mp_periodic_application_freezes_effective_atk_after_existing_attribute_buff"
+      ],
+      "reports": [
+        "native-verification.json"
+      ]
+    },
+    "MP05": {
+      "rustTests": [
+        "world::two_members::periodic_tests::mp_periodic_first_last_half_open_and_non_aligned_schedule",
+        "world::two_members::periodic_tests::mp_periodic_expiry_precedes_late_jobs_and_refresh_resets_cadence",
+        "world::two_members::periodic_tests::mp_periodic_dot_before_hot_cannot_revive_dead_target_and_other_hot_continues",
+        "world::two_members::periodic_tests::mp_periodic_actual_hp_loss_interrupts_extraction_before_completion"
+      ],
+      "reports": [
+        "native-verification.json"
+      ]
+    },
+    "MP06": {
+      "rustTests": [
+        "world::two_members::periodic_tests::mp_periodic_member_protection_consumes_only_related_plans_without_replay",
+        "world::two_members::periodic_tests::mp_periodic_returning_skips_source_and_target_without_delaying_other_npc",
+        "two_members::tests::capacity::delta::periodic::mp_periodic_public_reconnect_preserves_instance_cadence_and_old_connection_fences"
+      ],
+      "reports": [
+        "native-verification.json",
+        "browser/report.json"
+      ]
+    },
+    "MP07": {
+      "rustTests": [
+        "world::two_members::periodic_tests::mp_periodic_exit_clears_only_actual_source_and_target_with_private_removal_ids",
+        "world::two_members::periodic_tests::mp_periodic_npc_death_removes_its_foreign_dot_and_leaves_other_sources",
+        "world::two_members::periodic_tests::mp_periodic_true_npc_reset_fences_old_generation_statuses_and_shots",
+        "world::two_members::periodic_tests::mp_periodic_absolute_terminal_and_repeated_exit_never_run_late_ticks",
+        "two_members::tests::capacity::delta::periodic::mp_periodic_unknown_settlement_cleans_source_at_exit_and_other_sources_continue",
+        "two_members::tests::capacity::delta::periodic::mp_periodic_disconnect_timeout_cleans_lost_source_without_closing_peers"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json",
+        "browser/report.json"
+      ]
+    },
+    "MP08": {
+      "rustTests": [
+        "world::two_members::periodic_tests::mp_periodic_dot_kill_credit_and_drop_are_once_for_actual_source",
+        "world::two_members::periodic_tests::mp_periodic_simultaneous_sources_cannot_double_kill_or_drop",
+        "two_members::tests::capacity::delta::periodic::mp_periodic_npc_dot_death_settles_only_target_while_seven_peers_continue"
+      ],
+      "reports": [
+        "native-verification.json"
+      ]
+    },
+    "MP09": {
+      "rustTests": [
+        "world::two_members::periodic_tests::mp_periodic_npc_views_are_projected_per_source_and_self_hot_is_shared",
+        "two_members::tests::capacity::delta::periodic::mp_periodic_full_delta_and_cache_resync_reconstruct_real_projected_statuses",
+        "two_members::tests::capacity::delta::periodic::mp_periodic_decoder_refuses_foreign_source_and_wrong_target_atomically"
+      ],
+      "reports": [
+        "native-verification.json",
+        "interop-verification.json",
+        "public/report.json",
+        "browser/report.json"
+      ]
+    },
+    "MP10": {
+      "rustTests": [],
+      "reports": [
+        "public/report.json",
+        "browser/report.json",
+        "delivery/independent-verification.json"
+      ]
+    },
+    "MP11": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::periodic::mp_periodic_financial_recovery_does_not_restore_effects_or_world"
+      ],
+      "reports": [
+        "native-verification.json",
+        "crashes/report.json"
+      ]
+    },
+    "MP12": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::periodic::mp_periodic_hundred_public_runtimes_with_active_hot_release_world_and_financial_debts"
+      ],
+      "reports": [
+        "native-verification.json",
+        "legacy4/report.json",
+        "legacy5/report.json",
+        "legacy6/report.json",
+        "delivery/source-verification.json",
+        "delivery/independent-verification.json",
+        "local-preview.json"
+      ]
+    }
+  },
+  "limitations": [
+    "固定1～8必需成员PVE，仅普通方向弹道敌对DOT与自身HOT；实例/调度沿原周期底座",
+    "不含友军治疗/PvP/盾/受治疗修正/区域/穿透或其它周期公式",
+    "金融恢复仅Closed责任账，不恢复World/周期/基线；退出视图冻结",
+    "R2/R3仍有限实现，不关闭完整M01/M03/M04/M14；原48场景/50向量无新增执行数",
+    "保护批次起点实际存在旧文件；历史artifacts用户清理例外保持"
+  ]
+}

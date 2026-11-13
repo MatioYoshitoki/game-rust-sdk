@@ -1,0 +1,89 @@
+{
+  "batch": "SDK-5-88",
+  "delivery": "DELIVERY-01",
+  "crossPackage": "R3.4",
+  "sdkVersion": "0.116.0",
+  "date": "2026-11-09",
+  "mechanismVersion": 105,
+  "protocolVersion": 6,
+  "spec": "docs/batches/SDK-5-88-basic-charge.md",
+  "runtimeSourceSha256": "e8a638fbd36139c387aa54265624d2c488720a4b2a544ee3a4a5fa34faf2ec64",
+  "sample": {
+    "file": "examples/combat-host/basic-charge-profiles.json",
+    "sha256": "79d71c2ae850facdf6ad3c48bf67901da0d886fff4781c250f49a288205ed0bd",
+    "profiles": [
+      "fan_four_winds",
+      "shield_cross_wall",
+      "shield_breaker_wall"
+    ]
+  },
+  "sourceBinding": {
+    "tableFile": "rust-match-kernel-v1.1/resolved-config.json",
+    "tableFileSha256": "6f730cf5a4844f3f67870a720b4fd0ce024f53e6905714344bebb52f53df8e0a",
+    "morphRowsSha256": {
+      "fan_four_winds": "7ea8777a741cbff47c36b211fb3dbd62f4d4a5d71a9242d711d60acbe1b16f62",
+      "shield_cross_wall": "dcf7a84e410e6082b6b2dd2c9bec87ffd18a278b1ed2e9d88311d04b8283f3ff",
+      "shield_breaker_wall": "5ace2232caa47e14d98a37163fb46e2a6d0dfbde1b8b4d76a68e4e84381faeb2"
+    },
+    "basicFamilyRowsSha256": {
+      "fan": "ff4226404967ad5a974ae4488d5994231ecb67f979f1b9568bc547d712a24ad7",
+      "shield": "02c8deff4fc6df665fa43258e3db329100a9b4df1ed6b10bb248251bc0f28673"
+    },
+    "rulesFile": "rust-match-kernel-v1.1/source-rules.json",
+    "rulesFileSha256": "e7fd565d8144b6e6344db4ea136b6a526f9ded7986b13d296103c6debc041469",
+    "sourceDocuments": [
+      {
+        "path": "docs/designs/combat-engine.DESIGN.md",
+        "lines": [
+          203,
+          204,
+          214
+        ]
+      },
+      {
+        "path": "docs/interfaces/combat-engine.INTERFACE.md",
+        "lines": [
+          64,
+          74,
+          750,
+          751,
+          752,
+          753,
+          754,
+          755
+        ]
+      }
+    ]
+  },
+  "scopeDecisions": {
+    "session": "Server assigns a unique private ID and freezes the stage or distance at a matching release. The guard expires at the hold limit; the other profiles cap the effective duration.",
+    "pursuit": "A configured basic pursuit uses the selected stage range plus the ordinary pursuit allowance, limited by the world pursuit ceiling.",
+    "reflection": "The sample explicitly configures true damage for the post-shield reflection. Defense and shield rules determine the actual HP loss used to budget it.",
+    "dash": "First enhancement is ready. A committed dash starts the separate 6000ms interval. Ordinary attack inputs remain available for the family strike.",
+    "scratch": "One disposable directory for final validation. Shared Cargo build cache and streaming output."
+  },
+  "checks": {
+    "rustDefault": 2677,
+    "rustAllFeatures": 2677,
+    "rustFocused": 6,
+    "nodeAndH5Adapters": 197,
+    "clippy": true,
+    "format": true,
+    "schemas": true,
+    "publicH5": {
+      "transport": "HTTP/SSE and SQLite",
+      "seats": 2,
+      "frozenTier": 2,
+      "chargeLostOnReconnect": true,
+      "staleCancelRejected": true,
+      "dashResolved": true,
+      "settlements": 2
+    }
+  },
+  "open": [
+    "Charged fireball flight and detonation",
+    "Tower floors and sixth strike",
+    "Equipment resolution and in-match changes",
+    "Skill-based wind-blade displacement"
+  ]
+}

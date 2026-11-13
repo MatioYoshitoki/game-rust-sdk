@@ -1,0 +1,23 @@
+{
+  "batch": "SDK-5-18",
+  "crate": "0.20.0",
+  "protocol": 4,
+  "schema": 5,
+  "mechanism": 35,
+  "criteria": {
+    "TM01": {"testSuffixes": ["two_configurations_normalize_protocol4_and_preserve_legacy_protocols", "two_create_strict_counts_identity_namespace_and_atomic_rejection", "two_configuration_bounds_and_dormant_capabilities_are_rejected", "two_recovery_rejects_corrupt_hash_and_member_cross_binding"], "reports": ["public/report.json"]},
+    "TM02": {"testSuffixes": ["two_admissions_are_independent_and_financial_ledgers_never_own_worlds", "two_activation_waits_for_both_sent_and_ready_and_is_exactly_once", "two_equal_sequence_and_request_ids_do_not_cross_members"], "reports": ["public/report.json", "browser/report.json"]},
+    "TM03": {"testSuffixes": ["two_refused_required_member_compensates_only_successful_admission", "two_close_unknown_admission_queries_then_compensates_once", "two_missing_ready_times_out_without_activation_or_orphaned_cost", "two_delayed_create_uses_its_own_service_clock_deadlines", "two_financial_timeout_does_not_pause_or_close_the_other_members_world"], "reports": ["public/report.json", "crashes/report.json"]},
+    "TM04": {"testSuffixes": ["two_duplicate_cast_commits_cost_and_action_once_without_early_travel", "two_cancel_before_commit_and_nonfinite_inputs_do_not_debit", "two_self_statuses_use_real_member_ids_and_leave_does_not_clear_survivor", "two_npcs_select_and_damage_both_members_in_the_single_shared_world", "two_npc_projectiles_use_shared_target_eligibility", "two_self_status_capacity_and_malformed_payloads_are_atomic", "two_shared_projectiles_stop_at_the_first_wall", "two_source_ownership_and_aggregate_recovery_reject_reassigned_loot"], "reports": ["public/report.json", "browser/report.json"]},
+    "TM05": {"testSuffixes": ["two_same_step_resource_competition_grants_one_copy_and_preserves_other_inventory", "two_full_inventory_refusal_does_not_consume_shared_resource", "two_kill_orb_is_frozen_for_killer_and_other_member_cannot_take_it"], "reports": ["public/report.json", "browser/report.json"]},
+    "TM06": {"testSuffixes": ["two_public_members_and_events_do_not_contain_private_account_state", "two_failed_or_wrong_recipient_transport_cannot_advance_another_baseline", "two_slow_member_publications_remain_bounded_and_do_not_hold_peer"], "reports": ["browser/report.json"]},
+    "TM07": {"testSuffixes": ["two_background_and_reconnect_fence_only_the_current_member", "two_disconnect_expiry_does_not_extend_or_close_survivor"], "reports": ["browser/report.json"]},
+    "TM08": {"testSuffixes": ["two_core_unknown_holds_only_one_member_while_survivor_continues", "two_positive_damage_interrupts_only_the_affected_members_extraction", "two_death_and_survivor_extraction_settle_independently", "two_member_operation_cannot_be_applied_to_the_other_ledger"], "reports": ["public/report.json", "browser/report.json"]},
+    "TM09": {"testSuffixes": ["two_absolute_terminal_ignores_protection_and_closes_shared_world_once", "two_one_hundred_closes_release_world_and_all_external_responsibilities", "two_public_runtime_hundred_cycles_join_threads_and_preserve_abandoned_drains"], "reports": ["browser/report.json"]},
+    "TM10": {"testSuffixes": ["two_recovery_before_activation_refunds_each_original_debit_without_world", "two_recovery_retains_frozen_settlements_across_two_restarts", "two_public_loot_from_another_members_kill_survives_frozen_recovery"], "reports": ["crashes/report.json"]},
+    "TM11": {"testSuffixes": [], "reports": ["public/report.json", "browser/report.json", "delivery/independent-verification.json"]},
+    "TM12": {"testSuffixes": [], "reports": ["delivery/source-verification.json", "delivery/independent-verification.json"]},
+    "TM13": {"testSuffixes": [], "reports": ["delivery/source-verification.json", "delivery/independent-verification.json", "local-preview.json"]}
+  },
+  "limitations": ["两名必需成员的有限PVE；不关闭完整M01/M14", "R2.1只签收声明实体范围，R2.2/R2.3部分实现", "无标准8席/模式容量、PvP、delta、旁观、完整双人战斗组合", "原48场景/50数值向量本批未执行；历史证据清理例外保留"]
+}

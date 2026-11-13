@@ -1,0 +1,190 @@
+{
+  "batch": "SDK-5-88",
+  "delivery": "DELIVERY-01",
+  "workPackages": [
+    "R3.1",
+    "R3.2",
+    "R3.3"
+  ],
+  "sdkVersion": "0.129.0",
+  "date": "2026-11-09",
+  "mechanismVersion": 105,
+  "protocolVersion": 6,
+  "spec": "docs/batches/SDK-5-88-source-primordial-seal.md",
+  "runtimeSourceSha256": "f45a738cda6f6794435cea1bfe67bc75a0be64d00353657a521e9a1895b432a1",
+  "probeBinarySha256": "e703eb44f2203c8cd06ca0fda63292d1ab06e294529832d7fb0f4502d20d1c8e",
+  "sample": {
+    "file": "examples/combat-host/source-wushi-shu.json",
+    "sha256": "1e41f84e6479c3fcf0a69edbc29101b8d7e876589a31370df125a58c49988564",
+    "baseFile": "examples/combat-host/mastery-stages.json",
+    "baseSha256": "f9e8ef814f21c5900f1ce109094144d7ef809ba3e20ac2c619accb182584ca55",
+    "skillId": "wushi-shu",
+    "stages": [
+      {
+        "stageIndex": 0,
+        "sourceProfile": "wushi-shu:stage-1",
+        "status": "effect_wushi_seal",
+        "durationMs": 5000
+      },
+      {
+        "stageIndex": 1,
+        "sourceProfile": "wushi-shu:stage-2",
+        "status": "effect_wushi_seal_extended",
+        "durationMs": 6000
+      },
+      {
+        "stageIndex": 2,
+        "sourceProfile": "wushi-shu:stage-3",
+        "status": "effect_wushi_seal_extended",
+        "durationMs": 6000
+      },
+      {
+        "stageIndex": 3,
+        "sourceProfile": "wushi-shu:stage-4",
+        "status": "effect_wushi_seal_vulnerable",
+        "durationMs": 6000
+      },
+      {
+        "stageIndex": 4,
+        "sourceProfile": "wushi-shu:stage-5",
+        "status": "effect_wushi_seal_final",
+        "durationMs": 6000
+      }
+    ],
+    "nativeTest": "src/two_members/source_primordial_seal_tests.rs"
+  },
+  "sourceBinding": {
+    "sourceConfig": {
+      "file": "rust-match-kernel-v1.1/source-config.json",
+      "sha256": "7df9854739b72904fd55d93f4a0e0a0fb0b19026a21b37346d2a0f544704da66",
+      "rows": [
+        {
+          "pointer": "/tables/skills/wushi-shu",
+          "rowSha256": "8e3309a01a74fe252943664b5ef3227fd96ab1ec9f81cc72f95d6acde6b2b421"
+        },
+        {
+          "pointer": "/tables/skill-cast-lifecycle/wushi-shu",
+          "rowSha256": "e8b9dc18bbd912c3bf1cf62540887a10592e06c9489b92df9c9510d18ae05b54"
+        },
+        {
+          "pointer": "/tables/skill-targeting/wushi-shu",
+          "rowSha256": "7f97c1b2598673e74687c74694dd6ac078d8d2493f85a93be5641f19ea597754"
+        },
+        {
+          "pointer": "/tables/cultivations/wushi-shu",
+          "rowSha256": "5908d655d8581263e6b15a7279269a23dde208fbf2210970d56987fa382a4866"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-identities/wushi-shu",
+          "rowSha256": "4d77b1e2b8bc74f20aa7542f71199ea221eb5220acc27308867aef979dde80ce"
+        },
+        {
+          "pointer": "/tables/status-effects/effect_wushi_seal",
+          "rowSha256": "40159c02229af9150f95e1a51813d107353ac3a3ab0f1c1d4feb0a1d88377f9b"
+        },
+        {
+          "pointer": "/tables/status-effects/effect_wushi_vulnerability",
+          "rowSha256": "a06a52e208bcd0f0dfd5650aa7958d759811f2ccabf9778dd7fe623732697ac6"
+        },
+        {
+          "pointer": "/tables/status-effects/effect_wushi_expire_dispel",
+          "rowSha256": "c2b58f2589b72340b00ebad5ff5a61796781dc3825f5bffda8fd0789c4a92a34"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/wushi-shu:stage-1",
+          "rowSha256": "dde0661942d52ead55d6aa6f83833933b678144c00b071e7050747dea4db0fa5"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/wushi-shu:stage-2",
+          "rowSha256": "6832fc895bb3f90bc5092a84a4ab6f29a279f1c2d2917bfd21d46b11f83d4bbe"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/wushi-shu:stage-3",
+          "rowSha256": "b2c7599f6deca88ccb83e77aca24d70ae2009584ae09de3da1637f295399b836"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/wushi-shu:stage-4",
+          "rowSha256": "676142ac8d1956284ae74279a78e33d285cab151c3fd6432c5005c57ff80eca5"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/wushi-shu:stage-5",
+          "rowSha256": "ecf301a4e6fcf1645d61a84c74903bc2a2c5212d2206baa2bd3c12a61b0667a6"
+        }
+      ]
+    },
+    "sourceRules": {
+      "file": "rust-match-kernel-v1.1/source-rules.json",
+      "sha256": "e7fd565d8144b6e6344db4ea136b6a526f9ded7986b13d296103c6debc041469",
+      "documents": [
+        {
+          "path": "docs/designs/cultivation-combat-identity.DESIGN.md",
+          "sha256": "318480dc7cd726c7aea49cbace50e8c196de95d2914c9df033e6bd0f3a73e322",
+          "lines": [
+            316,
+            336
+          ]
+        },
+        {
+          "path": "docs/interfaces/cultivation-combat-identity.INTERFACE.md",
+          "sha256": "9c1323fc11b84a49b7a13e40dc3f28fef85dc2fea389b527543ec1093f45b3b7",
+          "lines": [
+            130
+          ]
+        }
+      ]
+    }
+  },
+  "contractFilesSha256": {
+    "docs/interfaces/combat-rules-v1.schema.json": "4b83b61f9605f116487a4a5ba3b5f77d657409946c87acaeb729b26df9995de3"
+  },
+  "scopeDecisions": {
+    "stage": "Resolve the highest applicable trusted stage for one instantaneous enemy unit skill. Use the original default hit statuses if growth is absent.",
+    "status": "Combine the matching stage effects into one native seal instance per source. Stages 2 and 3 have identical source profile factors.",
+    "amplification": "Use the strongest live configured physical or elemental amplification before final rounding and shield absorption. True damage and raw transfers retain separate rules.",
+    "expiry": "Only natural expiry performs the final stage dispel. Stable status order removes one still-active dispellable beneficial instance.",
+    "growth": "Power derivation, permanent mastery and insights remain separate.",
+    "scratch": "Use one batch scratch directory and shared Cargo cache."
+  },
+  "checks": {
+    "rustDefault": 2755,
+    "rustAllFeatures": 2755,
+    "rustFocused": 4,
+    "nodeAndH5Adapters": 210,
+    "format": true,
+    "clippy": true,
+    "schemas": true,
+    "sourceRowsVerified": 13,
+    "publicH5": {
+      "sdk": "0.129.0",
+      "transport": "Node/H5 HTTP/SSE and SQLite",
+      "seats": 2,
+      "stageIndices": [
+        0,
+        4
+      ],
+      "durationsMs": [
+        5000,
+        6000
+      ],
+      "firstDamage": 400,
+      "amplifiedDamage": 460,
+      "spiritCost": 3500000,
+      "blockedRefresh": true,
+      "sameSealOnRefresh": true,
+      "reconnectRestored": true,
+      "expiryDispels": 1,
+      "settlements": 2
+    },
+    "damageVariantsH5": {
+      "elemental": {
+        "before": 400,
+        "during": 460
+      },
+      "trueDamage": {
+        "before": 400,
+        "during": 400
+      }
+    }
+  },
+  "wholeDelivery01Accepted": false
+}

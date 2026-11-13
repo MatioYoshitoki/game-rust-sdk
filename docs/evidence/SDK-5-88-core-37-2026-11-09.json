@@ -1,0 +1,58 @@
+{
+  "batch": "SDK-5-88",
+  "checkpoint": "core-37",
+  "sdkVersion": "0.100.0",
+  "scope": "paid resource return after commit and finite exhaustion effects",
+  "runtimeSourceSha256": "e48b5695b69e6172281cce71d7d3da65974d0bd7a19b22f3cccc34515f9418cf",
+  "archiveSha256": "6c556394cdf4e7374d7a49443eb70d48db0991f02eae788b2ede81d9b6c9f70d",
+  "sourceCrateSha256": "5c732f947b9f162cbc0bc86828a416123326fd64241a58502e13814a006be71f",
+  "binarySha256": "50e626e40d6fbc3540c95337fcec7e021ffbcb575dacdd6a7542b3e84dd92a67",
+  "packageFiles": 2836,
+  "checks": {
+    "rustDefault": 2558,
+    "rustAllFeatures": 2558,
+    "newRustCases": 19,
+    "focusedRustCases": 563,
+    "node": 187,
+    "clippy": true,
+    "format": true,
+    "offlineIndependentDelivery": true,
+    "publicNodeMembers": [
+      4,
+      8
+    ],
+    "browserMembers": [
+      4,
+      8
+    ],
+    "legacy104": true,
+    "comparedSourceFiles": 446,
+    "consumedSampleCopiesCompared": 80,
+    "schemaRuntimeFragments": 236,
+    "schemaConfigFragments": 352,
+    "invalidFollowupFragmentsRejected": 26,
+    "invalidEnhancementFragmentsRejected": 36
+  },
+  "browserRooms": 48,
+  "candidatePassed": true,
+  "wholeTaskAccepted": false,
+  "evidenceDirectory": "/tmp/sdk88-proof-v100/checkpoints/core-37",
+  "evidenceManifestSha256": "7db947f0efb7c41cf6da6f8d80269ffe8364c4e35f3091030304805a42497c37",
+  "evidenceFiles": 63,
+  "historicalCleanupBaseline": "docs/evidence/SDK-5-88-cleanup-baseline.json",
+  "earlierHistoricalFilesRecheckedAfterCleanup": false,
+  "retries": [
+    {
+      "stage": "first archive H5",
+      "observed": "browser reported ERR_NETWORK_IO_SUSPENDED; frozen archive later removed with historical workspace outputs"
+    },
+    {
+      "stage": "isolated H5 retries",
+      "observed": "resource-steal timeout and activation leave request reached server after second pulse; reaction moved into browser first-pulse event handler"
+    },
+    {
+      "stage": "final isolated proof",
+      "observed": "same isolated archive passed all 48 rooms with exact pulse-prefix assertions; no runtime or fixture timing changed"
+    }
+  ]
+}

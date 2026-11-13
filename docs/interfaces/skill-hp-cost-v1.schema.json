@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://match-kernel.local/schema/skill-hp-cost-v1",
+  "title": "Mechanism 45 optional hp_cost configuration value",
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "value",
+        "min_hp_after_cost"
+      ],
+      "properties": {
+        "mode": {
+          "const": "fixed"
+        },
+        "value": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "min_hp_after_cost": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000000
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "value",
+        "min_hp_after_cost"
+      ],
+      "properties": {
+        "mode": {
+          "const": "current_hp_ratio"
+        },
+        "value": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "min_hp_after_cost": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000000
+        }
+      }
+    }
+  ]
+}

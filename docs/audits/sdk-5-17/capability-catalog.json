@@ -1,0 +1,581 @@
+{
+  "schemaVersion": 1,
+  "baseline": {
+    "crate": "0.19.0",
+    "mechanismVersion": 34
+  },
+  "existing": [
+    {
+      "id": "E01",
+      "title": "单成员准入/ready/冻结责任",
+      "input": "Create单participant；receipt/ready",
+      "state": "独立操作账本、单成员阶段",
+      "output": "业务请求/快照/终局",
+      "limits": "每World仅1参与者；不含同局多人",
+      "code": "src/engine.rs",
+      "contractOrEvidence": "docs/evidence/B1-completion-2026-11-02.md",
+      "passedReport": "artifacts/sdk-5-16/acceptance.json",
+      "test": "verification::tests::refused_admission_never_injects_inventory",
+      "evidenceScope": "历史记录声明已签收受控切片；不代表原内容/原场景精确执行",
+      "historicalReportAvailability": "cleaned_by_user_2026-11-05",
+      "evidenceLimitation": "本轮采集初始摘要后，用户明确清理artifacts；原报告当前不可复核。代码/契约仍可定位，不能将历史声明计为本轮重新验证通过。"
+    },
+    {
+      "id": "E02",
+      "title": "平面移动、阻挡与等距显示",
+      "input": "Move/Stop/平面地图",
+      "state": "位置/运动意图/路径",
+      "output": "权威位置",
+      "limits": "矩形/格阻挡、等高且无地形DOT；不含完整装饰碰撞",
+      "code": "src/world.rs",
+      "contractOrEvidence": "docs/evidence/B1-completion-2026-11-02.md",
+      "passedReport": "artifacts/sdk-5-16/acceptance.json",
+      "test": "verification::tests::movement_is_normalized_and_one_step_is_exact",
+      "evidenceScope": "历史记录声明已签收受控切片；不代表原内容/原场景精确执行",
+      "historicalReportAvailability": "cleaned_by_user_2026-11-05",
+      "evidenceLimitation": "本轮采集初始摘要后，用户明确清理artifacts；原报告当前不可复核。代码/契约仍可定位，不能将历史声明计为本轮重新验证通过。"
+    },
+    {
+      "id": "E03",
+      "title": "两槽提交事务及取消",
+      "input": "Cast/CancelAction及至多2个技能",
+      "state": "准备/提交/共享后摇/CD/SP",
+      "output": "动作结果/费用",
+      "limits": "后摇不可缩短；不含HP成本/引导/蓄力/再施放",
+      "code": "src/world/pve.rs",
+      "contractOrEvidence": "docs/interfaces/player-skills-v1.md",
+      "passedReport": "artifacts/sdk-5-16/acceptance.json",
+      "test": "verification::tests::cost_is_committed_once_and_cancel_before_commit_is_free",
+      "evidenceScope": "历史记录声明已签收受控切片；不代表原内容/原场景精确执行",
+      "historicalReportAvailability": "cleaned_by_user_2026-11-05",
+      "evidenceLimitation": "本轮采集初始摘要后，用户明确清理artifacts；原报告当前不可复核。代码/契约仍可定位，不能将历史声明计为本轮重新验证通过。"
+    },
+    {
+      "id": "E04",
+      "title": "严格敌方单位弹道",
+      "input": "敌方NPC单位引用/代次",
+      "state": "锁定目标与提交重验",
+      "output": "弹道接触/失效",
+      "limits": "非友方即时治疗、非任意单位效果",
+      "code": "src/world/pve.rs",
+      "contractOrEvidence": "docs/interfaces/unit-targets-v1.md",
+      "passedReport": "artifacts/sdk-5-16/acceptance.json",
+      "test": null,
+      "evidenceScope": "历史记录声明已签收受控切片；不代表原内容/原场景精确执行",
+      "historicalReportAvailability": "cleaned_by_user_2026-11-05",
+      "evidenceLimitation": "本轮采集初始摘要后，用户明确清理artifacts；原报告当前不可复核。代码/契约仍可定位，不能将历史声明计为本轮重新验证通过。"
+    },
+    {
+      "id": "E05",
+      "title": "ATK/DEF状态、来源分组与共享期限叠层",
+      "input": "有限状态定义及commit/hit挂钩",
+      "state": "refresh/ignore/stack、来源/到期",
+      "output": "有界状态视图/实际ATK/DEF",
+      "limits": "只允许已支持属性与策略；复合原状态不能拆成两个后宣称等价",
+      "code": "src/config/status.rs",
+      "contractOrEvidence": "docs/interfaces/status-stack-v1.md",
+      "passedReport": "artifacts/sdk-5-16/acceptance.json",
+      "test": null,
+      "evidenceScope": "历史记录声明已签收受控切片；不代表原内容/原场景精确执行",
+      "historicalReportAvailability": "cleaned_by_user_2026-11-05",
+      "evidenceLimitation": "本轮采集初始摘要后，用户明确清理artifacts；原报告当前不可复核。代码/契约仍可定位，不能将历史声明计为本轮重新验证通过。"
+    },
+    {
+      "id": "E06",
+      "title": "基础吸收盾",
+      "input": "配置grant/cap/期限",
+      "state": "按期限/应用顺序消费盾",
+      "output": "吸收量/HP/盾余量",
+      "limits": "无记录反击/增益吸收/过量转盾/任意触发",
+      "code": "src/world/pve.rs",
+      "contractOrEvidence": "docs/interfaces/absorption-shields-v1.md",
+      "passedReport": "artifacts/sdk-5-16/acceptance.json",
+      "test": null,
+      "evidenceScope": "历史记录声明已签收受控切片；不代表原内容/原场景精确执行",
+      "historicalReportAvailability": "cleaned_by_user_2026-11-05",
+      "evidenceLimitation": "本轮采集初始摘要后，用户明确清理artifacts；原报告当前不可复核。代码/契约仍可定位，不能将历史声明计为本轮重新验证通过。"
+    },
+    {
+      "id": "E07",
+      "title": "物理DOT",
+      "input": "有界间隔/期限/伤害系数",
+      "state": "冻结来源ATK及绝对deadline",
+      "output": "物理周期伤害/终结",
+      "limits": "不是状态持有者ATK；不含五行DOT",
+      "code": "src/world/pve.rs",
+      "contractOrEvidence": "docs/interfaces/periodic-damage-v1.md",
+      "passedReport": "artifacts/sdk-5-16/acceptance.json",
+      "test": null,
+      "evidenceScope": "历史记录声明已签收受控切片；不代表原内容/原场景精确执行",
+      "historicalReportAvailability": "cleaned_by_user_2026-11-05",
+      "evidenceLimitation": "本轮采集初始摘要后，用户明确清理artifacts；原报告当前不可复核。代码/契约仍可定位，不能将历史声明计为本轮重新验证通过。"
+    },
+    {
+      "id": "E08",
+      "title": "自身HOT",
+      "input": "固定值+基础maxHP系数",
+      "state": "单人周期计划",
+      "output": "实际HP/到期",
+      "limits": "自身、不得过疗；不含友方或施法者ATK完整公式",
+      "code": "src/world/pve.rs",
+      "contractOrEvidence": "docs/interfaces/periodic-healing-v1.md",
+      "passedReport": "artifacts/sdk-5-16/acceptance.json",
+      "test": null,
+      "evidenceScope": "历史记录声明已签收受控切片；不代表原内容/原场景精确执行",
+      "historicalReportAvailability": "cleaned_by_user_2026-11-05",
+      "evidenceLimitation": "本轮采集初始摘要后，用户明确清理artifacts；原报告当前不可复核。代码/契约仍可定位，不能将历史声明计为本轮重新验证通过。"
+    },
+    {
+      "id": "E09",
+      "title": "受疗倍率",
+      "input": "有界受疗状态",
+      "state": "倍率聚合",
+      "output": "治疗结算值",
+      "limits": "可复用受疗乘区；不等于完整鼎焰/层数联动",
+      "code": "src/world/pve.rs",
+      "contractOrEvidence": "docs/interfaces/healing-received-v1.md",
+      "passedReport": "artifacts/sdk-5-16/acceptance.json",
+      "test": null,
+      "evidenceScope": "历史记录声明已签收受控切片；不代表原内容/原场景精确执行",
+      "historicalReportAvailability": "cleaned_by_user_2026-11-05",
+      "evidenceLimitation": "本轮采集初始摘要后，用户明确清理artifacts；原报告当前不可复核。代码/契约仍可定位，不能将历史声明计为本轮重新验证通过。"
+    },
+    {
+      "id": "E10",
+      "title": "一次圆形地面效果",
+      "input": "合法点/半径/预警",
+      "state": "固定落点计划",
+      "output": "一次伤害/状态",
+      "limits": "严格合法点；无任意clamp/移动锚点",
+      "code": "src/world/pve.rs",
+      "contractOrEvidence": "docs/interfaces/ground-targets-v1.md",
+      "passedReport": "artifacts/sdk-5-16/acceptance.json",
+      "test": null,
+      "evidenceScope": "历史记录声明已签收受控切片；不代表原内容/原场景精确执行",
+      "historicalReportAvailability": "cleaned_by_user_2026-11-05",
+      "evidenceLimitation": "本轮采集初始摘要后，用户明确清理artifacts；原报告当前不可复核。代码/契约仍可定位，不能将历史声明计为本轮重新验证通过。"
+    },
+    {
+      "id": "E11",
+      "title": "固定圆形持续场",
+      "input": "点、期限/间隔",
+      "state": "场计划、绝对tick",
+      "output": "有界接触",
+      "limits": "不含enter/pickup触发或移动附着",
+      "code": "src/world/pve.rs",
+      "contractOrEvidence": "docs/interfaces/persistent-fields-v1.md",
+      "passedReport": "artifacts/sdk-5-16/acceptance.json",
+      "test": null,
+      "evidenceScope": "历史记录声明已签收受控切片；不代表原内容/原场景精确执行",
+      "historicalReportAvailability": "cleaned_by_user_2026-11-05",
+      "evidenceLimitation": "本轮采集初始摘要后，用户明确清理artifacts；原报告当前不可复核。代码/契约仍可定位，不能将历史声明计为本轮重新验证通过。"
+    },
+    {
+      "id": "E12",
+      "title": "统一接触预算",
+      "input": "每周期/总量/重复间隔",
+      "state": "命中账本",
+      "output": "接受/预算结束",
+      "limits": "每周期1..32、总1..128；0重复间隔按计划定义一次",
+      "code": "src/world/pve.rs",
+      "contractOrEvidence": "docs/interfaces/contact-policy-v1.md",
+      "passedReport": "artifacts/sdk-5-16/acceptance.json",
+      "test": null,
+      "evidenceScope": "历史记录声明已签收受控切片；不代表原内容/原场景精确执行",
+      "historicalReportAvailability": "cleaned_by_user_2026-11-05",
+      "evidenceLimitation": "本轮采集初始摘要后，用户明确清理artifacts；原报告当前不可复核。代码/契约仍可定位，不能将历史声明计为本轮重新验证通过。"
+    },
+    {
+      "id": "E13",
+      "title": "直线穿透与重复弹道",
+      "input": "方向/直线弹道/命中策略",
+      "state": "扫掠接触及历史",
+      "output": "按进度排序的伤害/结束",
+      "limits": "不含回旋/追踪/分裂/反弹/来源失效后继续",
+      "code": "src/world/pve.rs",
+      "contractOrEvidence": "docs/interfaces/projectile-repeat-v1.md",
+      "passedReport": "artifacts/sdk-5-16/acceptance.json",
+      "test": null,
+      "evidenceScope": "历史记录声明已签收受控切片；不代表原内容/原场景精确执行",
+      "historicalReportAvailability": "cleaned_by_user_2026-11-05",
+      "evidenceLimitation": "本轮采集初始摘要后，用户明确清理artifacts；原报告当前不可复核。代码/契约仍可定位，不能将历史声明计为本轮重新验证通过。"
+    },
+    {
+      "id": "E14",
+      "title": "固定线形持续场",
+      "input": "方向/全宽/长度/预警",
+      "state": "固定胶囊、裁墙、tick",
+      "output": "线端点和接触",
+      "limits": "全宽0.2..256、长0.1..10000、tick1..128；非移动线",
+      "code": "src/world/pve.rs",
+      "contractOrEvidence": "docs/interfaces/line-fields-v1.md",
+      "passedReport": "artifacts/sdk-5-16/acceptance.json",
+      "test": null,
+      "evidenceScope": "历史记录声明已签收受控切片；不代表原内容/原场景精确执行",
+      "historicalReportAvailability": "cleaned_by_user_2026-11-05",
+      "evidenceLimitation": "本轮采集初始摘要后，用户明确清理artifacts；原报告当前不可复核。代码/契约仍可定位，不能将历史声明计为本轮重新验证通过。"
+    },
+    {
+      "id": "E15",
+      "title": "有限NPC技能/牵引/支援/阶段",
+      "input": "NPC模板及既有有类型技能",
+      "state": "有限AI/牵引/同群支援/Boss阶段",
+      "output": "真实NPC伤害/回复/掉落",
+      "limits": "不能解释任意skillSlots条件、完整仇恨/风筝/生存NPC",
+      "code": "src/world/pve.rs",
+      "contractOrEvidence": "docs/evidence/B3-1-map-pve-2026-11-03.md",
+      "passedReport": "artifacts/sdk-5-16/acceptance.json",
+      "test": null,
+      "evidenceScope": "历史记录声明已签收受控切片；不代表原内容/原场景精确执行",
+      "historicalReportAvailability": "cleaned_by_user_2026-11-05",
+      "evidenceLimitation": "本轮采集初始摘要后，用户明确清理artifacts；原报告当前不可复核。代码/契约仍可定位，不能将历史声明计为本轮重新验证通过。"
+    },
+    {
+      "id": "E16",
+      "title": "遭遇、目标、调谐及重置",
+      "input": "配置遭遇/目标/成本",
+      "state": "依赖/阶段/整组复位",
+      "output": "目标进度/奖励可达",
+      "limits": "单参与者，无贡献优先期/三格加持",
+      "code": "src/world/pve.rs",
+      "contractOrEvidence": "docs/evidence/B3-13-encounter-reset-2026-11-04.md",
+      "passedReport": "artifacts/sdk-5-16/acceptance.json",
+      "test": null,
+      "evidenceScope": "历史记录声明已签收受控切片；不代表原内容/原场景精确执行",
+      "historicalReportAvailability": "cleaned_by_user_2026-11-05",
+      "evidenceLimitation": "本轮采集初始摘要后，用户明确清理artifacts；原报告当前不可复核。代码/契约仍可定位，不能将历史声明计为本轮重新验证通过。"
+    },
+    {
+      "id": "E17",
+      "title": "节点条件/选择/预警/效果组合",
+      "input": "有限节点和条件/效果",
+      "state": "节点选择和冻结预警",
+      "output": "伤害/修正/推进",
+      "limits": "只覆盖现有原生组合，不能按地图ID推断算法",
+      "code": "src/config.rs",
+      "contractOrEvidence": "docs/evidence/B3-19-sword-trial-2026-11-04.md",
+      "passedReport": "artifacts/sdk-5-16/acceptance.json",
+      "test": null,
+      "evidenceScope": "历史记录声明已签收受控切片；不代表原内容/原场景精确执行",
+      "historicalReportAvailability": "cleaned_by_user_2026-11-05",
+      "evidenceLimitation": "本轮采集初始摘要后，用户明确清理artifacts；原报告当前不可复核。代码/契约仍可定位，不能将历史声明计为本轮重新验证通过。"
+    },
+    {
+      "id": "E18",
+      "title": "整数物品、容器、落地拾取与一次性掉落",
+      "input": "箱/怪掉落/容量/拾取",
+      "state": "整数堆叠/容器进度/TTL",
+      "output": "库存与掉落",
+      "limits": "无实例装备、主动Drop、多人资源竞争/遗物",
+      "code": "src/world/pve.rs",
+      "contractOrEvidence": "docs/evidence/B3-2-pouch-2026-11-03.md",
+      "passedReport": "artifacts/sdk-5-16/acceptance.json",
+      "test": "verification::tests::full_inventory_does_not_consume_ground_drop",
+      "evidenceScope": "历史记录声明已签收受控切片；不代表原内容/原场景精确执行",
+      "historicalReportAvailability": "cleaned_by_user_2026-11-05",
+      "evidenceLimitation": "本轮采集初始摘要后，用户明确清理artifacts；原报告当前不可复核。代码/契约仍可定位，不能将历史声明计为本轮重新验证通过。"
+    },
+    {
+      "id": "E19",
+      "title": "单人撤离/死亡/有限成长与资产事务",
+      "input": "终局触发/原子回执",
+      "state": "核心提交及冻结责任",
+      "output": "金额/物品分解/终局",
+      "limits": "有限积分公式；不含全部成长/附属事实/转世",
+      "code": "src/engine.rs",
+      "contractOrEvidence": "docs/interfaces/assets-v2.md",
+      "passedReport": "artifacts/sdk-5-16/acceptance.json",
+      "test": "verification::tests::damage_and_leaving_range_interrupt_extraction",
+      "evidenceScope": "历史记录声明已签收受控切片；不代表原内容/原场景精确执行",
+      "historicalReportAvailability": "cleaned_by_user_2026-11-05",
+      "evidenceLimitation": "本轮采集初始摘要后，用户明确清理artifacts；原报告当前不可复核。代码/契约仍可定位，不能将历史声明计为本轮重新验证通过。"
+    },
+    {
+      "id": "E20",
+      "title": "连接代次、发布回执、有界IO及关局",
+      "input": "输入/重连/发送回执/receipt/close",
+      "state": "单接收者基线、连接代次、恢复账本",
+      "output": "全量快照/故障/closed",
+      "limits": "单成员权限；不含原客户端full/delta全字段及多人慢发送隔离",
+      "code": "src/runtime.rs",
+      "contractOrEvidence": "docs/evidence/B2-4-flow-control-2026-11-03.md",
+      "passedReport": "artifacts/sdk-5-16/acceptance.json",
+      "test": "verification::tests::worker_shutdown_releases_each_of_one_hundred_runtime_threads",
+      "evidenceScope": "历史记录声明已签收受控切片；不代表原内容/原场景精确执行",
+      "historicalReportAvailability": "cleaned_by_user_2026-11-05",
+      "evidenceLimitation": "本轮采集初始摘要后，用户明确清理artifacts；原报告当前不可复核。代码/契约仍可定位，不能将历史声明计为本轮重新验证通过。"
+    }
+  ],
+  "missing": [
+    {
+      "id": "N01",
+      "title": "实体身份/归属/关系",
+      "workPackages": [
+        "R2.1"
+      ],
+      "gapIds": [
+        "M01"
+      ],
+      "input": "成员/实体引用、代次、owner/关系",
+      "state": "统一身份表/资格",
+      "output": "只针对合法目标的结果",
+      "limits": "有界实体；禁止把NPC或另一Runtime当第二玩家；可为M02/M06/M07/M10/M14提供底座，不等于每个引用者都缺这五类行为",
+      "status": "missing_or_needs_spec"
+    },
+    {
+      "id": "N02",
+      "title": "多成员准入与生命周期",
+      "workPackages": [
+        "R2.2"
+      ],
+      "gapIds": [
+        "M01"
+      ],
+      "input": "冻结席位、独立事实/回执/ready",
+      "state": "成员阶段/成本/关局责任",
+      "output": "按成员激活和终局",
+      "limits": "容量按模式配置；双人切片不关闭完整M01",
+      "status": "missing_or_needs_spec"
+    },
+    {
+      "id": "N03",
+      "title": "逐接收者权限/基线",
+      "workPackages": [
+        "R2.3"
+      ],
+      "gapIds": [
+        "M14"
+      ],
+      "input": "接收者/连接/full或delta回执",
+      "state": "各自可见集合/基线",
+      "output": "已裁剪发布",
+      "limits": "慢发送、观礼、重连不相互污染",
+      "status": "missing_or_needs_spec"
+    },
+    {
+      "id": "N04",
+      "title": "目标/动作/成本/多槽",
+      "workPackages": [
+        "R3.1"
+      ],
+      "gapIds": [
+        "M02"
+      ],
+      "input": "有类型目标/HP成本/蓄力引导再施放/道具",
+      "state": "动作事务与阶段",
+      "output": "真实费用/效果/中断",
+      "limits": "无通用脚本或ModeAction tunnel",
+      "status": "missing_or_needs_spec"
+    },
+    {
+      "id": "N05",
+      "title": "属性与复合状态/控制",
+      "workPackages": [
+        "R3.2"
+      ],
+      "gapIds": [
+        "M03"
+      ],
+      "input": "原生属性、状态/免疫/驱散/控制",
+      "state": "单状态身份、层数/期限/来源",
+      "output": "属性和资格变化",
+      "limits": "D-03先裁定；不空实现状态名；伤害/恢复控制组合另关联M04",
+      "status": "missing_or_needs_spec"
+    },
+    {
+      "id": "N06",
+      "title": "事件/计数器/条件触发",
+      "workPackages": [
+        "R3.2"
+      ],
+      "gapIds": [
+        "M03"
+      ],
+      "input": "有类型事件、条件、优先级、预算",
+      "state": "计数/消费/ICD/触发去重",
+      "output": "有限原生效果",
+      "limits": "G-01未知special先补精确语义；不运行JSON解释器",
+      "status": "missing_or_needs_spec"
+    },
+    {
+      "id": "N07",
+      "title": "完整伤害乘区",
+      "workPackages": [
+        "R3.3"
+      ],
+      "gapIds": [
+        "M04"
+      ],
+      "input": "五行/抗性/境界/命中/破甲/真伤等事实",
+      "state": "冻结或实时取值策略",
+      "output": "实际伤害/免疫/死亡",
+      "limits": "公式和取整逐向量验证；NPC已有有限暴击闪避不等价",
+      "status": "missing_or_needs_spec"
+    },
+    {
+      "id": "N08",
+      "title": "完整恢复/DOT/HOT/护盾",
+      "workPackages": [
+        "R3.3"
+      ],
+      "gapIds": [
+        "M04"
+      ],
+      "input": "持有者或来源ATK、友方、过量、盾策略",
+      "state": "周期/来源存续/记录值",
+      "output": "HP/SP/盾/反击",
+      "limits": "先冻结时钟/顺序；复用E06..E09有限切片",
+      "status": "missing_or_needs_spec"
+    },
+    {
+      "id": "N09",
+      "title": "原生形状/运动/锚点/位移",
+      "workPackages": [
+        "R3.4"
+      ],
+      "gapIds": [
+        "M05"
+      ],
+      "input": "扇形/环/链/陷阱/附着/位移等有限计划",
+      "state": "轨迹/锚点/接触历史",
+      "output": "接触/位移/回收",
+      "limits": "形状不由VFX决定；共享命中链和预算",
+      "status": "missing_or_needs_spec"
+    },
+    {
+      "id": "N10",
+      "title": "来源失效后的世界效果",
+      "workPackages": [
+        "R3.4"
+      ],
+      "gapIds": [
+        "M05"
+      ],
+      "input": "冻结source引用和continue/end策略",
+      "state": "来源失效而计划仍可执行",
+      "output": "目标伤害及独立结束",
+      "limits": "死亡不复活/不重结算；仍保持归属",
+      "status": "missing_or_needs_spec"
+    },
+    {
+      "id": "N11",
+      "title": "召唤/复制/参战",
+      "workPackages": [
+        "R3.5"
+      ],
+      "gapIds": [
+        "M06"
+      ],
+      "input": "模板、owner、寿命、数量、允许复制能力",
+      "state": "真实召唤实体",
+      "output": "造成/承受伤害和退场",
+      "limits": "非仅视觉；受实体和触发预算约束",
+      "status": "missing_or_needs_spec"
+    },
+    {
+      "id": "N12",
+      "title": "生产几何/导航/地形",
+      "workPackages": [
+        "R4.1"
+      ],
+      "gapIds": [
+        "M08"
+      ],
+      "input": "边界/高度/装饰/动态阵法/地形DOT",
+      "state": "统一碰撞与导航场",
+      "output": "路径/视线/扫掠/合法落点",
+      "limits": "G-02完整输入先冻结；禁止运行时回调JS",
+      "status": "missing_or_needs_spec"
+    },
+    {
+      "id": "N13",
+      "title": "完整AI/多目标仇恨/NPC",
+      "workPackages": [
+        "R4.2"
+      ],
+      "gapIds": [
+        "M07"
+      ],
+      "input": "资格、仇恨、技能优先条件/库存",
+      "state": "目标/寻路/生存状态",
+      "output": "实际技能/移动/搜刮",
+      "limits": "复用E15；不能为45模板写45处理器",
+      "status": "missing_or_needs_spec"
+    },
+    {
+      "id": "N14",
+      "title": "环境资源生成/分布",
+      "workPackages": [
+        "R4.3"
+      ],
+      "gapIds": [
+        "M09"
+      ],
+      "input": "热点/池/补充/一次性/落点预算",
+      "state": "来源及重生计划",
+      "output": "合法资源实例",
+      "limits": "满预算/无落点不能吞物或无限重试",
+      "status": "missing_or_needs_spec"
+    },
+    {
+      "id": "N15",
+      "title": "实例物品/竞争/贡献/遗物",
+      "workPackages": [
+        "R4.4"
+      ],
+      "gapIds": [
+        "M10"
+      ],
+      "input": "物品实例/修订、领取者、占用、贡献",
+      "state": "容量/预留/优先期/遗物",
+      "output": "唯一收益、私有内容",
+      "limits": "两人/NPC、失败回滚、数量守恒与权限共同验收",
+      "status": "missing_or_needs_spec"
+    },
+    {
+      "id": "N16",
+      "title": "成长派生/养成/附属事实",
+      "workPackages": [
+        "R5.1"
+      ],
+      "gapIds": [
+        "M13"
+      ],
+      "input": "完整成长事实/公式、功法和装备绑定",
+      "state": "派生/上限/跨区及事务快照",
+      "output": "金额/属性/附属事实",
+      "limits": "D-05/G-03先冻结；具名DTO解耦，不让Node补算",
+      "status": "missing_or_needs_spec"
+    },
+    {
+      "id": "N17",
+      "title": "临时加持",
+      "workPackages": [
+        "R5.2"
+      ],
+      "gapIds": [
+        "M11"
+      ],
+      "input": "有界槽位、获取/替换/强化",
+      "state": "临时所有权/自动被动",
+      "output": "战斗变化/退出清理",
+      "limits": "首款配置三格；不能只把调谐结果改名",
+      "status": "missing_or_needs_spec"
+    },
+    {
+      "id": "N18",
+      "title": "模式阶段/胜负/复活/检查点",
+      "workPackages": [
+        "R5.3"
+      ],
+      "gapIds": [
+        "M12"
+      ],
+      "input": "有类型模式配置和有限动作",
+      "state": "模式状态机/期限/责任",
+      "output": "胜负/复活/观礼/终局",
+      "limits": "D-07连接60s不覆盖竞技30s判负",
+      "status": "missing_or_needs_spec"
+    }
+  ]
+}

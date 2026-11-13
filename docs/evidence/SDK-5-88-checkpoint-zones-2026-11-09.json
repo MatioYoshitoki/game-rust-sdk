@@ -1,0 +1,95 @@
+{
+  "batch": "SDK-5-88",
+  "delivery": "DELIVERY-01",
+  "crossPackage": "R3.4",
+  "supportsPackage": "R5.3",
+  "sdkVersion": "0.123.0",
+  "date": "2026-11-09",
+  "mechanismVersion": 105,
+  "protocolVersion": 6,
+  "spec": "docs/batches/SDK-5-88-checkpoint-zones.md",
+  "runtimeSourceSha256": "5a76712c49c23120987e2efe18be4b7cedb0b66335668179a81c225bf86ac98a",
+  "sample": {
+    "file": "examples/combat-host/checkpoint-zones.json",
+    "sha256": "4e57aa3c8dae75da28e74c93772ba71868cd743beb5027d3149d80cc0b203487",
+    "scheduleId": "wind-eye"
+  },
+  "sourceBinding": {
+    "tableFile": "rust-match-kernel-v1.1/source-config.json",
+    "tableFileSha256": "7df9854739b72904fd55d93f4a0e0a0fb0b19026a21b37346d2a0f544704da66",
+    "stageRowSha256": "8d1bf743aae5c6dd4433b79329fe11b8c5d15d976de5e6d26518680b8850d2bc",
+    "hazardRowSha256": "08a9b526152b0d4f19c45fb67c828dd3de4cb84e27515568e76c18f98cf51cbb",
+    "rulesFile": "rust-match-kernel-v1.1/source-rules.json",
+    "rulesFileSha256": "e7fd565d8144b6e6344db4ea136b6a526f9ded7986b13d296103c6debc041469",
+    "sourceDocuments": [
+      {
+        "path": "docs/designs/tribulation-trial.DESIGN.md",
+        "sha256": "13323833aa49eaef4fde492f5bb891cf7019a7942848f0be780ebe8cbbd0ae89",
+        "lines": [
+          54,
+          55,
+          56
+        ]
+      },
+      {
+        "path": "docs/interfaces/tribulation-trial.INTERFACE.md",
+        "sha256": "296e3dd73c0dd634ab1613271a0722f5c457b9a0e6d22940158390604e01f34e",
+        "lines": [
+          38,
+          39,
+          51,
+          57,
+          59,
+          104,
+          106
+        ]
+      }
+    ]
+  },
+  "contractFilesSha256": {
+    "docs/interfaces/member-piercing-v1.schema.json": "e56518107aede78e497d838f0467f34dafcab985f669d419b0c9dd88d4dee7ed",
+    "docs/interfaces/publications-v6.schema.json": "9b79df7b2a21633d26af36817a05bafe4a95d2b9a360e80672872a6b0d1b446e"
+  },
+  "scopeDecisions": {
+    "schedule": "The host supplies finite, precomputed world centers. The wind-eye sample begins after one source interval and opens three windows at 8, 16 and 24 seconds.",
+    "geometry": "Use the member center at the end of the fixed step and a clear movement line. A member already inside at opening can qualify.",
+    "lifecycle": "Each eligible seat can collect a window once. Closing time is exclusive. Protected, dead and departing members are ineligible.",
+    "publication": "Active windows are public and progress is private. Progress survives reconnect and freezes on departure; the departing view has no active windows.",
+    "scratch": "Use one batch scratch directory and the project Cargo cache."
+  },
+  "checks": {
+    "rustDefault": 2718,
+    "rustAllFeatures": 2718,
+    "rustFocused": 6,
+    "nodeAndH5Adapters": 204,
+    "clippy": true,
+    "format": true,
+    "schemas": true,
+    "publicH5": {
+      "sdk": "0.123.0",
+      "transport": "Node/H5 HTTP/SSE and SQLite",
+      "seats": 2,
+      "openingsMs": [
+        8000,
+        16000,
+        24000
+      ],
+      "windowMs": 3000,
+      "radius": 150,
+      "memberProgress": [
+        3,
+        1
+      ],
+      "restoredWindow": 1,
+      "duplicateReentryBlocked": true,
+      "departureFrozen": true,
+      "settlements": 2
+    }
+  },
+  "openInR3.4": [
+    "Other world effects and production geometry integration"
+  ],
+  "openInR5.3": [
+    "Wind pressure, trial stages, survival/completion and rewards"
+  ]
+}

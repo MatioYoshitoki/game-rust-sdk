@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:match-kernel:settlement-facts:v1",
+  "oneOf": [
+    {"$ref": "#/$defs/appendFacts"},
+    {"$ref": "#/$defs/factsAppended"}
+  ],
+  "$defs": {
+    "id": {"type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[^\\u0000-\\u001F\\u007F-\\u009F]+$"},
+    "operationId": {"type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[^\\u0000-\\u001F\\u007F-\\u009F]+$"},
+    "factIds": {
+      "type": "array", "minItems": 1, "maxItems": 8, "uniqueItems": true,
+      "items": {"$ref": "#/$defs/id"}
+    },
+    "settlementFacts": {
+      "type": "object", "maxProperties": 2,
+      "propertyNames": {"$ref": "#/$defs/id"},
+      "additionalProperties": {"$ref": "#/$defs/factIds"}
+    },
+    "appendFacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "settlement_operation_id", "result_id", "fact_ids"],
+      "properties": {
+        "kind": {"const": "append_facts"},
+        "settlement_operation_id": {"$ref": "#/$defs/operationId"},
+        "result_id": {"$ref": "#/$defs/id"},
+        "fact_ids": {"$ref": "#/$defs/factIds"}
+      }
+    },
+    "factsAppended": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "commit_id"],
+      "properties": {
+        "kind": {"const": "facts_appended"},
+        "commit_id": {"$ref": "#/$defs/operationId"}
+      }
+    }
+  }
+}

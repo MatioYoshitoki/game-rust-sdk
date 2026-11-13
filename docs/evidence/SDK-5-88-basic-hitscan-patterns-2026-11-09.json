@@ -1,0 +1,220 @@
+{
+  "batch": "SDK-5-88",
+  "delivery": "DELIVERY-01",
+  "crossPackage": "R3.4",
+  "sdkVersion": "0.109.0",
+  "mechanismVersion": 105,
+  "date": "2026-11-09",
+  "scope": "Two configurable same-tick primary-bound patterns, bounded alternating refraction and nonrecursive target burst.",
+  "spec": "docs/batches/SDK-5-88-basic-hitscan-patterns.md",
+  "runtimeSourceSha256": "20807538ad970a4091da09ce09a416be8aaab8142b82679297f6a0b0307d1f5f",
+  "sourceBinding": {
+    "rulesFile": "rust-match-kernel-v1.1/source-rules.json",
+    "rulesSha256": "e7fd565d8144b6e6344db4ea136b6a526f9ded7986b13d296103c6debc041469",
+    "documents": {
+      "docs/designs/combat-engine.DESIGN.md": {
+        "sha256": "2b1a9cd20e3cc79e8ab158879e59ff68f807c63ab93c27ae0b40a46aa144d558",
+        "ruleRowSha256": {
+          "196": "7798936907632e71060c424db700bbe9a3e0e58b33c25af83bb1c82ad62e942c",
+          "197": "eecfa3187046d4d3e751a68d23dad19eab266d9c424035cec82c6f01c6c18c17",
+          "200": "215a3389927366ab237fd08e7ef2e30e90e3d0d4923e448b32da95d9fdebd9b2",
+          "209": "9a4f95e7d9edf591b4f1c5e9401c309e443772347e1f631ad4a389c3144580c1",
+          "210": "e12ad75c1e31ea605202614faa3b22d6a73031a856482e154066eca3c5232b7b"
+        }
+      },
+      "docs/interfaces/combat-engine.INTERFACE.md": {
+        "sha256": "36c7d30dc1f9b490692d3b7d5ef1fde79cfeaaafef1973e0dcf854d6656b2ed8",
+        "ruleRowSha256": {
+          "110": "0d170f8e14661950309c5b23931cf72258e6d07f3f509289a1fe94ed42eae808",
+          "114": "b50321b243b9d6c339d25c854ef96a44a34d567213a63942a7386fae847aff70",
+          "981": "29f0dc0b3e11a32217342c51ef2e10f481e242886fcc84284aa240a9e4f05677",
+          "983": "120f6418e8c3fba624c0688f3963fa32e12681de65bb925f56a1cdf9def19bf7",
+          "984": "68be670b3f939ad6c2831c1a7d3b071f2515c8cc0e8efde24b3b8f7aadbf7510"
+        }
+      }
+    },
+    "resolvedConfig": "rust-match-kernel-v1.1/resolved-config.json",
+    "resolvedConfigSha256": "6f730cf5a4844f3f67870a720b4fd0ce024f53e6905714344bebb52f53df8e0a",
+    "morphRows": {
+      "/tables/data~1weapon-attack-morphs/WEAPON_ATTACK_MORPHS/3": {
+        "id": "mirror_triple_refraction",
+        "sha256": "6be8e83d42ecd8c83a173b700fc1e3fc8be9fec9a8c5321fdd191f49ef1db889"
+      },
+      "/tables/data~1weapon-attack-morphs/WEAPON_ATTACK_MORPHS/4": {
+        "id": "mirror_split_light",
+        "sha256": "97b124a4d92235455d756c60767936c4367f81f42037bc472be4ce547aee7d20"
+      }
+    }
+  },
+  "package": {
+    "archive": "/private/tmp/sdk88-basic-patterns-v109/delivery/match-kernel-0.109.0-aarch64-apple-darwin.tar.gz",
+    "target": "aarch64-apple-darwin",
+    "sha256": "dcbd31721b6290aaa4839b8420bde18de0b33d76ae44022a419b7049c4596336",
+    "sourceCrateSha256": "4e1c9075cd2f2c0256203dc41ce5ff0baf29c79012f739ab7cb34bc620b6b02b",
+    "binarySha256": "a1d058066aa07b7f2576d81f220e3abafaa69054630c47c3bdf23a508a503f02",
+    "packageFiles": 2887
+  },
+  "sample": {
+    "file": "examples/combat-host/basic-weapon-profiles.json",
+    "sha256": "30ea4a44c94313ce2e773eef4edc20573629c5fb9274af3a0cef7113d6faee51",
+    "profiles": {
+      "mirror_triple_refraction": {
+        "plan_id": "mirror_triple_refraction",
+        "damage_bps": 9000,
+        "timing": {
+          "kind": "hitscan",
+          "followup": {
+            "radius": 230,
+            "damage_bps": 2200,
+            "kind": "alternating_refraction",
+            "max_contacts": 8,
+            "repeat_decay_bps": 8500,
+            "minimum_damage_bps": 1400
+          }
+        }
+      },
+      "mirror_split_light": {
+        "plan_id": "mirror_split_light",
+        "damage_bps": 12000,
+        "timing": {
+          "kind": "hitscan",
+          "followup": {
+            "radius": 140,
+            "damage_bps": 3500,
+            "kind": "target_burst",
+            "max_targets": 6
+          }
+        }
+      }
+    }
+  },
+  "scopeDecisions": {
+    "secondaryOrder": "freeze eligible LOS candidates by distance and id; alternate with primary in stable round-robin",
+    "repeatDamage": "apply decay to the same identity’s prior planned coefficient, including the primary coefficient on a return",
+    "deadLeg": "skip an invalid secondary and associated return; stop at an invalid hub return",
+    "targetBurst": "freeze primary center; distinct secondary candidates; no recursive burst",
+    "binding": "trusted initial basic_profile; automatic equipment morph resolution remains open"
+  },
+  "checks": {
+    "rustDefault": {
+      "passed": 2633,
+      "logSha256": "14729d9aad8bf0fd1531e01871da8bae68e2000729827c699da6c314061463b7"
+    },
+    "rustAllFeatures": {
+      "passed": 2633,
+      "logSha256": "0b739e14418893cb15fb0b6bbeed8156d80b8a4775369970509149a6f481874e"
+    },
+    "rustPackagedEmptyCache": {
+      "passed": 7,
+      "logSha256": "25ae0e21edee81e8df00f50b1891452917de2bb3e7ce62dd3eac13ec5b08c331"
+    },
+    "nodeAndH5Adapters": {
+      "passed": 190,
+      "logSha256": "49d855457a54362558ddb53d795725cff6f1b990cae8956ac33552a4eedd294e"
+    },
+    "clippy": true,
+    "format": true,
+    "schema": {
+      "profileTableAccepted": 1,
+      "configRejected": 5,
+      "eventAccepted": 4,
+      "eventRejected": 4,
+      "publicEventsAccepted": 16,
+      "publicEventSha256": "1f9e884018ba5ed4a42ea5f97cf6e425dd6eeb6120ebfb8cc7614b8357db0ffe"
+    },
+    "publicNodeAndSqlite": {
+      "sdk": "0.109.0",
+      "profiles": [
+        "mirror_triple_refraction",
+        "mirror_split_light"
+      ],
+      "segments": [
+        8,
+        6
+      ],
+      "damage": [
+        [
+          90,
+          22,
+          76,
+          22,
+          65,
+          18,
+          55,
+          18
+        ],
+        [
+          120,
+          35,
+          35,
+          35,
+          35,
+          35
+        ]
+      ],
+      "actualLifeSteal": [
+        54,
+        44
+      ],
+      "sameTickPerAction": true,
+      "reconnected": true,
+      "settled": 2
+    },
+    "legacy104PublicNode": [
+      {
+        "scenario": "four",
+        "members": 4,
+        "source": "P00",
+        "target": "power-target",
+        "powerBps": 5000,
+        "damage": [
+          66,
+          100,
+          66,
+          66
+        ],
+        "settled": 4
+      },
+      {
+        "scenario": "eight",
+        "members": 8,
+        "source": "P00",
+        "target": "power-target",
+        "powerBps": 10000,
+        "damage": [
+          66,
+          133,
+          66,
+          66
+        ],
+        "settled": 8
+      }
+    ],
+    "basicMirrorAndCauldronPublicNode": {
+      "sdk": "0.109.0",
+      "profiles": [
+        "mirror",
+        "cauldron"
+      ],
+      "damages": [
+        90,
+        65,
+        0,
+        78
+      ],
+      "sameTickRefraction": true,
+      "fixedDelayMs": 350,
+      "rawSelfHeal": 25,
+      "actualSelfHeal": 25,
+      "reconnectedPeerRecoveredPlan": true,
+      "settled": 2
+    },
+    "packagedRuntimeFilesCompared": 384,
+    "sampleCopiesCompared": 6
+  },
+  "open": [
+    "The other sixteen named morphs, including the manual beam session",
+    "Equipment-instance morph resolution, in-match weapon changes and remaining world effects",
+    "Original resource-steal HP policy and remaining production mode/host acceptance"
+  ]
+}

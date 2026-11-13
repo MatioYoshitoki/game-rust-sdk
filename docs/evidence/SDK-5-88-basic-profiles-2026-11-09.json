@@ -1,0 +1,178 @@
+{
+  "batch": "SDK-5-88",
+  "delivery": "DELIVERY-01",
+  "crossPackage": "R3.4",
+  "sdkVersion": "0.107.0",
+  "mechanismVersion": 105,
+  "date": "2026-11-09",
+  "scope": "Trusted per-seat basic attack selection with configured release and positive-HP-damage terminal status bindings.",
+  "spec": "docs/batches/SDK-5-88-basic-profiles.md",
+  "runtimeSourceSha256": "4f295be5496ae919ab0cf5bca7a82dba3698e2168dae89d44977a74e828cf70f",
+  "sourceBinding": {
+    "rulesFile": "rust-match-kernel-v1.1/source-rules.json",
+    "rulesSha256": "e7fd565d8144b6e6344db4ea136b6a526f9ded7986b13d296103c6debc041469",
+    "documents": {
+      "docs/designs/combat-engine.DESIGN.md": {
+        "sha256": "2b1a9cd20e3cc79e8ab158879e59ff68f807c63ab93c27ae0b40a46aa144d558",
+        "ruleRowSha256": {
+          "181": "9fb166aaad315222ee093d797d32b064b9a88069ea54a64e4235fa328699d9d7",
+          "186": "47c61c477af16e8d34e7246cff98ac5e7ee8b811f4331264820694f8dfc1d6c8",
+          "188": "679214317a65b6bc4dc4ca22a164756501a63e3d8225c0a879175debf239dee3",
+          "189": "ccfbd2a126d29f91930942c3bd7699cac16f92b2e7d5c4b2f5953bdbb4392d44",
+          "190": "8feb2b8714cc10475f6960dfc29e2a0b4372a40a89f56a6ba46f0c2c1e809908"
+        }
+      },
+      "docs/interfaces/combat-engine.INTERFACE.md": {
+        "sha256": "36c7d30dc1f9b490692d3b7d5ef1fde79cfeaaafef1973e0dcf854d6656b2ed8",
+        "ruleRowSha256": {
+          "125": "d3dc11234c0a80e55ba9d1343203d03d97c669006c8c165647142377d340e6d2",
+          "126": "98dbddaada3833772c1f4c766c1a7dbd69832db910ab6693becbd3ff4145df04"
+        }
+      }
+    },
+    "resolvedConfig": "rust-match-kernel-v1.1/resolved-config.json",
+    "resolvedConfigSha256": "6f730cf5a4844f3f67870a720b4fd0ce024f53e6905714344bebb52f53df8e0a",
+    "basicAttackRows": {
+      "/tables/data~1weapon-basic-attacks/WEAPON_BASIC_ATTACK_PROFILES/fan": "ff4226404967ad5a974ae4488d5994231ecb67f979f1b9568bc547d712a24ad7",
+      "/tables/data~1weapon-basic-attacks/WEAPON_BASIC_ATTACK_PROFILES/shield": "02c8deff4fc6df665fa43258e3db329100a9b4df1ed6b10bb248251bc0f28673",
+      "/tables/data~1weapon-basic-attacks/WEAPON_BASIC_ATTACK_PROFILES/tower": "f6ae26160b8966ef00bdd412556d3af06e4d95b758afb852556ec9a2fd2eefa1",
+      "/tables/data~1weapon-basic-attacks/UNARMED_BASIC_ATTACK_PROFILE": "8b8321836eb4405397b6c1132a4349c0339572ea3f3216d9e708a63b4329f7e9",
+      "/tables/data~1weapon-basic-attacks/WEAPON_BASIC_ATTACK_PROFILES/sword": "fd00e88d58a3aeb8c620cdc46bc0921893210296093c1e1f58bcea78cf2fe86a"
+    },
+    "statusSourceConfig": "rust-match-kernel-v1.1/source-config.json",
+    "statusSourceConfigSha256": "7df9854739b72904fd55d93f4a0e0a0fb0b19026a21b37346d2a0f544704da66",
+    "statusRows": {
+      "/tables/status-effects/effect_weapon_tower_suppress_movement": "75ac7aaa863ebbb85c00987a3175af497d0b574151918fe242f5dd8eac30f56e",
+      "/tables/status-effects/effect_weapon_tower_suppress_attack_speed": "6f4b217402a61a20a44409ec445518fed153e383a7c1c0251642c2b901d17013",
+      "/tables/status-effects/effect_weapon_tower_suppress_power": "34c2169c5cbbc3298cf78be334591c82c24ff6f386e0c147198efacfabf79501"
+    }
+  },
+  "package": {
+    "archive": "/private/tmp/sdk88-basic-profiles-v107/delivery-final/match-kernel-0.107.0-aarch64-apple-darwin.tar.gz",
+    "target": "aarch64-apple-darwin",
+    "sha256": "f1cb8b70d89622f599352b48a56b60bdd978c2cb009d665a039165b981fa3664",
+    "sourceCrateSha256": "1d5012598cd52f49543a9bc3770486678c2888fd23f1e71ef9f657a59b4a5a33",
+    "binarySha256": "f20c757731fd56a7e7c18c4fcb4c1465dfaf4c597583a87e6bdb20aac2d967ea",
+    "packageFiles": 2882
+  },
+  "sample": {
+    "file": "examples/combat-host/basic-weapon-profiles.json",
+    "sha256": "7f6222f084dcca8ab188cb988182e532621cbb193b5cd2643d07d77cc55d46d1",
+    "profiles": [
+      "fan",
+      "shield",
+      "tower",
+      "unarmed",
+      "sword"
+    ],
+    "shield": {
+      "maxHpBps": 500,
+      "durationMs": 1200
+    },
+    "tower": {
+      "reductionBps": 1500,
+      "reductionDurationMs": 900,
+      "rankBps": {
+        "elite": 7500,
+        "boss": 5000
+      },
+      "suppressionMs": 5000,
+      "maxStacks": 2
+    }
+  },
+  "scopeDecisions": {
+    "selection": "trusted Create participant field; immutable for the World; absent uses arena basic",
+    "terminalQualification": "actual HP damage with one outcome per still eligible target generation",
+    "attackSuppression": "ATK, per original design and interface text",
+    "stacking": "per-target two layers, duration refresh and latest contributor ownership in the kit",
+    "lockedProjectile": "uses existing interception rule and only damages intended target"
+  },
+  "checks": {
+    "rustDefault": {
+      "passed": 2618,
+      "logSha256": "2e53cc0843b95943840cd8a29753b47ac8ddca92ca1ff1acae5b63974be00d87"
+    },
+    "rustAllFeatures": {
+      "passed": 2618,
+      "logSha256": "b20c116ccd8c535c4b71730f265e8607093c380ae9ee2bf3bc3e4ab47bd9b0ee"
+    },
+    "rustPackagedEmptyCache": {
+      "passed": 7,
+      "logSha256": "dfe5098b9fe1ffeefdb22bc62fcea6b70cc5201dec852dc1bf6ee111d87cbdbc"
+    },
+    "nodeAndH5Adapters": {
+      "passed": 189,
+      "logSha256": "ff9cd7e9d2968f5d4f070662b3341bfc45eb8a3cec44ca5d978055c1cefca4e5"
+    },
+    "clippy": true,
+    "format": true,
+    "schema": {
+      "profileTableAccepted": 1,
+      "profileTableRejected": 5,
+      "seatAccepted": 4,
+      "seatRejected": 6
+    },
+    "publicNodeAndSqlite": {
+      "sdk": "0.107.0",
+      "profiles": [
+        "shield",
+        "tower"
+      ],
+      "contacts": [
+        2,
+        4
+      ],
+      "shield": 50,
+      "shieldDurationMs": 1200,
+      "towerReductionBps": 1500,
+      "towerReductionDurationMs": 900,
+      "towerDebuffs": [
+        -750,
+        -750,
+        -600,
+        -600
+      ],
+      "targetProfile": "elite",
+      "privateProjection": true,
+      "reconnected": true,
+      "settled": 2
+    },
+    "legacy104PublicNode": [
+      {
+        "scenario": "four",
+        "members": 4,
+        "source": "P00",
+        "target": "power-target",
+        "powerBps": 5000,
+        "damage": [
+          66,
+          100,
+          66,
+          66
+        ],
+        "settled": 4
+      },
+      {
+        "scenario": "eight",
+        "members": 8,
+        "source": "P00",
+        "target": "power-target",
+        "powerBps": 10000,
+        "damage": [
+          66,
+          133,
+          66,
+          66
+        ],
+        "settled": 8
+      }
+    ],
+    "packagedRuntimeFilesCompared": 381,
+    "sampleCopiesCompared": 6
+  },
+  "open": [
+    "Mirror same-tick refraction, cauldron fixed delay and its terminal heal",
+    "Named morphs, runtime weapon changes and the remaining world effects of R3.4",
+    "Original resource-steal HP policy and remaining production mode/host acceptance"
+  ]
+}

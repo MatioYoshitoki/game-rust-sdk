@@ -1,0 +1,286 @@
+{
+  "batch": "SDK-5-88",
+  "delivery": "DELIVERY-01",
+  "crossPackage": "R3.4",
+  "sdkVersion": "0.113.0",
+  "mechanismVersion": 105,
+  "date": "2026-11-09",
+  "scope": "Configuration-driven full-path seal landings and returns, bounded distinct-target ricochets, scoped marks and optional visual return with shared shields.",
+  "spec": "docs/batches/SDK-5-88-basic-projectile-paths.md",
+  "runtimeSourceSha256": "d14563dc76ee08cc6ee98448846ece35d745823770418af54d2516ed45e139cd",
+  "sourceBinding": {
+    "table": "data/weapon-attack-morphs/WEAPON_ATTACK_MORPHS",
+    "tableFile": "rust-match-kernel-v1.1/resolved-config.json",
+    "tableFileSha256": "6f730cf5a4844f3f67870a720b4fd0ce024f53e6905714344bebb52f53df8e0a",
+    "rowSha256": {
+      "sword_piercing_array": "bb863f16bf2db9e018dc424c28bc8b435631e5f2ad8d3912cc62a74e7f1ae0ab",
+      "shield_double_quake": "bd00e9618a400e05321c192665cb80b4ed3bd1c0775d8c08ec35e1527e1655de"
+    },
+    "rulesFile": "rust-match-kernel-v1.1/source-rules.json",
+    "rulesFileSha256": "e7fd565d8144b6e6344db4ea136b6a526f9ded7986b13d296103c6debc041469",
+    "sourceDocuments": [
+      {
+        "path": "docs/designs/combat-engine.DESIGN.md",
+        "sha256": "2b1a9cd20e3cc79e8ab158879e59ff68f807c63ab93c27ae0b40a46aa144d558",
+        "lines": [
+          167,
+          198,
+          204,
+          209,
+          238
+        ]
+      },
+      {
+        "path": "docs/interfaces/combat-engine.INTERFACE.md",
+        "sha256": "36c7d30dc1f9b490692d3b7d5ef1fde79cfeaaafef1973e0dcf854d6656b2ed8",
+        "lines": [
+          110,
+          118,
+          989
+        ]
+      },
+      {
+        "path": "docs/designs/passive-morph-cultivations.DESIGN.md",
+        "sha256": "728f6e736ef5617a5d3fe44d51f7e92952eec0c0c2acacd8816d4b9a5368fda7",
+        "lines": [
+          15,
+          41
+        ]
+      },
+      {
+        "path": "docs/interfaces/passive-morph-cultivations.INTERFACE.md",
+        "sha256": "1ccc2d7120a0e44aa8c3b799c4e8a61693cf977b543f86182d08a3321902812e",
+        "lines": [
+          20,
+          21,
+          22
+        ]
+      }
+    ]
+  },
+  "package": {
+    "archive": "/private/tmp/sdk88-basic-projectile-paths-v113/delivery/match-kernel-0.113.0-aarch64-apple-darwin.tar.gz",
+    "target": "aarch64-apple-darwin",
+    "sha256": "67e1db09f60fcd45d8341d611b6b99862cea8926d1b1221b5ae0e0b5a6629994",
+    "sourceCrateSha256": "364f705f4716405d1311feda62633cc74ade4371c649887a8585213183e522aa",
+    "binarySha256": "d9a95fb1c201ac4374acaccffa4432d4bcd1987ea99fd4c88f8d926cf899716c",
+    "packageFiles": 2899
+  },
+  "sample": {
+    "file": "examples/combat-host/basic-weapon-profiles.json",
+    "sha256": "01e4df3f27a4104a3af897e61036587f31874d348ce1f18d02c572d7f64f2186",
+    "profiles": {
+      "sword_piercing_array": {
+        "mechanism": "projectile",
+        "windup_ms": 100,
+        "interval_ms": 700,
+        "range": 330,
+        "projectile_speed": 1500,
+        "settle_on_end": true,
+        "projectile_followup": {
+          "plan_id": "sword_piercing_array",
+          "primary_damage_bps": 10000,
+          "pattern": {
+            "kind": "seal_recall",
+            "required_seals": 6,
+            "overtravel": 84,
+            "corridor_half_width": 28,
+            "additional_damage_bps": 4000,
+            "recall_damage_bps": 1800,
+            "settle_delay_ms": 100,
+            "interval_ms": 55,
+            "slow_status": "seal-recall-slow"
+          }
+        }
+      },
+      "shield_double_quake": {
+        "windup_ms": 160,
+        "interval_ms": 1000,
+        "range": 300,
+        "projectile_speed": 720,
+        "mechanism": "projectile",
+        "settle_on_end": true,
+        "projectile_followup": {
+          "plan_id": "shield_double_quake",
+          "primary_damage_bps": 7200,
+          "pattern": {
+            "kind": "ricochet",
+            "max_targets": 4,
+            "search_radius": 190,
+            "damage_bps": 5600,
+            "mark_duration_ms": 5000,
+            "hits_to_stun": 3,
+            "stun_status": "ricochet-stun",
+            "resistant_profiles": [
+              "elite",
+              "boss"
+            ]
+          }
+        }
+      },
+      "shield_double_quake_return": {
+        "windup_ms": 160,
+        "interval_ms": 1000,
+        "range": 300,
+        "projectile_speed": 720,
+        "mechanism": "projectile",
+        "settle_on_end": true,
+        "projectile_followup": {
+          "plan_id": "shield_double_quake_return",
+          "primary_damage_bps": 7200,
+          "pattern": {
+            "kind": "ricochet",
+            "max_targets": 6,
+            "search_radius": 237.5,
+            "damage_bps": 8400,
+            "mark_duration_ms": 5000,
+            "hits_to_stun": 3,
+            "stun_status": "ricochet-stun",
+            "resistant_profiles": [
+              "elite",
+              "boss"
+            ],
+            "return_to_owner": {
+              "speed_bps": 20000,
+              "shield_status": "ricochet-return-shield",
+              "base_max_hp_bps": 400,
+              "per_extra_max_hp_bps": 100,
+              "max_hp_bps": 900
+            }
+          }
+        }
+      }
+    }
+  },
+  "scopeDecisions": {
+    "selection": "trusted seat profile; optional return sample represents an already resolved base passive",
+    "corridor": "live target centers projected onto the frozen flight interval; full terrain sweep and cross-corridor line of sight",
+    "seal": "only primary HP damage permits a seal when the path ends or hits a wall; leave the seal on the clear side of terrain",
+    "recall": "anchor delayed launch schedule, freeze the current owner position for each flight, and wait for all terminal paths",
+    "ricochet": "success selects the nearest distinct eligible identity by distance then ID; the next segment starts from the actual terminal contact point",
+    "marks": "scoped by source and target generation; consume third mark even when the target rank resists the stun",
+    "return": "from authoritative outbound terminal position to the current owner sampled on release; ignores collisions and damage; shields once after arrival and keeps the higher same-source remainder within shared cap",
+    "capacity": "32 profile slots; corridor admission conservatively budgets possible same-step contacts from member count and configured NPC slots"
+  },
+  "checks": {
+    "rustDefault": {
+      "passed": 2661,
+      "logSha256": "260fb3252b231ebcc38945829c05361e343b3707fe7eb47331a695ea1917beb9"
+    },
+    "rustAllFeatures": {
+      "passed": 2661,
+      "logSha256": "815ec661f6d261b2da592cfbb4a23772690d2582ec603d247957e583558d5a3b"
+    },
+    "rustPackagedEmptyCache": {
+      "passed": 7,
+      "logSha256": "f1d34d555da1b3489a6961e3e28821e71089ee2b000c770fa08a361d9c14b42d"
+    },
+    "nodeAndH5Adapters": {
+      "passed": 194,
+      "logSha256": "f6127a24e86c4a783bb9481a383c77a1e5884b0284e1ab419ee7ac5c91e5269a"
+    },
+    "clippy": true,
+    "format": true,
+    "schema": {
+      "profileTableAccepted": 1,
+      "profileTableRejected": 6,
+      "wireAccepted": 4,
+      "wireRejected": 4
+    },
+    "publicH5HttpSseAndSqlite": {
+      "sdk": "0.113.0",
+      "transport": "H5 HTTP/SSE + Node + SQLite",
+      "landed": 6,
+      "recallSegments": 6,
+      "recallContacts": 12,
+      "resumedFlights": 3,
+      "resumedSeals": 3,
+      "ricochetDamage": [
+        72,
+        84
+      ],
+      "returnShield": 50,
+      "settled": 2
+    },
+    "publicH5Confirmation": {
+      "sdk": "0.113.0",
+      "transport": "H5 HTTP/SSE + Node + SQLite",
+      "landed": 6,
+      "recallSegments": 6,
+      "recallContacts": 12,
+      "resumedFlights": 2,
+      "resumedSeals": 4,
+      "ricochetDamage": [
+        72,
+        84
+      ],
+      "returnShield": 50,
+      "settled": 2
+    },
+    "legacy104PublicNode": [
+      {
+        "scenario": "four",
+        "members": 4,
+        "source": "P00",
+        "target": "power-target",
+        "powerBps": 5000,
+        "damage": [
+          66,
+          100,
+          66,
+          66
+        ],
+        "settled": 4
+      },
+      {
+        "scenario": "eight",
+        "members": 8,
+        "source": "P00",
+        "target": "power-target",
+        "powerBps": 10000,
+        "damage": [
+          66,
+          133,
+          66,
+          66
+        ],
+        "settled": 8
+      }
+    ],
+    "existingCompanionAndVolleyPublicH5": {
+      "sdk": "0.113.0",
+      "transport": "H5 HTTP/SSE + Node + SQLite",
+      "companionDamage": [
+        105,
+        35
+      ],
+      "volleyDamage": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        35,
+        35,
+        35,
+        35,
+        35,
+        35
+      ],
+      "volleySegments": 6,
+      "resumedFlights": 2,
+      "progressReset": true,
+      "settled": 2
+    },
+    "packagedRuntimeFilesCompared": 392,
+    "sampleCopiesCompared": 90,
+    "h5AdapterSha256": "88ba13e36896eebed9ca0cd63df14f6a5ec3b42b560ec70b2eaa0a34da24e295",
+    "bundleVerification": "Package files verified: 2899"
+  },
+  "open": [
+    "The other nine named morphs",
+    "Equipment-instance morph resolution, in-match weapon changes, skill-based wind-blade push and remaining world effects",
+    "Original resource-steal HP policy and remaining production mode/host acceptance"
+  ]
+}

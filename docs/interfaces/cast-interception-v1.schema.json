@@ -1,0 +1,276 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://match-kernel.local/interfaces/cast-interception-v1.schema.json",
+  "title": "Trusted final skill commit interception rule and private event fragments",
+  "$comment": "The loader also checks referenced skill, status and profile IDs, permitted status forms and composition.",
+  "$defs": {
+    "entity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "id",
+        "generation"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "participant",
+            "monster"
+          ]
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "interception_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "interception_skill_selection": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "mode"
+          ],
+          "properties": {
+            "mode": {
+              "const": "any"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "mode",
+            "ids"
+          ],
+          "properties": {
+            "mode": {
+              "const": "only"
+            },
+            "ids": {
+              "type": "array",
+              "maxItems": 64,
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "minItems": 1
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "mode",
+            "ids"
+          ],
+          "properties": {
+            "mode": {
+              "const": "except"
+            },
+            "ids": {
+              "type": "array",
+              "maxItems": 64,
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              }
+            }
+          }
+        }
+      ]
+    },
+    "interception_action_filter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "basic",
+        "skills"
+      ],
+      "properties": {
+        "basic": {
+          "const": false
+        },
+        "skills": {
+          "$ref": "#/$defs/interception_skill_selection"
+        }
+      }
+    },
+    "interception_effect": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "status_id"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "interrupt",
+            "allow_and_apply"
+          ]
+        },
+        "status_id": {
+          "$ref": "#/$defs/interception_id"
+        }
+      }
+    },
+    "interception_rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "action_filter",
+        "default"
+      ],
+      "properties": {
+        "action_filter": {
+          "$ref": "#/$defs/interception_action_filter"
+        },
+        "default": {
+          "$ref": "#/$defs/interception_effect"
+        },
+        "profile_overrides": {
+          "type": "object",
+          "maxProperties": 16,
+          "propertyNames": {
+            "$ref": "#/$defs/interception_id"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/interception_effect"
+          }
+        }
+      }
+    },
+    "interception_config": {
+      "type": "object",
+      "maxProperties": 16,
+      "propertyNames": {
+        "$ref": "#/$defs/interception_id"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/interception_rule"
+      }
+    },
+    "interception_resolved": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "source",
+        "target",
+        "skill_id",
+        "mark_instance_id",
+        "mark_definition_id",
+        "outcome"
+      ],
+      "properties": {
+        "kind": {
+          "const": "cast_interception_resolved"
+        },
+        "source": {
+          "$ref": "#/$defs/entity"
+        },
+        "target": {
+          "$ref": "#/$defs/entity"
+        },
+        "skill_id": {
+          "$ref": "#/$defs/interception_id"
+        },
+        "action_id": {
+          "$ref": "#/$defs/interception_id"
+        },
+        "mark_instance_id": {
+          "$ref": "#/$defs/interception_id"
+        },
+        "mark_definition_id": {
+          "$ref": "#/$defs/interception_id"
+        },
+        "followup_status_id": {
+          "$ref": "#/$defs/interception_id"
+        },
+        "outcome": {
+          "enum": [
+            "interrupted",
+            "immune_allowed",
+            "allowed_with_followup"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "const": "immune_allowed"
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "required": [
+                "followup_status_id"
+              ]
+            }
+          },
+          "else": {
+            "required": [
+              "followup_status_id"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "target": {
+                "properties": {
+                  "kind": {
+                    "const": "participant"
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "action_id"
+            ]
+          },
+          "else": {
+            "not": {
+              "required": [
+                "action_id"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/interception_rule"
+    },
+    {
+      "$ref": "#/$defs/interception_resolved"
+    }
+  ]
+}

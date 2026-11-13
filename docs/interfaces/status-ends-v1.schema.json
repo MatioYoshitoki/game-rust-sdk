@@ -1,0 +1,240 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://match-kernel.local/interfaces/status-ends-v1.schema.json",
+  "title": "Finite native status endings and one delayed damage deadline",
+  "$defs": {
+    "entity": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "enum": [
+            "participant",
+            "monster"
+          ]
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        }
+      },
+      "required": [
+        "kind",
+        "id",
+        "generation"
+      ],
+      "additionalProperties": false
+    },
+    "end_rule": {
+      "type": "object",
+      "properties": {
+        "on": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 4,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "expired",
+              "depleted",
+              "consumed",
+              "cleansed"
+            ]
+          }
+        },
+        "target_statuses": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "minItems": 1,
+          "maxItems": 2,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "on",
+        "target_statuses"
+      ],
+      "additionalProperties": false
+    },
+    "budget": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 128
+    },
+    "delayed": {
+      "type": "object",
+      "properties": {
+        "fixed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "source_power_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "target_missing_hp_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "caps_by_target_profile": {
+          "type": "object",
+          "maxProperties": 64,
+          "propertyNames": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100000
+          }
+        }
+      },
+      "required": [
+        "fixed",
+        "source_power_bps",
+        "target_missing_hp_bps",
+        "caps_by_target_profile"
+      ],
+      "additionalProperties": false,
+      "anyOf": [
+        {
+          "properties": {
+            "fixed": {
+              "minimum": 1
+            }
+          }
+        },
+        {
+          "properties": {
+            "source_power_bps": {
+              "minimum": 1
+            }
+          }
+        },
+        {
+          "properties": {
+            "target_missing_hp_bps": {
+              "minimum": 1
+            }
+          }
+        }
+      ]
+    },
+    "resolved": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "status_end_resolved"
+        },
+        "instance_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "definition_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "source": {
+          "$ref": "#/$defs/entity"
+        },
+        "target": {
+          "$ref": "#/$defs/entity"
+        },
+        "reason": {
+          "enum": [
+            "expired",
+            "depleted",
+            "consumed",
+            "cleansed"
+          ]
+        },
+        "active_definition_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "minItems": 0,
+          "maxItems": 2,
+          "uniqueItems": true
+        },
+        "failure": {
+          "enum": [
+            "INVALID_TARGET",
+            "INVALID_STATE",
+            "CAPACITY",
+            "IMMUNE"
+          ]
+        }
+      },
+      "required": [
+        "kind",
+        "instance_id",
+        "definition_id",
+        "source",
+        "target",
+        "reason",
+        "active_definition_ids"
+      ],
+      "additionalProperties": false
+    },
+    "suppressed": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "status_ends_suppressed"
+        },
+        "at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        }
+      },
+      "required": [
+        "kind",
+        "at_ms",
+        "count"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/end_rule"
+    },
+    {
+      "$ref": "#/$defs/delayed"
+    },
+    {
+      "$ref": "#/$defs/resolved"
+    },
+    {
+      "$ref": "#/$defs/suppressed"
+    },
+    {
+      "$ref": "#/$defs/budget"
+    }
+  ]
+}

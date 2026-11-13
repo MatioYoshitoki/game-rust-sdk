@@ -1,0 +1,55 @@
+// Ordinary JSONL boundary checks, no internal World access or replay clock.
+import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
+import {resolve,join} from 'node:path';
+import {execFileSync} from 'node:child_process';
+import {createHash} from 'node:crypto';
+import assert from 'node:assert/strict';
+import {KernelProcess,TwoMemberDatabase,TwoMemberHost,newRecord,readCatalog} from '../adapters/node/two-member-host.mjs';
+import {businessKind} from '../adapters/node/asset-store.mjs';
+const flag=(n,f)=>{const i=process.argv.indexOf(n);return i<0?f:process.argv[i+1]},binary=resolve(flag('--binary','target/debug/kernel-host')),out=resolve(flag('--out','artifacts/sdk-5-28/legacy6'));mkdirSync(out,{recursive:true});
+const manifest=resolve('examples/delta-host/catalog.json'),catalog=readCatalog(binary,manifest),accounts=JSON.parse(readFileSync('examples/delta-host/accounts-b.json','utf8')),template=newRecord({catalog,scenario:'eight',accounts,manifest}).originalCreate,cases=[];
+const push=cases.push.bind(cases);cases.push=c=>{console.error("passed: "+c.name);return push(c);};
+const mutations=[['zero',r=>r.participants=[],'INVALID_MESSAGE'],['one',r=>r.participants.pop(),'INVALID_MESSAGE'],['extra',r=>r.participants.push(r.participants[0]),'INVALID_MESSAGE'],['missing-roster',r=>delete r.participants,'INVALID_MESSAGE'],['duplicate-last-id',r=>r.participants[7].participant_id=r.participants[3].participant_id,'CONFLICT'],['duplicate-last-principal',r=>r.participants[7].authenticated_principal=r.participants[3].authenticated_principal,'CONFLICT'],['duplicate-last-connection',r=>r.participants[7].connection=r.participants[3].connection,'CONFLICT'],['zero-generation',r=>r.participants[7].connection.generation=0,'INVALID_MESSAGE'],['npc-namespace',r=>r.participants[3].participant_id='status-target-1','INVALID_MESSAGE'],['mixed-single',r=>r.participant_id='fake','INVALID_MESSAGE'],['unknown-patch',r=>r.world_patch={hp:999},'INVALID_MESSAGE'],['wrong-version',r=>r.protocol_version=5,'VERSION_MISMATCH'],['wrong-hash',r=>r.config_hash='f'.repeat(64),'CONFIG_MISMATCH']];
+for(const[name,mutate,error]of mutations){console.error("testing: "+name);const kernel=new KernelProcess(binary,manifest);try{const r=structuredClone(template);mutate(r);await assert.rejects(kernel.rpc({type:'create',request:r}),e=>e.code===error);assert.deepEqual((await kernel.rpc({type:'drain_outputs'})).outputs,[]);await kernel.rpc({type:'create',request:template});assert.equal((await kernel.rpc({type:'drain_outputs'})).outputs.filter(o=>o.body.kind==='business_request_v4').length,8);cases.push({name,error,noPartialCreate:true});}finally{await kernel.dispose();}}
+for(const[n,mutate]of[['capacity-zero',v=>v.members.capacity=0],['capacity-nine',v=>v.members.capacity=9],['overlap-last',v=>v.members.spawns[7]=v.members.spawns[3]],['queue-budget',v=>v.output_capacity=511],['unsupported-npc-heal',v=>v.pve.combat.heal.hp_threshold=.3],['ack-budget',v=>v.replication.ack_timeout_ms=0],['ttl-budget',v=>v.replication.baseline_ttl_ms=100],['period-budget',v=>v.replication.full_interval_ms=60001],['terminal-budget',v=>v.replication.terminal_grace_ms=100]]){
+ const folder=join(out,n);mkdirSync(folder,{recursive:true});const config=JSON.parse(readFileSync('examples/delta-host/arena-b.json','utf8'));mutate(config);writeFileSync(join(folder,'arena.json'),JSON.stringify(config));writeFileSync(join(folder,'catalog.json'),JSON.stringify({schema_version:1,default_scenario:'invalid',active:{invalid:'arena.json'},archives:[]}));assert.throws(()=>execFileSync(binary,['--configs',join(folder,'catalog.json'),'--catalog'],{stdio:['ignore','pipe','pipe']}));cases.push({name:n,rejectedBeforeRuntime:true});
+}
+{
+ const database=new TwoMemberDatabase(join(out,'slow-core.sqlite')),record=newRecord({catalog,scenario:'eight',accounts,manifest});database.create(record);let held=false;const host=new TwoMemberHost({autoAck:true,binary,manifest,database,record,ioPolicy:(pid,r)=>pid==='P03'&&businessKind(r)==='commit_settlement'?(held=true,{delayMs:900,dropReceipt:true}):{}});
+ try{await host.start();await host.joinAndReady();await host.input('P03',{kind:'leave'});await host.until(()=>held);const before=host.member('P07').snapshot.self.position;await host.input('P07',{kind:'move',direction:[0,1]});await host.until(()=>host.member('P07').snapshot.self.position[1]>before[1]);assert.equal(database.views(record.id)[3].settlements,0);await host.input('P07',{kind:'stop'});await host.until(()=>database.views(record.id)[3].settlements===1&&host.member('P03').snapshot.self.phase==='terminal');assert.equal(host.phase,'active');for(const m of host.members)if(m.account.participant_id!=='P03')await host.input(m.account.participant_id,{kind:'leave'});await host.until(()=>host.phase==='closed'&&host.pending()===0);assert.ok(database.views(record.id).every(a=>a.settlements===1));cases.push({name:'unknown-core-one-of-eight',peerContinued:true,accounts:database.views(record.id),pending:0});}finally{await host.dispose();database.close();}
+}
+{
+ const database=new TwoMemberDatabase(join(out,'refusal.sqlite')),record=newRecord({catalog,scenario:'eight',accounts,manifest});database.create(record);const host=new TwoMemberHost({autoAck:true,binary,manifest,database,record,ioPolicy:(pid,r)=>pid==='P03'&&businessKind(r)==='commit_admission'?{delayMs:200,refuse:true}:{}});
+ try{await host.start();await host.until(()=>host.phase==='closed'&&host.pending()===0);const views=database.views(record.id);assert.ok(views.every((a,i)=>i===3?a.admissions===0&&a.compensations===0:a.admissions===1&&a.compensations===1));cases.push({name:'refused-middle-seat',activation:false,accounts:views,pending:0});}finally{await host.dispose();database.close();}
+}
+// Transport failure injection uses the ordinary public receipt API only.
+for(const mode of ['failed','cancelled','timeout']){
+ const database=new TwoMemberDatabase(join(out,mode+'.sqlite')),record=newRecord({catalog,scenario:'eight',accounts,manifest});database.create(record);let armed=false,held=null,replacement=null;
+ const host=new TwoMemberHost({binary,manifest,database,record,onPublication:async(pid,o,h)=>{
+  if(armed&&pid==='P03'&&!held&&o.body.payload.kind==='delta'){held=o;if(mode!=='timeout')await h.transport(pid,o.id,o.body.connection,mode);return;}
+  if(held&&!replacement&&pid==='P03'&&o.body.stream_epoch>held.body.stream_epoch){assert.equal(o.body.payload.kind,'full');replacement=o;}
+  await h.transport(pid,o.id,o.body.connection,'sent');
+ }});
+ try{await host.start();await host.joinAndReady();armed=true;await host.until(()=>held);const p=host.member('P07'),before=p.snapshot.self.position[1];await host.input('P07',{kind:'move',direction:[0,1]});await host.until(()=>p.snapshot.self.position[1]>before);await host.input('P07',{kind:'stop'});await host.until(()=>replacement);assert.equal(replacement.body.payload.reason,mode==='timeout'?'timeout':'failure');assert.equal(await host.transport('P03',held.id,held.body.connection,'sent'),false);assert.equal(host.phase,'active');for(const m of host.members)await host.input(m.account.participant_id,{kind:'leave'});await host.until(()=>host.phase==='closed'&&host.pending()===0&&host.publicationsComplete());assert.ok(database.views(record.id).every(a=>a.admissions===a.settlements&&a.settlements===1));cases.push({name:'transport-'+mode,peerContinued:true,newEpochFull:true,lateSentRejected:true,replication:host.replicationStats,pending:0});}finally{await host.dispose();database.close();}
+}
+{
+ const database=new TwoMemberDatabase(join(out,'cache.sqlite')),record=newRecord({catalog,scenario:'eight',accounts,manifest});database.create(record);const host=new TwoMemberHost({binary,manifest,database,record,autoAck:true});
+ try{await host.start();await host.joinAndReady();await host.until(()=>host.replicationStats.delta>0);const previous=host.member('P03').replica.epoch;host.member('P03').replica.forgetBaseline();await host.until(()=>host.replicationStats.resyncs>0);await host.until(()=>host.member('P03').replica.epoch>previous);const recovered=host.replicationStats.delta;await host.until(()=>host.replicationStats.delta>recovered);await host.close();await host.until(()=>host.phase==='closed'&&host.pending()===0&&host.publicationsComplete());cases.push({name:'client-forgot-baseline',newFullThenDelta:true,replication:host.replicationStats,pending:0});}finally{await host.dispose();database.close();}
+}
+for(const mode of ['terminal-failure','terminal-expiry']){
+ const database=new TwoMemberDatabase(join(out,mode+'.sqlite')),record=newRecord({catalog,scenario:'eight',accounts,manifest});database.create(record);let held=null,replaced=false;
+ const host=new TwoMemberHost({binary,manifest,database,record,onPublication:async(pid,o,h)=>{
+  if(pid==='P03'&&o.body.payload.kind==='full'&&['settling','terminal'].includes(o.body.payload.snapshot.self.phase)){
+   if(mode==='terminal-expiry')return;
+   if(!held){held=o;await h.transport(pid,o.id,o.body.connection,'failed');return;}
+   if(o.body.stream_epoch>held.body.stream_epoch)replaced=true;
+  }await h.transport(pid,o.id,o.body.connection,'sent');
+ }});
+ try{await host.start();await host.joinAndReady();for(const m of host.members)await host.input(m.account.participant_id,{kind:'leave'});await host.until(()=>host.phase==='closed'&&host.pending()===0&&host.publicationsComplete());assert.ok(database.views(record.id).every(a=>a.admissions===a.settlements&&a.settlements===1));if(mode==='terminal-failure'){assert.ok(replaced);await assert.rejects(host.input('P03',{kind:'request_full',stream_epoch:0}),e=>e.code==='STALE_PUBLICATION');assert.ok(host.member('P03').terminalDelivered);await host.pump();assert.ok(host.publicationsComplete());}else {assert.ok(host.member('P03').deliveryExpired);assert.ok(!host.member('P03').terminalDelivered);assert.equal(host.replicationStats.expired,1);}cases.push({name:mode,closed:true,honestExpiry:mode==='terminal-expiry',replacement:replaced,replication:host.replicationStats,pending:0});}finally{await host.dispose();database.close();}
+}
+{
+ const database=new TwoMemberDatabase(join(out,'early-reconnect.sqlite')),record=newRecord({catalog,scenario:'eight',accounts,manifest});database.create(record);const host=new TwoMemberHost({binary,manifest,database,record,autoAck:true,ioPolicy:()=>({delayMs:200})});
+ try{await host.start();await host.reconnect('P00');await host.joinAndReady();assert.equal(host.member('P00').connection.generation,2);await host.until(()=>host.members.every(m=>m.snapshot.self.ready));await host.close();await host.until(()=>host.phase==='closed'&&host.pending()===0&&host.publicationsComplete());cases.push({name:'preparing-reconnect-then-join',active:true,newGeneration:2,pending:0});}finally{await host.dispose();database.close();}
+}
+
+const report={passed:true,crate:'0.30.0',binarySha256:createHash('sha256').update(readFileSync(binary)).digest('hex'),cases};writeFileSync(join(out,'report.json'),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify({passed:true,cases:cases.length,report:join(out,'report.json')}));

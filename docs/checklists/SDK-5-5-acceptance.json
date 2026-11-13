@@ -1,0 +1,101 @@
+{
+  "batch": "SDK-5-5",
+  "scope": "finite periodic physical damage; not full M04 or HOT",
+  "criteria": {
+    "PD01": {
+      "rustTests": [
+        "config::status::periodic_tests::periodic_engineering_limit_and_zero_damage_are_configurable_but_not_inputs",
+        "config::status::periodic_tests::periodic_support_and_normalized_config_are_explicit_and_reloadable",
+        "config::status::periodic_tests::periodic_invalid_fields_timing_versions_and_bindings_reject_startup"
+      ]
+    },
+    "PD02": {
+      "rustTests": [
+        "world::pve::periodic_tests::periodic_capacity_failure_does_not_refresh_existing_plan",
+        "world::pve::periodic_tests::periodic_refresh_recaptures_source_attack_and_ignore_keeps_original_plan",
+        "world::pve::periodic_tests::periodic_self_target_and_mixed_group_are_rejected_atomically",
+        "world::pve::periodic_tests::periodic_uses_effective_source_attack_but_later_changes_do_not_recalculate",
+        "world::pve::periodic_tests::periodic_source_scoped_groups_or_latest_owner_preserve_identity"
+      ]
+    },
+    "PD03": {
+      "rustTests": [
+        "world::pve::periodic_tests::periodic_first_last_and_half_open_deadline_are_exact",
+        "world::pve::periodic_tests::periodic_late_valid_jobs_are_ordered_but_expired_jobs_are_not_replayed",
+        "world::pve::periodic_tests::periodic_non_aligned_clock_does_not_drift_and_expiry_wins_last_step",
+        "world::pve::periodic_tests::periodic_simultaneous_jobs_are_stably_ordered_and_dead_targets_cancel_rest",
+        "world::pve::periodic_tests::periodic_public_input_retry_and_reconnect_preserve_next_tick"
+      ]
+    },
+    "PD04": {
+      "rustTests": [
+        "world::pve::periodic_tests::periodic_does_not_roll_dodge_or_crit_or_repeat_hit_bindings",
+        "world::pve::periodic_tests::periodic_current_defense_and_shield_are_read_each_tick",
+        "world::pve::periodic_tests::periodic_defense_change_after_application_changes_next_damage",
+        "world::pve::periodic_tests::periodic_large_attack_and_damage_ratio_are_bounded_by_existing_math",
+        "world::pve::periodic_tests::periodic_zero_raw_damage_obeys_minimum_without_contact_rng"
+      ]
+    },
+    "PD05": {
+      "rustTests": [
+        "world::pve::periodic_tests::periodic_can_kill_and_drop_once_without_another_direct_attack",
+        "world::pve::periodic_tests::periodic_does_not_roll_dodge_or_crit_or_repeat_hit_bindings",
+        "world::pve::periodic_tests::periodic_full_absorption_does_not_interrupt_extraction_but_hp_damage_does",
+        "world::pve::periodic_tests::periodic_monster_source_can_cause_natural_death_without_lifesteal_or_marks",
+        "world::pve::periodic_tests::periodic_pulses_do_not_consume_counter_or_interrupt_support_casts"
+      ]
+    },
+    "PD06": {
+      "rustTests": [
+        "world::pve::periodic_tests::periodic_protected_ticks_are_consumed_without_damage_or_later_replay",
+        "world::pve::periodic_tests::periodic_hundred_closes_and_absolute_terminal_never_emit_late_ticks",
+        "world::pve::periodic_tests::periodic_returning_ticks_skip_without_cancelling_return_or_extending_status",
+        "world::pve::periodic_tests::periodic_source_death_or_generation_change_stops_future_damage",
+        "world::pve::periodic_tests::periodic_public_input_retry_and_reconnect_preserve_next_tick",
+        "world::pve::periodic_tests::periodic_encounter_reset_invalidates_old_round_and_pending_jobs",
+        "world::pve::periodic_tests::periodic_event_burst_releases_world_and_retains_frozen_settlement"
+      ],
+      "nodeCases": [
+        "a-extraction"
+      ]
+    },
+    "PD07": {
+      "nodeCases": [
+        "a-extraction",
+        "a-death",
+        "b-extraction",
+        "b-death"
+      ],
+      "touchCases": [
+        "extraction",
+        "death"
+      ]
+    },
+    "PD08": {
+      "crashBoundaries": [
+        "active",
+        "after_intent_persist",
+        "after_storage_commit"
+      ],
+      "recoveriesPerBoundary": 2
+    },
+    "PD09": {
+      "rustTests": [
+        "config::status::periodic_tests::periodic_legacy_definitions_19_to_22_keep_their_normalized_shape",
+        "world::pve::periodic_tests::periodic_old_views_do_not_gain_periodic_fields"
+      ],
+      "reports": [
+        "artifacts/sdk-5-5/baseline-verification.json",
+        "artifacts/sdk-5-5/verification.json",
+        "artifacts/sdk-5-5/delivery/independent-verification.json"
+      ]
+    },
+    "PD10": {
+      "reports": [
+        "artifacts/sdk-5-5/delivery/source-verification.json",
+        "artifacts/sdk-5-5/delivery/independent-verification.json",
+        "artifacts/sdk-5-5/baseline-verification.json"
+      ]
+    }
+  }
+}

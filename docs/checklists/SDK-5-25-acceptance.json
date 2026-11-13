@@ -1,0 +1,153 @@
+{
+  "batch": "SDK-5-25",
+  "crate": "0.27.0",
+  "protocol": 6,
+  "schema": 7,
+  "mechanism": 42,
+  "criteria": {
+    "LA01": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::lines::member_lines_configuration_capacity_policy_and_output_budget_reject_before_io"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json"
+      ]
+    },
+    "LA02": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::lines::member_lines_duplicate_direction_input_only_commits_and_charges_once",
+        "two_members::tests::capacity::delta::lines::member_lines_public_one_two_four_eight_line_commit_and_independent_cost",
+        "two_members::tests::capacity::delta::lines::member_lines_wrong_input_and_zero_direction_never_pay",
+        "world::two_members::line_tests::line_accept_direction_and_origin_are_strict_without_ground_or_vision_gate",
+        "world::two_members::line_tests::line_and_circle_share_slots_while_projectiles_and_self_do_not",
+        "world::two_members::line_tests::line_commit_revalidates_origin_cost_status_and_capacity_atomically",
+        "world::two_members::line_tests::line_one_two_four_eight_share_world_capacity_and_actual_sources"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json"
+      ]
+    },
+    "LA03": {
+      "rustTests": [
+        "world::two_members::line_tests::line_capsule_swept_wall_boundary_diagonal_and_zero_length_are_shared",
+        "world::two_members::line_tests::line_commit_freezes_current_origin_direction_and_background_geometry"
+      ],
+      "reports": [
+        "native-verification.json",
+        "browser/report.json"
+      ]
+    },
+    "LA04": {
+      "rustTests": [
+        "world::two_members::line_tests::line_attack_frozen_but_current_defense_and_shield_are_resolved_per_contact",
+        "world::two_members::line_tests::line_caps_and_sides_include_footprint_and_respect_axis_to_target_walls",
+        "world::two_members::line_tests::line_order_is_path_progress_then_axis_distance_then_identity",
+        "world::two_members::line_tests::line_overlapping_lethal_contacts_credit_and_drop_once",
+        "world::two_members::line_tests::line_targets_enter_leave_return_reset_and_friendly_are_live"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json"
+      ]
+    },
+    "LA05": {
+      "rustTests": [
+        "world::two_members::line_tests::line_field_first_tick_end_exclusive_and_non_aligned_schedule",
+        "world::two_members::line_tests::line_same_due_creation_order_and_catchup_keep_scheduled_timestamps",
+        "world::two_members::line_tests::line_zero_warning_still_waits_interval_and_never_hits_commit_step"
+      ],
+      "reports": [
+        "native-verification.json",
+        "interop-verification.json"
+      ]
+    },
+    "LA06": {
+      "rustTests": [
+        "world::two_members::line_tests::line_dodge_does_not_consume_budget_full_absorption_does_and_keeps_bindings",
+        "world::two_members::line_tests::line_hit_budget_exhaustion_and_expiry_end_exactly_once",
+        "world::two_members::line_tests::line_positive_repeat_uses_scheduled_inclusive_time_not_execution_time",
+        "world::two_members::line_tests::line_zero_repeat_allows_new_generation_but_never_reuses_old_identity"
+      ],
+      "reports": [
+        "native-verification.json",
+        "interop-verification.json"
+      ]
+    },
+    "LA07": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::lines::member_lines_public_field_reconnect_preserves_plan_deadline_budget_and_old_connection_fences",
+        "two_members::tests::capacity::delta::lines::member_lines_unknown_settlement_cleans_owner_only_and_peers_continue",
+        "world::two_members::line_tests::line_absolute_terminal_clears_all_without_late_contacts",
+        "world::two_members::line_tests::line_prepare_cancel_and_protect_leave_cost_and_plan_unchanged",
+        "world::two_members::line_tests::line_source_exit_cleans_only_owner_without_waiting_for_finance"
+      ],
+      "reports": [
+        "native-verification.json",
+        "browser/report.json",
+        "public/report.json"
+      ]
+    },
+    "LA08": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::lines::member_lines_malformed_full_array_identity_schedule_budget_are_atomic",
+        "world::two_members::line_tests::line_public_plan_uses_kernel_id_and_never_exposes_private_request_or_stats"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json"
+      ]
+    },
+    "LA09": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::lines::member_lines_two_skill_shapes_full_delta_clear_and_cross_language_vectors"
+      ],
+      "reports": [
+        "interop-verification.json",
+        "native-verification.json"
+      ]
+    },
+    "LA10": {
+      "rustTests": [],
+      "reports": [
+        "public/report.json",
+        "browser/report.json",
+        "visual-verification.json"
+      ]
+    },
+    "LA11": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::lines::member_lines_hundred_public_runtimes_with_committed_fields_release_all_responsibilities",
+        "two_members::tests::capacity::delta::lines::member_lines_recovery_closed_never_restores_plans_or_publications"
+      ],
+      "reports": [
+        "crashes/report.json",
+        "native-verification.json"
+      ]
+    },
+    "LA12": {
+      "rustTests": [],
+      "reports": [
+        "native-verification.json",
+        "delivery/source-verification.json",
+        "delivery/independent-verification.json",
+        "legacy4/report.json",
+        "legacy5/report.json",
+        "legacy6/report.json",
+        "legacy38/report.json",
+        "legacy39/report.json",
+        "legacy40/report.json",
+        "legacy41/report.json",
+        "local-preview.json"
+      ]
+    }
+  },
+  "limitations": [
+    "Fixed 1-8 required PVE members, player-owned fixed circle and capsule plans; no PvP, friendly targeting, moving areas, piercing or complete modes",
+    "Same scheduler, contact budget and direct damage pipeline; old single-member adapters remain supported",
+    "All length/width, timing, effects, repetition and bounded world capacity/history/output initialized from config",
+    "Restart closes frozen financial responsibility only; no World, plans, statuses, shields or publication baselines restored",
+    "No added executions of original 48 scenarios or 50 numeric vectors; historical user artifact cleanup exception preserved"
+  ]
+}

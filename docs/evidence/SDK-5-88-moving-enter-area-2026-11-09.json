@@ -1,0 +1,95 @@
+{
+  "batch": "SDK-5-88",
+  "delivery": "DELIVERY-01",
+  "crossPackage": "R3.4",
+  "sdkVersion": "0.119.0",
+  "date": "2026-11-09",
+  "mechanismVersion": 105,
+  "protocolVersion": 6,
+  "spec": "docs/batches/SDK-5-88-moving-enter-area.md",
+  "runtimeSourceSha256": "e37497d04a6a179e876b765c27195b50554ea3c1a93c0553341f83fdeabbd47f",
+  "sample": {
+    "file": "examples/combat-host/moving-enter-area.json",
+    "sha256": "4090564f69b6ec38e86ea1b2267cce7bb11acd9e90e47597daf3883f44bc172e",
+    "skillId": "tribulation-wind-blade"
+  },
+  "sourceBinding": {
+    "tableFile": "rust-match-kernel-v1.1/source-config.json",
+    "tableFileSha256": "7df9854739b72904fd55d93f4a0e0a0fb0b19026a21b37346d2a0f544704da66",
+    "skillRowSha256": "fa03d4a3e9c0026be66408940697a1022aaf4208ee053b27df552e02574b1a82",
+    "castLifecycleSha256": "942715491eabbcceedfac149ccd2bda335a836a69b4059570fb1b7a4f2a50752",
+    "knockbackFactorSha256": "d2f402b5ca55ae73c346187c02a00704f35632fe596959563ebb68684af68de1",
+    "windboundStatusSha256": "397f80852fbd5a6c7bcb80fd3be86c1b31db5fad1daa8179b8e769979465eb8c",
+    "rulesFile": "rust-match-kernel-v1.1/source-rules.json",
+    "rulesFileSha256": "e7fd565d8144b6e6344db4ea136b6a526f9ded7986b13d296103c6debc041469",
+    "sourceDocuments": [
+      {
+        "path": "docs/designs/skill-runtime.DESIGN.md",
+        "sha256": "556aa9683e6f0d8e9ad44a36ae0aaab76e7b4a6261b290251b3f9c7a340316db",
+        "lines": [
+          79,
+          83,
+          99,
+          149,
+          163,
+          167
+        ]
+      },
+      {
+        "path": "docs/designs/tribulation-trial.DESIGN.md",
+        "sha256": "13323833aa49eaef4fde492f5bb891cf7019a7942848f0be780ebe8cbbd0ae89",
+        "lines": [
+          53,
+          101
+        ]
+      },
+      {
+        "path": "docs/interfaces/tribulation-trial.INTERFACE.md",
+        "sha256": "296e3dd73c0dd634ab1613271a0722f5c457b9a0e6d22940158390604e01f34e",
+        "lines": [
+          29,
+          31,
+          33,
+          36
+        ]
+      }
+    ]
+  },
+  "contractFilesSha256": {
+    "docs/interfaces/combat-rules-v1.schema.json": "3796dc40b9323973a802e383e575a2d7e74249281e76dfe4cbbeb450bf7508b7",
+    "docs/interfaces/member-piercing-v1.schema.json": "24853712e69cd8ca0c720505fc668751ba5edd4a97c369e57fbb626f8f9eac7d",
+    "docs/interfaces/publications-v6.schema.json": "2c6315819365fdcc0732c570e098f319c3bd06f21840199bd702f86fec8ebf14"
+  },
+  "scopeDecisions": {
+    "windup": "Use the structured 750 ms lifecycle instead of the older 1.2 s prose and castTime.",
+    "damage": "Use the trial interface target max HP basis. The sampled hazard bypasses armor and dodge while running through reduction, shield, immunity and death guards.",
+    "entryClock": "Convert 20 source ticks using 100 ms per tick. Sustained overlap adds no pulses. The sample has no stationary dwell after travel.",
+    "displacement": "Use the frozen caster position for the push direction and clip the full player footprint sweep at movement obstacles.",
+    "sourceLifetime": "For a committed route with end_on_source_invalid false, the geometry keeps advancing with its original source reference. An invalid source does not execute further enter effects.",
+    "scratch": "One reused batch scratch directory. Cargo used the shared build cache."
+  },
+  "checks": {
+    "rustDefault": 2695,
+    "rustAllFeatures": 2695,
+    "rustFocused": 6,
+    "nodeAndH5Adapters": 200,
+    "clippy": true,
+    "format": true,
+    "schemas": true,
+    "publicH5": {
+      "transport": "Node/H5 HTTP/SSE and SQLite",
+      "seats": 2,
+      "warningMs": 750,
+      "actualHpLoss": 50,
+      "clippedX": 503.999999,
+      "slideMultiplier": 3,
+      "movingAreaRehydrated": true,
+      "entered": 1,
+      "settlements": 2
+    }
+  },
+  "openInR3.4": [
+    "Detached enter effects after the source entity is invalid",
+    "Remaining world effects and production geometry integration"
+  ]
+}

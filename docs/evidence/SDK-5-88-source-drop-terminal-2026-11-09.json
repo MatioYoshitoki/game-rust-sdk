@@ -1,0 +1,72 @@
+{
+  "batch": "SDK-5-88",
+  "delivery": "DELIVERY-01",
+  "date": "2026-11-09",
+  "scope": "workspace supplemental Rust acceptance",
+  "baseline": {
+    "sdkVersion": "0.102.0",
+    "checkpoint": "core-39",
+    "evidence": "SDK-5-88-core-39-2026-11-09.json",
+    "archiveSha256": "1d0b27eb64a6490ac4cc0f119607aee8720627eb9e70e47c7178302738ac7ad2",
+    "archiveVerifiedUnchanged": true,
+    "runtimeCodeUnchanged": true,
+    "includedInFrozenPackageTestSuite": false
+  },
+  "source": {
+    "file": "rust-match-kernel-v1.1/scenarios.json",
+    "sha256": "84d5e7f8ac78f1fb478bf1ff5ab446527f3ed4d6b1623782b2e7badd0e981a00",
+    "workspaceFixtureRowsCompared": true
+  },
+  "scenarios": {
+    "S20": {
+      "pointer": "/scenarios/19",
+      "rowSha256": "735a3700f64dd0036ed4da309455f77ad5245fed0bdb413cfd72125157b028b6",
+      "test": "world::two_members::source_cast_scenario_tests::source_inventory_scenario_s20_failed_placement_preserves_the_original_slot",
+      "fixtureMapping": "Original slot 0, xuan-tie x2, revision 1 and request time are used. The source does not specify provenance. This test maps the slot to eligible in-match loot and represents no_legal_point by a non-walkable grid.",
+      "observed": "InvalidTarget preserves the inventory, net loot, revision, snapshot and resource sequence. The same inventory and input on the walkable grid drop exactly one resource of quantity 2.",
+      "open": [
+        "R4.1 production placement search",
+        "R4.4 production slot and item provenance",
+        "R6.2 deployed scenario"
+      ]
+    },
+    "S28": {
+      "pointer": "/scenarios/27",
+      "rowSha256": "2474546144c1e7f4f7be615fc74fb35521c260d36c1d9639145a992035167302",
+      "test": "two_members::tests::capacity::delta::source_terminal_settlement::source_terminal_scenario_s28_settles_both_protected_and_unprotected_members_once",
+      "fixtureMapping": "A and B use the source match identity, participant values and deadline in a protocol 6 match backed by the Rust in-memory host store. The fixture starts the last steps of the empty world near the deadline and applies immunity and background protection via ordinary actions.",
+      "observed": "Both members are alive one step before the deadline. At 915000 ms both replicas receive a closed snapshot with own phase Settling, and two distinct death settlement operations are pending. Each receipt clears only its own ledger. Each store records one settlement even when its request is replayed, and the match closes once.",
+      "open": [
+        "R2.1 hosted responsibility acceptance",
+        "R6.2 deployed client, transport and database"
+      ]
+    }
+  },
+  "rustTestSourceSha256": {
+    "src/two_members/delta_tests.rs": "573c46f6ee5a97bb872d65b3dcef13f404ce3562c751378dd299230b5b24ed8a",
+    "src/two_members/source_instant_cast_tests.rs": "25480c53b535e3676c7dd0d0e9dc49cff371fa8fbd8cd3fe054a79ad0f063aff",
+    "src/two_members/source_terminal_settlement_tests.rs": "42694bb064b7dacc06ff135e787fd818c78648541a61cd069c3aab502339564d",
+    "src/world/two_members/source_cast_scenario_tests.rs": "e86c3760316ba2f31ecd817f28dc2c710b22ecda6a78f86a6ab611abbe026fd9"
+  },
+  "checks": {
+    "rustDefaultLibrary": {
+      "logSha256": "0372f4fa69038805f05d4cfc3630929279521711e8a8539e905eec5bc439a38c",
+      "passed": 2583
+    },
+    "rustAllFeaturesLibrary": {
+      "logSha256": "ba442d94ed28d05e5b837884d5d04dacc0158ee9110619246e8ec0ef0205b2f8",
+      "passed": 2583
+    },
+    "clippy": {
+      "logSha256": "81999a52c6b83d9914a5614f7f7dd7101140cdf464b30081c8f874540222a859",
+      "passed": true
+    },
+    "format": true
+  },
+  "reproduction": [
+    "cargo test --offline --lib",
+    "cargo test --offline --lib --all-features",
+    "cargo clippy --offline --all-targets --all-features -- -D warnings",
+    "cargo fmt --all --check"
+  ]
+}

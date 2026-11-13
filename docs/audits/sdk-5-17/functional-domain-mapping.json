@@ -1,0 +1,522 @@
+{
+  "schemaVersion": 1,
+  "domains": [
+    {
+      "id": "F-01",
+      "sourceFile": "rust-match-kernel-v1.1/acceptance.md",
+      "originalRow": "| F-01 创建部署 | behavior §2、逐图匹配/模式配置 | S01–S03 | 所有模式、席位失败/补偿、重复加入/关闭 |",
+      "sourceSha256": "cc857023ffd28f9b2f119e05d3f4c17b728d726840c5f82b27b35176b93a635b",
+      "currentMatrixFile": "docs/checklists/sdk-requirements-gap.md",
+      "currentRow": "| F-01 创建与部署 | 单参与者配置/事实/扣费/ready/激活/失败补偿；B1/B2、`src/engine.rs` | P01/P08；多席位与成员级准入 M01；真实准入 I02/I03 |",
+      "wholeDomainStatus": "open",
+      "exactOriginalAcceptance": "not_run",
+      "existingCapabilities": [
+        "E01"
+      ],
+      "missingCapabilities": [
+        "N01",
+        "N02"
+      ],
+      "gapIds": [
+        "I02",
+        "I03",
+        "M01",
+        "P01",
+        "P08"
+      ],
+      "workPackages": [
+        "R2.1",
+        "R2.2",
+        "R4.1",
+        "R5.1",
+        "R6.1"
+      ],
+      "ruleGates": [
+        "D-08",
+        "G-04"
+      ],
+      "primaryWorkPackage": "R2.1"
+    },
+    {
+      "id": "F-02",
+      "sourceFile": "rust-match-kernel-v1.1/acceptance.md",
+      "originalRow": "| F-02 输入移动 | §3、速度/碰撞/输入参数 | S04–S07 | 全地形/边界、序号/频率、全部动作取消/准入 |",
+      "sourceSha256": "dde82812620b33689c0561393bd2db0e280a3e78f98e2305c357792582a0dc79",
+      "currentMatrixFile": "docs/checklists/sdk-requirements-gap.md",
+      "currentRow": "| F-02 输入与移动 | 严格输入、方向/导航/停止、碰撞、1～2个配置玩家技能（方向/自身/严格敌方单位弹道）；`src/protocol.rs`、`src/world.rs`、`src/world/pve.rs` | P01/P03；更多操作 M02，完整位移/几何 M05/M08；客户端 I01/I03 |",
+      "wholeDomainStatus": "open",
+      "exactOriginalAcceptance": "not_run",
+      "existingCapabilities": [
+        "E02",
+        "E03",
+        "E04"
+      ],
+      "missingCapabilities": [
+        "N04",
+        "N09",
+        "N12"
+      ],
+      "gapIds": [
+        "I01",
+        "I03",
+        "M02",
+        "M05",
+        "M08",
+        "P01",
+        "P03"
+      ],
+      "workPackages": [
+        "R3.1",
+        "R3.4",
+        "R4.1",
+        "R6.1"
+      ],
+      "ruleGates": [
+        "G-02",
+        "G-04"
+      ],
+      "primaryWorkPackage": "R3.1"
+    },
+    {
+      "id": "F-03",
+      "sourceFile": "rust-match-kernel-v1.1/acceptance.md",
+      "originalRow": "| F-03 数值状态 | §4、数值帽/状态/恢复配置 | S08–S10 | 每个状态、控制/护盾/恢复乘区和死亡顺序 |",
+      "sourceSha256": "831b2d8289da80a69ef49caa5f573db63bfdae2ac69179922d766f3da1036572",
+      "currentMatrixFile": "docs/checklists/sdk-requirements-gap.md",
+      "currentRow": "| F-03 战斗数值与状态 | 有限物理/金属性伤害、怪物暴击闪避、自疗/支援、冷却/打断/保护；B1、B3-1/9/11/12 | P02/P03；通用状态 M03，完整伤害/控制/恢复 M04；原算术 I05 |",
+      "wholeDomainStatus": "open",
+      "exactOriginalAcceptance": "not_run",
+      "existingCapabilities": [
+        "E05",
+        "E06",
+        "E07",
+        "E08",
+        "E09",
+        "E15"
+      ],
+      "missingCapabilities": [
+        "N05",
+        "N06",
+        "N07",
+        "N08"
+      ],
+      "gapIds": [
+        "I05",
+        "M03",
+        "M04",
+        "P02",
+        "P03"
+      ],
+      "workPackages": [
+        "R3.2",
+        "R3.3",
+        "R3.4",
+        "R4.2",
+        "R6.2"
+      ],
+      "ruleGates": [
+        "D-02",
+        "D-03",
+        "G-01"
+      ],
+      "primaryWorkPackage": "R3.2"
+    },
+    {
+      "id": "F-04",
+      "sourceFile": "rust-match-kernel-v1.1/acceptance.md",
+      "originalRow": "| F-04 技能武器 | §5、86 技能/18 器型/177 标签 | S10–S15、数值向量 | 每个有效内容项的成功/失败/边界；关闭 G-01 |",
+      "sourceSha256": "ed4ac416931c823643fc09433d38f84e8bef0d40cc20b7e20805bbc67d0d7f0c",
+      "currentMatrixFile": "docs/checklists/sdk-requirements-gap.md",
+      "currentRow": "| F-04 技能与武器 | 玩家主技能及可选一个附加技能（方向/自身/严格敌方单位弹道）；怪物弹道、自疗、圆形预警、支援与定向重击等有限能力 | P03；更多技能/目标 M02，武器/效果接触 M05，召唤 M06；内容 I04 |",
+      "wholeDomainStatus": "open",
+      "exactOriginalAcceptance": "not_run",
+      "existingCapabilities": [
+        "E03",
+        "E04",
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14"
+      ],
+      "missingCapabilities": [
+        "N04",
+        "N06",
+        "N09",
+        "N10",
+        "N11"
+      ],
+      "gapIds": [
+        "I04",
+        "M02",
+        "M03",
+        "M05",
+        "M06",
+        "P03"
+      ],
+      "workPackages": [
+        "R3.1",
+        "R3.2",
+        "R3.4",
+        "R3.5",
+        "R6.2"
+      ],
+      "ruleGates": [
+        "D-01",
+        "G-01"
+      ],
+      "primaryWorkPackage": "R3.1"
+    },
+    {
+      "id": "F-05",
+      "sourceFile": "rust-match-kernel-v1.1/acceptance.md",
+      "originalRow": "| F-05 AI 导航 | §6、怪物/遭遇/NPC/地形 | S16–S17 | 全 AI 原型/Boss、完整生产碰撞；关闭 G-02 |",
+      "sourceSha256": "743ba6a76de5104f43f06ab775f5164a68d958f64cf5cde2e80d932dc560891c",
+      "currentMatrixFile": "docs/checklists/sdk-requirements-gap.md",
+      "currentRow": "| F-05 AI 与导航 | 多模板近战/弹道/治疗、牵引/归位、有限导航、Boss 阶段；B3-1/4/7/11/13 | P02/P06；完整仇恨/NPC M07，完整生产导航 M08；生产地图 I04 |",
+      "wholeDomainStatus": "open",
+      "exactOriginalAcceptance": "not_run",
+      "existingCapabilities": [
+        "E02",
+        "E15"
+      ],
+      "missingCapabilities": [
+        "N12",
+        "N13"
+      ],
+      "gapIds": [
+        "I04",
+        "M07",
+        "M08",
+        "P02",
+        "P06"
+      ],
+      "workPackages": [
+        "R4.1",
+        "R4.2",
+        "R5.3",
+        "R6.2"
+      ],
+      "ruleGates": [
+        "G-02"
+      ],
+      "primaryWorkPackage": "R4.1"
+    },
+    {
+      "id": "F-06",
+      "sourceFile": "rust-match-kernel-v1.1/acceptance.md",
+      "originalRow": "| F-06 搜索资产 | §7、物品/投放/宝物/遗物 | S18–S23、S29 | 全宝物/资源来源、满包/溢出、死亡失败重试 |",
+      "sourceSha256": "0de07f5686a6cddc6caff520654ee8fb601c1ab2439c32902ec3dfe24e326363",
+      "currentMatrixFile": "docs/checklists/sdk-requirements-gap.md",
+      "currentRow": "| F-06 搜索与资产 | 普通/封印/守护容器、概率掉落、落地拾取、整数堆叠与容量、光球；B1、B3-2～4 | P04/P05；资源分布 M09，实例物品/竞争/遗物 M10；真实库存 I02 |",
+      "wholeDomainStatus": "open",
+      "exactOriginalAcceptance": "not_run",
+      "existingCapabilities": [
+        "E18"
+      ],
+      "missingCapabilities": [
+        "N14",
+        "N15"
+      ],
+      "gapIds": [
+        "I02",
+        "M09",
+        "M10",
+        "P04",
+        "P05"
+      ],
+      "workPackages": [
+        "R4.3",
+        "R4.4",
+        "R6.1"
+      ],
+      "ruleGates": [
+        "D-09",
+        "G-01"
+      ],
+      "primaryWorkPackage": "R4.3"
+    },
+    {
+      "id": "F-07",
+      "sourceFile": "rust-match-kernel-v1.1/acceptance.md",
+      "originalRow": "| F-07 终局结算 | §8、结算倍率/寿元等来源 | S24–S29 | 完整永久成长金额与快照；关闭 G-03、D-05 |",
+      "sourceSha256": "9d271b86940f39e9d8134cf25e752a1c15723d64d89ae56ff368b363d16bbf08",
+      "currentMatrixFile": "docs/checklists/sdk-requirements-gap.md",
+      "currentRow": "| F-07 撤离、死亡与结算 | 单人撤离/中断/终局、配置损耗/积分、原子请求/补偿/冻结恢复；B1/B2、SDK-3-1/2 | P08；完整成长 M13、遗物 M10；真实事务 I02、原向量 I05 |",
+      "wholeDomainStatus": "open",
+      "exactOriginalAcceptance": "not_run",
+      "existingCapabilities": [
+        "E19"
+      ],
+      "missingCapabilities": [
+        "N15",
+        "N16"
+      ],
+      "gapIds": [
+        "I02",
+        "I05",
+        "M10",
+        "M13",
+        "P08"
+      ],
+      "workPackages": [
+        "R4.4",
+        "R5.1",
+        "R6.1",
+        "R6.2"
+      ],
+      "ruleGates": [
+        "D-05",
+        "D-06",
+        "G-03"
+      ],
+      "primaryWorkPackage": "R4.4"
+    },
+    {
+      "id": "F-08",
+      "sourceFile": "rust-match-kernel-v1.1/acceptance.md",
+      "originalRow": "| F-08 PVE 秘境 | §9.1、10 图配置/秘境档案 | S30–S31 | 每图机制/贡献/奖励、全部加持组合 |",
+      "sourceSha256": "775cbc91e2c20b7c69497e11410fefab08b5aa06507a7c24e7bf5423a3600923",
+      "currentMatrixFile": "docs/checklists/sdk-requirements-gap.md",
+      "currentRow": "| F-08 地图 PVE 与秘境 | 依赖目标、调谐、波次/阶段、预警站位、节点完成修正、整组复位；B3-5～19 | P06/P07；多人贡献 M10、三格临时加持 M11、新地图行为按 M04/M05；内容 I04 |",
+      "wholeDomainStatus": "open",
+      "exactOriginalAcceptance": "not_run",
+      "existingCapabilities": [
+        "E16",
+        "E17"
+      ],
+      "missingCapabilities": [
+        "N15",
+        "N17"
+      ],
+      "gapIds": [
+        "I04",
+        "M04",
+        "M05",
+        "M10",
+        "M11",
+        "P06",
+        "P07"
+      ],
+      "workPackages": [
+        "R4.4",
+        "R5.2",
+        "R5.3",
+        "R6.2"
+      ],
+      "ruleGates": [
+        "G-01"
+      ],
+      "primaryWorkPackage": "R4.4"
+    },
+    {
+      "id": "F-09",
+      "sourceFile": "rust-match-kernel-v1.1/acceptance.md",
+      "originalRow": "| F-09 特殊模式 | §9.2–9.5、训练/竞技/三遗迹/会战 | S32–S36 | 模式特有机制、重入、窗口/奖励/终态全覆盖 |",
+      "sourceSha256": "6284402b95338b2a5c8b44e70a475f9397d4d34749036d22829ec7b52da73a1c",
+      "currentMatrixFile": "docs/checklists/sdk-requirements-gap.md",
+      "currentRow": "| F-09 特殊对局模式 | 当前仅有搜打撤终局触发；修改结果 ID 不会增加新模式 | 模式与胜负/复活 M12，依赖 M01/M04/M10/M13；之后 I01/I03/I04 |",
+      "wholeDomainStatus": "open",
+      "exactOriginalAcceptance": "not_run",
+      "existingCapabilities": [],
+      "missingCapabilities": [
+        "N18"
+      ],
+      "gapIds": [
+        "I01",
+        "I03",
+        "I04",
+        "M01",
+        "M04",
+        "M10",
+        "M12",
+        "M13"
+      ],
+      "workPackages": [
+        "R5.3",
+        "R6.1",
+        "R6.2"
+      ],
+      "ruleGates": [
+        "D-07",
+        "D-08",
+        "G-01",
+        "G-04"
+      ],
+      "primaryWorkPackage": "R5.3"
+    },
+    {
+      "id": "F-10",
+      "sourceFile": "rust-match-kernel-v1.1/acceptance.md",
+      "originalRow": "| F-10 试炼养成 | §4.1/9.6、四劫/功法/真意/心法 | S37–S38 | 四劫每种达标/失败、全部成长效果；D-03 |",
+      "sourceSha256": "6078b12057530279ff0d85aa5e3342cd182931fe4b05d29654d375e32324b9bb",
+      "currentMatrixFile": "docs/checklists/sdk-requirements-gap.md",
+      "currentRow": "| F-10 试炼与养成战斗影响 | 可信初始基础属性、有限积分成长公式；未签收四劫/完整养成 | 四劫 M12，临时/永久派生 M04/M11/M13；对应向量与内容 I04/I05 |",
+      "wholeDomainStatus": "open",
+      "exactOriginalAcceptance": "not_run",
+      "existingCapabilities": [
+        "E19"
+      ],
+      "missingCapabilities": [
+        "N05",
+        "N07",
+        "N16",
+        "N18"
+      ],
+      "gapIds": [
+        "I04",
+        "I05",
+        "M03",
+        "M04",
+        "M11",
+        "M12",
+        "M13"
+      ],
+      "workPackages": [
+        "R3.2",
+        "R3.3",
+        "R5.1",
+        "R5.3",
+        "R6.2"
+      ],
+      "ruleGates": [
+        "D-03",
+        "G-01",
+        "G-03"
+      ],
+      "primaryWorkPackage": "R3.2"
+    },
+    {
+      "id": "F-11",
+      "sourceFile": "rust-match-kernel-v1.1/acceptance.md",
+      "originalRow": "| F-11 连接 | §3.1、身份代与保护规则 | S06、S34、S39 | 原地重连、新会话、旧 continuation、准备超时 |",
+      "sourceSha256": "8ae9d5638e233f9fcc927a6776398a57acb439c3180533f81cea6e1800e550f4",
+      "currentMatrixFile": "docs/checklists/sdk-requirements-gap.md",
+      "currentRow": "| F-11 连接生命周期 | 单人同 World 断线保留/换代/前后台/重新就绪/到期关闭；B2-1/2 | P09；多人/模式恢复 M01/M12；真实 Socket I03。战斗进程热恢复仍非首期要求 |",
+      "wholeDomainStatus": "open",
+      "exactOriginalAcceptance": "not_run",
+      "existingCapabilities": [
+        "E20"
+      ],
+      "missingCapabilities": [
+        "N02",
+        "N18"
+      ],
+      "gapIds": [
+        "I03",
+        "M01",
+        "M12",
+        "P09"
+      ],
+      "workPackages": [
+        "R2.2",
+        "R5.3",
+        "R6.1",
+        "R6.3"
+      ],
+      "ruleGates": [
+        "D-07"
+      ],
+      "primaryWorkPackage": "R2.2"
+    },
+    {
+      "id": "F-12",
+      "sourceFile": "rust-match-kernel-v1.1/acceptance.md",
+      "originalRow": "| F-12 状态发布 | §10、boundary §2.4/2.5 | S22、S40–S41 | 全字段映射、权限、背压/局部失败；G-04 |",
+      "sourceSha256": "9007f1755e6c94018f8db33640b404c84c8b8141119de7e28853181f4d0420bf",
+      "currentMatrixFile": "docs/checklists/sdk-requirements-gap.md",
+      "currentRow": "| F-12 状态发布 | 单接收者冻结全量、事件、发送回执、替代全量；B1/B2-4 | 多接收者权限/增量 M14；原客户端字段和真实发送 I01/I03 |",
+      "wholeDomainStatus": "open",
+      "exactOriginalAcceptance": "not_run",
+      "existingCapabilities": [
+        "E20"
+      ],
+      "missingCapabilities": [
+        "N03"
+      ],
+      "gapIds": [
+        "I01",
+        "I03",
+        "M14"
+      ],
+      "workPackages": [
+        "R2.3",
+        "R6.1"
+      ],
+      "ruleGates": [
+        "G-04"
+      ],
+      "primaryWorkPackage": "R2.3"
+    },
+    {
+      "id": "F-13",
+      "sourceFile": "rust-match-kernel-v1.1/acceptance.md",
+      "originalRow": "| F-13 外部业务 | boundary §2.3/3、事务与幂等 | S02、S26–S27、S36、S42–S43、S45 | 真实存储冲突/容量/未知结果/补偿，所有请求类 |",
+      "sourceSha256": "ad04544df9c776500515cf7bdd6163b6f43e101fd73b34a139d4555ba8c71a6d",
+      "currentMatrixFile": "docs/checklists/sdk-requirements-gap.md",
+      "currentRow": "| F-13 外部业务闭环 | 读取、入场、结算、补偿、查询/核对，协议 1/2/3 与本地持久责任恢复 | P08/P09；完整成长/附属事实 M13；真实事务/远程隔离 I02；跨游戏账本 I07 |",
+      "wholeDomainStatus": "open",
+      "exactOriginalAcceptance": "not_run",
+      "existingCapabilities": [
+        "E01",
+        "E19",
+        "E20"
+      ],
+      "missingCapabilities": [
+        "N16"
+      ],
+      "gapIds": [
+        "I02",
+        "I03",
+        "I07",
+        "M13",
+        "P08",
+        "P09"
+      ],
+      "workPackages": [
+        "R5.1",
+        "R6.1",
+        "R6.3",
+        "R6.4"
+      ],
+      "ruleGates": [
+        "D-05",
+        "D-06",
+        "G-03",
+        "G-04"
+      ],
+      "primaryWorkPackage": "R5.1"
+    },
+    {
+      "id": "F-14",
+      "sourceFile": "rust-match-kernel-v1.1/acceptance.md",
+      "originalRow": "| F-14 运行故障 | §10、boundary §4 | S03、S43–S48 | 正式 profile、隔离/故障/长稳/容量；G-05 |",
+      "sourceSha256": "0cecf8446d6d165f2888867076d2332ee35a94495781de678543608efed677d4",
+      "currentMatrixFile": "docs/checklists/sdk-requirements-gap.md",
+      "currentRow": "| F-14 运行与故障 | 单 Runtime 一局一线程、有界消息、独立模拟、重复/关闭/责任恢复；B1/B2/SDK-4-1 | P09；多局正式负载/长稳 I06，平台/发布 I08，独立审查 I09 |",
+      "wholeDomainStatus": "open",
+      "exactOriginalAcceptance": "not_run",
+      "existingCapabilities": [
+        "E20"
+      ],
+      "missingCapabilities": [],
+      "gapIds": [
+        "I06",
+        "I07",
+        "I08",
+        "I09",
+        "P09"
+      ],
+      "workPackages": [
+        "R6.3",
+        "R6.4",
+        "R6.5",
+        "R6.6"
+      ],
+      "ruleGates": [
+        "G-05"
+      ],
+      "primaryWorkPackage": "R6.3"
+    }
+  ]
+}

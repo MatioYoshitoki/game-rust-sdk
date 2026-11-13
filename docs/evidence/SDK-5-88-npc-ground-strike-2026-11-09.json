@@ -1,0 +1,100 @@
+{
+  "batch": "SDK-5-88",
+  "delivery": "DELIVERY-01",
+  "crossPackage": "R3.4",
+  "sdkVersion": "0.122.0",
+  "date": "2026-11-09",
+  "mechanismVersion": 105,
+  "protocolVersion": 6,
+  "spec": "docs/batches/SDK-5-88-npc-ground-strike.md",
+  "runtimeSourceSha256": "11407b2a50051539e103b3434e21bd30d95da679fb7559de459e449853855179",
+  "sample": {
+    "file": "examples/combat-host/npc-ground-strike.json",
+    "sha256": "3af4caa22ffa7c04626babdf798c31c3d19931156930557dd300acc14281caea",
+    "skillId": "tribulation-thunder-strike"
+  },
+  "sourceBinding": {
+    "tableFile": "rust-match-kernel-v1.1/source-config.json",
+    "tableFileSha256": "7df9854739b72904fd55d93f4a0e0a0fb0b19026a21b37346d2a0f544704da66",
+    "skillRowSha256": "cd096c93d0e951a5f6fe4a8575653ec52d18b901bdf1fa7d98cc90d8f68defc2",
+    "lifecycleRowSha256": "942715491eabbcceedfac149ccd2bda335a836a69b4059570fb1b7a4f2a50752",
+    "deliveryRowSha256": "cf59761cff330a9086fe2b4391e2a0a20efba4a425e9d833b3bc4df43b76146c",
+    "paralysisStatusSha256": "9e3a12e6d5e61196e1d72b0bae84aeec77226a6439f62beddf90263981d82115",
+    "rulesFile": "rust-match-kernel-v1.1/source-rules.json",
+    "rulesFileSha256": "e7fd565d8144b6e6344db4ea136b6a526f9ded7986b13d296103c6debc041469",
+    "sourceDocuments": [
+      {
+        "path": "docs/interfaces/skill-roster-cast-redesign.INTERFACE.md",
+        "sha256": "387c47f8b2c61334c393e7a7adf6bdf1447a927b4834e8986ce8f0ab734cf6de",
+        "lines": [
+          144,
+          765
+        ]
+      },
+      {
+        "path": "docs/designs/tribulation-trial.DESIGN.md",
+        "sha256": "13323833aa49eaef4fde492f5bb891cf7019a7942848f0be780ebe8cbbd0ae89",
+        "lines": [
+          37,
+          38,
+          100
+        ]
+      },
+      {
+        "path": "docs/interfaces/tribulation-trial.INTERFACE.md",
+        "sha256": "296e3dd73c0dd634ab1613271a0722f5c457b9a0e6d22940158390604e01f34e",
+        "lines": [
+          29,
+          33,
+          67
+        ]
+      }
+    ]
+  },
+  "contractFilesSha256": {
+    "docs/interfaces/combat-rules-v1.schema.json": "ea2d5881c451a82e0cf337648167595ed8ff17314c718b93a664784bf66d3863",
+    "docs/interfaces/member-piercing-v1.schema.json": "6d06133d6f532667fc89c7320e39b5c5ad0457333724abfe2e26112374e04045",
+    "docs/interfaces/publications-v6.schema.json": "c1502330cfcee3526830b2e169f2a7febcab9c3ffc7623727702a815a8f75884"
+  },
+  "scopeDecisions": {
+    "warning": "Use the structured NPC preparation of 750 ms, fixed radius 96 and world point locked at preparation.",
+    "target": "Select the nearest eligible member whose collision circle overlaps the warning and whose geometry is clear. Equal distance uses identity order. Immunity or dodge on the selection resolves an empty strike.",
+    "damage": "Reuse NPC area damage and shielding. Sample sets unavoidable contact. A fully absorbed hit can still qualify for the status roll.",
+    "status": "Roll once per successful contact with living source and target. Map paralysis to movement slow from the source description. Preserve its ordinary owner, lifetime and removal rules.",
+    "sourceLoss": "Reclaim pending warnings immediately on source death or replacement. Release closes the strike in the same simulation step.",
+    "departedView": "Omit NPC areas from the departing member frozen view. Surviving seats still observe the area lifecycle.",
+    "scratch": "Use one batch scratch directory and the project Cargo cache."
+  },
+  "checks": {
+    "rustDefault": 2712,
+    "rustAllFeatures": 2712,
+    "rustGroundFocused": 14,
+    "rustStrikeFocused": 8,
+    "nodeAndH5Adapters": 203,
+    "clippy": true,
+    "format": true,
+    "schemas": true,
+    "publicH5": {
+      "sdk": "0.122.0",
+      "transport": "Node/H5 HTTP/SSE and SQLite",
+      "seats": 2,
+      "warningMs": 750,
+      "radius": 96,
+      "warningRestoreLogicalMs": 180,
+      "statusRestoreLogicalMs": 930,
+      "slowExpiresAtMs": 3870,
+      "warningRestored": true,
+      "nearestHits": 1,
+      "damage": 80,
+      "seed": 1,
+      "statusChanceBps": 1500,
+      "slowMs": 3000,
+      "slowRestored": true,
+      "sourceLossCancelled": true,
+      "settlements": 2
+    }
+  },
+  "openInR3.4": [
+    "Other world effects and production geometry integration"
+  ]
+}

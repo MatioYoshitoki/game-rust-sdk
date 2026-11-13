@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "scope": "SDK-5-1 finite single-layer timed DEF status; controlled local integration only",
+  "criteria": {
+    "ST01": {
+      "rustTests": [
+        "config::status::tests::status_schema_protocol_and_support_matrix_match_registered_capability",
+        "config::status::tests::status_invalid_fields_references_policies_and_ranges_fail_before_start",
+        "config::status::tests::status_publication_budget_is_checked_for_all_reserved_entities",
+        "config::status::tests::status_public_actions_have_no_direct_state_mutation_or_clock_input"
+      ]
+    },
+    "ST02": {
+      "rustTests": [
+        "world::pve::status_tests::status_cancel_before_commit_has_no_cost_cooldown_projectile_or_instance",
+        "world::pve::status_tests::status_invalid_or_unaffordable_input_never_applies",
+        "world::pve::status_tests::status_dodge_or_lethal_contact_does_not_apply_to_target",
+        "world::pve::status_tests::status_legal_zero_damage_contact_applies_but_wall_does_not",
+        "world::pve::status_tests::status_monster_projectile_commit_and_player_hit_share_the_same_store",
+        "world::pve::status_tests::status_public_engine_deduplicates_input_and_rejects_nonfinite_payloads"
+      ]
+    },
+    "ST03": {
+      "rustTests": [
+        "world::pve::status_tests::status_real_projectile_uses_old_defense_then_new_defense_and_expires",
+        "world::pve::status_tests::status_defense_clamps_aggregates_and_uses_wide_integer_math",
+        "world::pve::status_tests::status_both_damage_directions_use_clamped_effective_defense_exactly"
+      ]
+    },
+    "ST04": {
+      "rustTests": [
+        "world::pve::status_tests::status_full_slot_still_refreshes_or_ignores_existing_instance",
+        "world::pve::status_tests::status_source_scoping_separates_monster_and_participant_and_refresh_updates_owner"
+      ]
+    },
+    "ST05": {
+      "rustTests": [
+        "world::pve::status_tests::status_half_open_expiry_read_only_views_and_reapplication_identity",
+        "world::pve::status_tests::status_real_projectile_uses_old_defense_then_new_defense_and_expires"
+      ]
+    },
+    "ST06": {
+      "rustTests": [
+        "world::pve::status_tests::status_capacity_preflight_is_atomic_for_self_and_hit_groups",
+        "world::pve::status_tests::status_monster_capacity_rejection_does_not_commit_cost_or_cooldown",
+        "world::pve::status_tests::status_event_burst_faults_with_frozen_responsibility_and_releases_world",
+        "config::status::tests::status_publication_budget_is_checked_for_all_reserved_entities"
+      ]
+    },
+    "ST07": {
+      "rustTests": [
+        "world::pve::status_tests::status_background_and_foreground_keep_original_deadlines",
+        "world::pve::status_tests::status_new_connection_preserves_instance_and_rejects_old_generation"
+      ],
+      "nodeCase": "a-extraction"
+    },
+    "ST08": {
+      "rustTests": [
+        "world::pve::status_tests::status_true_return_reset_invalidates_sources_and_old_projectile_binding",
+        "world::pve::status_tests::status_target_death_clears_its_instances_and_owned_effects",
+        "world::pve::status_tests::status_encounter_reset_clears_old_round_and_cannot_reapply_from_it",
+        "world::pve::status_tests::status_leave_extraction_and_close_release_instances_including_foreign_sources",
+        "world::pve::status_tests::status_hundred_lifetimes_clear_without_retaining_timers_or_ids"
+      ]
+    },
+    "ST09": {
+      "rustTests": [],
+      "nodeCases": [
+        "a-extraction",
+        "a-death",
+        "b-extraction",
+        "b-death"
+      ]
+    },
+    "ST10": {
+      "rustTests": [],
+      "reports": [
+        "artifacts/sdk-5-1/verification.json",
+        "artifacts/sdk-5-1/touch-verification.json",
+        "artifacts/sdk-5-1/delivery/independent-verification.json"
+      ]
+    },
+    "ST11": {
+      "rustTests": [],
+      "crashBoundaries": [
+        "active",
+        "after_intent_persist",
+        "after_storage_commit"
+      ]
+    },
+    "ST12": {
+      "rustTests": [],
+      "reports": [
+        "docs/evidence/b1-results.json",
+        "artifacts/sdk-3-1/verification.json",
+        "artifacts/sdk-3-2/verification.json",
+        "artifacts/sdk-5-1/scenario-regressions.json",
+        "artifacts/sdk-5-1/node-storage-final.log",
+        "artifacts/sdk-5-1/delivery/independent-verification.json"
+      ]
+    }
+  }
+}

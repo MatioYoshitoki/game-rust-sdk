@@ -1,0 +1,124 @@
+{
+  "batch": "SDK-5-19",
+  "crate": "0.21.0",
+  "protocol": 5,
+  "schema": 6,
+  "mechanism": 36,
+  "criteria": {
+    "MC01": {
+      "rustTests": [
+        "two_members::tests::capacity::member_capacity_one_two_four_eight_have_real_independent_world_members",
+        "two_members::tests::capacity::member_capacity_rejects_invalid_or_mixed_configuration_and_spawn_pairs",
+        "two_members::tests::capacity::member_capacity_create_count_and_every_identity_are_checked_before_io",
+        "two_members::tests::capacity::member_capacity_protocol4_stays_exactly_two"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json"
+      ]
+    },
+    "MC02": {
+      "rustTests": [
+        "two_members::tests::capacity::member_capacity_last_seat_sent_and_ready_gates_one_common_activation",
+        "two_members::tests::capacity::member_capacity_reverse_admission_receipts_never_cross_revisions"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json",
+        "browser/report.json"
+      ]
+    },
+    "MC03": {
+      "rustTests": [
+        "two_members::tests::capacity::member_capacity_required_refusal_first_middle_last_refunds_other_commits_once",
+        "two_members::tests::capacity::member_capacity_missing_last_ready_aborts_and_refunds_all_eight",
+        "two_members::tests::capacity::member_capacity_unknown_admission_is_queried_before_refund",
+        "two_members::tests::capacity::member_capacity_refused_facts_never_admit_that_member_and_compensate_others"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json"
+      ]
+    },
+    "MC04": {
+      "rustTests": [
+        "two_members::tests::capacity::member_capacity_same_input_ids_and_self_status_are_independent_for_eight",
+        "two_members::tests::capacity::member_capacity_shared_npcs_damage_distinct_members_and_allies_are_ignored",
+        "two_members::tests::capacity::member_capacity_eight_compete_for_one_resource_and_duplicate_does_not_repeat",
+        "two_members::tests::capacity::member_capacity_full_member_leaves_resource_for_next_member"
+      ],
+      "reports": [
+        "native-verification.json",
+        "browser/report.json"
+      ]
+    },
+    "MC05": {
+      "rustTests": [
+        "two_members::tests::capacity::member_capacity_private_publications_and_wrong_recipient_acks_stay_isolated"
+      ],
+      "reports": [
+        "native-verification.json",
+        "browser/report.json"
+      ]
+    },
+    "MC06": {
+      "rustTests": [
+        "two_members::tests::capacity::member_capacity_reconnect_first_middle_last_fences_old_input_only",
+        "two_members::tests::capacity::member_capacity_disconnect_timeout_terminates_only_one_of_eight",
+        "two_members::tests::capacity::member_capacity_unknown_core_and_each_member_exit_leave_survivor_active",
+        "two_members::tests::capacity::member_capacity_first_middle_last_npc_death_does_not_close_survivors"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json",
+        "browser/report.json"
+      ]
+    },
+    "MC07": {
+      "rustTests": [
+        "two_members::tests::capacity::member_capacity_absolute_terminal_and_repeated_close_release_single_world",
+        "two_members::tests::capacity::member_capacity_output_pressure_rejects_before_mutation_and_can_close_after_drain",
+        "two_members::tests::capacity::member_capacity_public_runtime_hundred_eight_member_cycles_release_threads_and_debts"
+      ],
+      "reports": [
+        "native-verification.json",
+        "browser/report.json"
+      ]
+    },
+    "MC08": {
+      "rustTests": [
+        "two_members::tests::capacity::member_capacity_eight_frozen_settlements_recover_twice_without_world",
+        "two_members::tests::capacity::member_capacity_recovery_rejects_missing_or_reordered_or_rebound_members",
+        "two_members::tests::capacity::member_capacity_asset_fact_budget_rejects_before_application_and_fits_jsonl_recovery"
+      ],
+      "reports": [
+        "native-verification.json",
+        "crashes/report.json"
+      ]
+    },
+    "MC09": {
+      "rustTests": [],
+      "reports": [
+        "native-verification.json",
+        "browser/report.json",
+        "delivery/independent-verification.json"
+      ]
+    },
+    "MC10": {
+      "rustTests": [],
+      "reports": [
+        "native-verification.json",
+        "delivery/independent-verification.json",
+        "delivery/source-verification.json",
+        "legacy-public/report.json",
+        "local-preview.json"
+      ]
+    }
+  },
+  "limitations": [
+    "固定完整名单1～8名真实成员，全部必需；沿SDK-5-18 PVE白名单",
+    "未接匹配队列/自动机器人、16/24模式、PvP、delta/旁观和完整战斗组合",
+    "不关闭完整R2/M01/M14；原48场景/50向量本批未执行",
+    "原历史artifacts清理例外保留；本批起点实际存在文件逐字节保护"
+  ]
+}

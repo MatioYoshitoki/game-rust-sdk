@@ -1,0 +1,122 @@
+{
+  "batch": "SDK-5-88",
+  "delivery": "DELIVERY-01",
+  "crossPackage": "R3.4",
+  "sdkVersion": "0.127.0",
+  "date": "2026-11-09",
+  "mechanismVersion": 105,
+  "protocolVersion": 6,
+  "spec": "docs/batches/SDK-5-88-anchor-following-fields.md",
+  "runtimeSourceSha256": "113ffc7ec5caeacc33186a0dbbcfcd27bf23941325fe5f8844020607e02a63d4",
+  "sample": {
+    "file": "examples/combat-host/anchor-following-field.json",
+    "sha256": "6e28c0ab5d42a43ef5681b173f797db2915181f7724c868bfba345b54e2d5538",
+    "baseFile": "examples/combat-host/member-cast-anchor.json",
+    "baseSha256": "4a8bde5c9faa655dd1e3abaaaaf8a7532a8eebe57874d3a008d717be11b0d6c0",
+    "producerSkillId": "anchor-place",
+    "fieldSkillId": "anchor-field",
+    "role": "generic fixture"
+  },
+  "sourceBinding": {
+    "rulesFile": "rust-match-kernel-v1.1/source-rules.json",
+    "rulesFileSha256": "e7fd565d8144b6e6344db4ea136b6a526f9ded7986b13d296103c6debc041469",
+    "sourceDocuments": [
+      {
+        "path": "docs/designs/skill-runtime.DESIGN.md",
+        "sha256": "556aa9683e6f0d8e9ad44a36ae0aaab76e7b4a6261b290251b3f9c7a340316db",
+        "lines": [
+          46,
+          49,
+          64,
+          67,
+          109,
+          110,
+          167,
+          185
+        ]
+      },
+      {
+        "path": "docs/designs/skill-cast-lifecycle.DESIGN.md",
+        "sha256": "89980ef32683ce41f104a9105495e7f55748e90cdae74ffc44be470d0847be2f",
+        "lines": [
+          213,
+          219,
+          379,
+          514
+        ]
+      },
+      {
+        "path": "docs/interfaces/skill-runtime.INTERFACE.md",
+        "sha256": "886544c59b05b0f22690157d862652fc6cea8d84683d63be8b7ccff9f3920729",
+        "lines": [
+          60,
+          63,
+          64,
+          84
+        ]
+      }
+    ]
+  },
+  "contractFilesSha256": {
+    "docs/interfaces/combat-rules-v1.schema.json": "40f1dc11aea691a42a430a3edc7656892013750502e40b6403af1751f64f35bc",
+    "docs/interfaces/member-piercing-v1.schema.json": "69d97a1f12e6fbc4acaee7ee10e7ba781379806d4703427ec79cdb88f6f90ea8",
+    "docs/interfaces/publications-v6.schema.json": "90602dc7af21ecfaa10a6bf72103377816bd4b4a3cf2814bedd89a2d24daf367",
+    "web/replication.mjs": "17ef3066f27036fc5ddf7be7882393b1fe596d82b24542040c47eb0dafd3310c"
+  },
+  "scopeDecisions": {
+    "attachment": "Opt in by anchor producer and ground field skill. An explicit anchored cast binds the field to the exact live anchor and owner generation.",
+    "movement": "Anchor recast updates the field center in the same input. The field keeps its original warning, tick clock, contact history, lifetime, ownership and capacity slot.",
+    "cleanup": "An expiring or replaced anchor ends its attached fields with anchor_invalid before they can resolve another pulse. Ordinary source and world cleanup remain authoritative.",
+    "publication": "Validate same-frame anchor identity, owner and center. Restore current binding and contact history across reconnect.",
+    "scratch": "Use one batch scratch directory and the shared Cargo cache."
+  },
+  "checks": {
+    "rustDefault": 2744,
+    "rustAllFeatures": 2744,
+    "rustFocused": 18,
+    "nodeAndH5Adapters": 209,
+    "clippy": true,
+    "format": true,
+    "schemas": true,
+    "publicH5": {
+      "sdk": "0.127.0",
+      "transport": "Node/H5 HTTP/SSE and SQLite",
+      "seats": 2,
+      "centers": [
+        [
+          560,
+          400
+        ],
+        [
+          560,
+          600
+        ],
+        [
+          560,
+          400
+        ],
+        [
+          560,
+          600
+        ]
+      ],
+      "hitsByTarget": [
+        100,
+        100
+      ],
+      "completedTicks": 3,
+      "usedHits": 2,
+      "spiritSpent": 17,
+      "sameFieldIdentity": true,
+      "warningMoved": true,
+      "reconnectPreservedContacts": true,
+      "repeatHitBlocked": true,
+      "ownerExitIsolated": true,
+      "settlements": 2
+    }
+  },
+  "openInR3.4": [
+    "Anchor ending and return behaviors",
+    "Remaining world effects and production geometry integration"
+  ]
+}

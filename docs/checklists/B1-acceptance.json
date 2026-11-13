@@ -1,0 +1,156 @@
+{
+  "schemaVersion": 1,
+  "scope": "B1 frozen verification fixture and controlled storage; no production signoff",
+  "criteria": {
+    "B1-K01": {
+      "rustTests": [
+        "verification::tests::strict_schema_rejects_unknown_commands_and_fields",
+        "verification::boundaries::b1_k01_invalid_create_and_loaded_facts_have_no_partial_effects",
+        "verification::boundaries::b1_k01_fieldless_messages_reject_unknown_fields"
+      ],
+      "wireChecks": [
+        "strict_schema_and_recovery",
+        "oversized_line_recovery"
+      ],
+      "nodeCases": [
+        "oversized"
+      ]
+    },
+    "B1-K02": {
+      "rustTests": [
+        "verification::boundaries::b1_k02_duplicate_create_join_ready_activate_once",
+        "verification::boundaries::b1_k02_ready_accepts_sent_full_while_newer_full_is_inflight",
+        "verification::boundaries::b1_k02_background_revokes_prior_readiness_without_resetting_active_clock",
+        "verification::boundaries::b1_publication_terminal_order_matrix_and_replacement_full",
+        "verification::boundaries::b1_publication_identity_and_old_failure_cannot_change_new_full",
+        "verification::boundaries::b1_k02_background_during_deployment_revokes_initial_sent_full",
+        "verification::boundaries::b1_k02_background_ready_requires_foreground_and_reentry_revokes_unready_epoch"
+      ],
+      "nodeCases": [
+        "duplicates",
+        "publication_failure",
+        "combined"
+      ]
+    },
+    "B1-K03": {
+      "rustTests": [
+        "verification::tests::movement_is_normalized_and_one_step_is_exact",
+        "verification::tests::movement_cannot_cross_walls_or_bounds",
+        "verification::tests::invalid_numbers_and_old_identity_do_not_mutate_world",
+        "verification::boundaries::b1_input_history_eviction_rejects_replay_without_restarting_movement"
+      ]
+    },
+    "B1-K04": {
+      "rustTests": [
+        "verification::tests::cost_is_committed_once_and_cancel_before_commit_is_free",
+        "verification::tests::projectile_does_not_travel_before_its_commit_time",
+        "verification::tests::wall_intercepts_projectile_before_target",
+        "verification::boundaries::b1_melee_cannot_damage_through_a_static_wall"
+      ],
+      "nodeCases": [
+        "duplicates",
+        "combined"
+      ]
+    },
+    "B1-K05": {
+      "rustTests": [
+        "verification::tests::full_inventory_does_not_consume_ground_drop",
+        "verification::boundaries::b1_k05_material_and_orb_are_consumed_once_and_clamped",
+        "verification::boundaries::b1_k05_wrong_inventory_revision_keeps_material_and_quantity"
+      ],
+      "nodeCases": [
+        "duplicates"
+      ]
+    },
+    "B1-K06": {
+      "rustTests": [
+        "verification::tests::early_extraction_is_refused_and_cancel_does_not_settle",
+        "verification::tests::damage_and_leaving_range_interrupt_extraction",
+        "verification::boundaries::b1_k06_background_interrupts_final_channel_step_then_new_channel_can_finish",
+        "verification::boundaries::b1_k06_same_step_damage_precedes_channel_completion",
+        "verification::boundaries::b1_k06_channel_cannot_commit_before_five_seconds"
+      ],
+      "nodeCases": [
+        "normal",
+        "unknown"
+      ]
+    },
+    "B1-K07": {
+      "rustTests": [
+        "verification::tests::extraction_and_death_have_exact_asset_results",
+        "verification::tests::absolute_terminal_uses_the_same_death_settlement",
+        "verification::boundaries::b1_k07_natural_lethal_hit_cancels_uncommitted_skill",
+        "verification::boundaries::b1_k07_draining_rejects_lifecycle_inputs_and_duplicate_death"
+      ],
+      "nodeCases": [
+        "death"
+      ]
+    },
+    "B1-K08": {
+      "rustTests": [
+        "verification::tests::refused_admission_never_injects_inventory",
+        "verification::tests::unknown_admission_is_queried_without_double_debit",
+        "verification::boundaries::b1_k08_wrong_receipts_cannot_resolve_or_modify_settlement",
+        "verification::boundaries::b1_k08_settlement_retry_after_known_failure_is_not_double_applied",
+        "verification::boundaries::b1_k08_retry_exhaustion_emits_one_reconciliation_and_never_changes_business_id",
+        "verification::boundaries::b1_k08_refused_settlement_requires_explicit_proof_and_preserves_frozen_amounts",
+        "verification::boundaries::b1_k08_unknown_query_escalates_once_and_late_commit_resolves_all_pending_reads"
+      ],
+      "nodeCases": [
+        "retry",
+        "retry_exhausted",
+        "refused",
+        "query_unknown",
+        "unknown"
+      ]
+    },
+    "B1-K09": {
+      "rustTests": [
+        "verification::tests::late_admission_after_close_is_compensated_without_world",
+        "verification::tests::active_close_freezes_settlement_and_late_commit_does_not_reopen",
+        "verification::tests::output_fault_preserves_a_frozen_asset_obligation",
+        "verification::boundaries::b1_k08_refused_settlement_recovers_after_world_is_closed",
+        "verification::boundaries::b1_k09_closed_admission_no_commit_never_starts_another_debit",
+        "verification::boundaries::b1_k09_late_load_never_creates_admission_after_close",
+        "verification::boundaries::b1_k09_refused_compensation_is_reconciled_once_without_world",
+        "verification::boundaries::b1_k09_reconciled_admission_after_close_is_refunded_once",
+        "verification::boundaries::b1_k09_reconciliation_no_commit_can_close_an_unadmitted_instance",
+        "verification::boundaries::b1_k09_close_uses_reserved_capacity_when_ordinary_input_is_full"
+      ],
+      "nodeCases": [
+        "close_pending",
+        "refused"
+      ]
+    },
+    "B1-K10": {
+      "rustTests": [
+        "verification::tests::semantic_replay_compares_events_and_random_drop_positions",
+        "verification::tests::fixed_seed_replays_and_one_hundred_worlds_close",
+        "verification::tests::worker_shutdown_releases_each_of_one_hundred_runtime_threads",
+        "verification::tests::bounded_output_backpressure_faults_only_its_instance",
+        "verification::tests::live_runtime_ticks_without_host_timers_and_shutdown_joins"
+      ]
+    },
+    "B1-H01": {
+      "nodeCases": [
+        "normal",
+        "death",
+        "publication_failure",
+        "close_pending"
+      ]
+    },
+    "B1-H02": {
+      "nodeCases": [
+        "normal",
+        "death",
+        "duplicates",
+        "unknown",
+        "retry",
+        "refused",
+        "retry_exhausted",
+        "query_unknown",
+        "combined"
+      ]
+    }
+  }
+}

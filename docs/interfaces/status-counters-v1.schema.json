@@ -1,0 +1,765 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:match-kernel:status-counters-v1",
+  "title": "Explicit zero counters, fixed and layered status contributions",
+  "$comment": "Native Rust validates cross references, initial/stacks <= maximum, total modifiers <=8 and attribute uniqueness; runtime owns crossing and lifecycle.",
+  "$defs": {
+    "entity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "id",
+        "generation"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "participant",
+            "monster"
+          ]
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "compound_numeric_modifier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "attribute",
+        "modifier_bps"
+      ],
+      "properties": {
+        "attribute": {
+          "enum": [
+            "max_hp",
+            "max_spirit",
+            "spd",
+            "attack_speed",
+            "element_resistance",
+            "atk",
+            "def",
+            "healing_received",
+            "damage_reduction",
+            "recovery_strength",
+            "cooldown_reduction",
+            "armor_penetration",
+            "critical_chance",
+            "critical_damage_bonus",
+            "dodge_penalty",
+            "dodge_chance",
+            "accuracy",
+            "skill_power_bonus",
+            "control_duration_reduction",
+            "harmful_duration_reduction",
+            "basic_interval_delay",
+            "movement_slow",
+            "movement_haste",
+            "life_steal"
+          ]
+        },
+        "modifier_bps": {
+          "type": "integer",
+          "minimum": -10000,
+          "maximum": 100000
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "attribute": {
+                "not": {
+                  "enum": [
+                    "max_hp",
+                    "max_spirit",
+                    "spd",
+                    "attack_speed",
+                    "element_resistance",
+                    "atk",
+                    "def",
+                    "healing_received",
+                    "recovery_strength",
+                    "movement_slow",
+                    "life_steal"
+                  ]
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "modifier_bps": {
+                "minimum": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "attribute": {
+                "const": "movement_slow"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "modifier_bps": {
+                "minimum": -9999,
+                "maximum": -1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "attribute": {
+                "const": "movement_haste"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "modifier_bps": {
+                "minimum": 1,
+                "maximum": 10000
+              }
+            }
+          }
+        }
+      ]
+    },
+    "window_record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "basis",
+        "recorded",
+        "cap",
+        "contacts",
+        "maximum_sampling",
+        "max_hp_at_apply",
+        "max_spirit_at_apply"
+      ],
+      "properties": {
+        "basis": {
+          "enum": [
+            "none",
+            "damage_dealt",
+            "damage_taken",
+            "shield_absorbed"
+          ]
+        },
+        "recorded": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "cap": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "contacts": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "maximum_sampling": {
+          "enum": [
+            "snapshot",
+            "live"
+          ]
+        },
+        "max_hp_at_apply": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "max_spirit_at_apply": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "basis": {
+                "const": "none"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "recorded": {
+                "const": 0
+              },
+              "cap": {
+                "const": 0
+              },
+              "contacts": {
+                "const": 0
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "cap": {
+                "minimum": 1
+              }
+            }
+          }
+        }
+      ],
+      "$comment": "recorded <= cap and contact/record consistency are enforced by the shared Node/H5 decoder."
+    },
+    "status_flags": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "oneOf": [
+        {
+          "items": {
+            "enum": [
+              "silence",
+              "root",
+              "stun"
+            ]
+          }
+        },
+        {
+          "items": {
+            "enum": [
+              "control_immunity",
+              "damage_immunity",
+              "first_control_immunity"
+            ]
+          }
+        }
+      ]
+    },
+    "counter_config": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "initial",
+        "maximum"
+      ],
+      "properties": {
+        "initial": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 128
+        },
+        "maximum": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "zero_policy": {
+          "enum": [
+            "keep",
+            "remove"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "zero_policy"
+            ],
+            "properties": {
+              "zero_policy": {
+                "const": "remove"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "initial": {
+                "minimum": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "counter_definition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "mechanism",
+        "duration_ms",
+        "duplicate_policy",
+        "source_scoped",
+        "stack_counter"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "mechanism": {
+          "const": "timed_compound_modifier"
+        },
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3600000
+        },
+        "duplicate_policy": {
+          "enum": [
+            "refresh",
+            "ignore"
+          ]
+        },
+        "source_scoped": {
+          "const": true
+        },
+        "modifier_bps": {
+          "const": 0
+        },
+        "base_modifiers": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/compound_numeric_modifier"
+          }
+        },
+        "modifiers": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/compound_numeric_modifier"
+          }
+        },
+        "harmful": {
+          "type": "boolean"
+        },
+        "stack_counter": {
+          "$ref": "#/$defs/counter_config"
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "base_modifiers"
+          ]
+        },
+        {
+          "required": [
+            "modifiers"
+          ]
+        }
+      ]
+    },
+    "fixed_definition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "mechanism",
+        "duration_ms",
+        "duplicate_policy",
+        "source_scoped",
+        "base_modifiers"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "mechanism": {
+          "const": "timed_compound_modifier"
+        },
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3600000
+        },
+        "duplicate_policy": {
+          "enum": [
+            "refresh",
+            "ignore",
+            "stack"
+          ]
+        },
+        "source_scoped": {
+          "type": "boolean"
+        },
+        "modifier_bps": {
+          "const": 0
+        },
+        "base_modifiers": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/compound_numeric_modifier"
+          }
+        },
+        "modifiers": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/compound_numeric_modifier"
+          }
+        },
+        "harmful": {
+          "type": "boolean"
+        },
+        "max_stacks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "flags": {
+          "$ref": "#/$defs/status_flags"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "duplicate_policy": {
+                "const": "stack"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "max_stacks"
+            ]
+          },
+          "else": {
+            "not": {
+              "required": [
+                "max_stacks"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "counter_status": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "instance_id",
+        "definition_id",
+        "source",
+        "target",
+        "applied_at_ms",
+        "expires_at_ms",
+        "modifier_bps",
+        "stack_counter",
+        "stacks",
+        "max_stacks"
+      ],
+      "properties": {
+        "instance_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "definition_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "source": {
+          "$ref": "#/$defs/entity"
+        },
+        "target": {
+          "$ref": "#/$defs/entity"
+        },
+        "applied_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "expires_at_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "modifier_bps": {
+          "const": 0
+        },
+        "base_modifiers": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/compound_numeric_modifier"
+          }
+        },
+        "modifiers": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/compound_numeric_modifier"
+          }
+        },
+        "window": {
+          "$ref": "#/$defs/window_record"
+        },
+        "stack_counter": {
+          "const": true
+        },
+        "stacks": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 128
+        },
+        "max_stacks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "cleanse": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/status_cleanse_view"
+            },
+            {
+              "properties": {
+                "on_tick": {
+                  "const": false
+                },
+                "on_expired": {
+                  "const": true
+                }
+              }
+            }
+          ]
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "base_modifiers"
+          ]
+        },
+        {
+          "required": [
+            "modifiers"
+          ]
+        }
+      ]
+    },
+    "fixed_status": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "instance_id",
+        "definition_id",
+        "source",
+        "target",
+        "applied_at_ms",
+        "expires_at_ms",
+        "modifier_bps",
+        "base_modifiers"
+      ],
+      "properties": {
+        "instance_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "definition_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "source": {
+          "$ref": "#/$defs/entity"
+        },
+        "target": {
+          "$ref": "#/$defs/entity"
+        },
+        "applied_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "expires_at_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "modifier_bps": {
+          "const": 0
+        },
+        "base_modifiers": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/compound_numeric_modifier"
+          }
+        },
+        "modifiers": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/compound_numeric_modifier"
+          }
+        },
+        "window": {
+          "$ref": "#/$defs/window_record"
+        },
+        "stacks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "max_stacks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "flags": {
+          "$ref": "#/$defs/status_flags"
+        }
+      },
+      "dependentRequired": {
+        "stacks": [
+          "max_stacks"
+        ],
+        "max_stacks": [
+          "stacks"
+        ]
+      }
+    },
+    "add_stacks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "subject",
+        "status_id",
+        "amount"
+      ],
+      "properties": {
+        "kind": {
+          "const": "add_status_stacks"
+        },
+        "subject": {
+          "enum": [
+            "owner",
+            "other"
+          ]
+        },
+        "status_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "amount": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "refresh_duration": {
+          "type": "boolean"
+        }
+      }
+    },
+    "stack_selector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "definition_id",
+        "at_least"
+      ],
+      "properties": {
+        "definition_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "at_least": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        }
+      }
+    },
+    "status_cleanse_view": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "on_tick",
+        "on_expired"
+      ],
+      "properties": {
+        "on_tick": {
+          "type": "boolean"
+        },
+        "on_expired": {
+          "type": "boolean"
+        }
+      },
+      "anyOf": [
+        {
+          "properties": {
+            "on_tick": {
+              "const": true
+            }
+          }
+        },
+        {
+          "properties": {
+            "on_expired": {
+              "const": true
+            }
+          }
+        }
+      ]
+    }
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/counter_definition"
+    },
+    {
+      "$ref": "#/$defs/fixed_definition"
+    },
+    {
+      "$ref": "#/$defs/counter_status"
+    },
+    {
+      "$ref": "#/$defs/fixed_status"
+    },
+    {
+      "$ref": "#/$defs/add_stacks"
+    },
+    {
+      "$ref": "#/$defs/stack_selector"
+    }
+  ]
+}

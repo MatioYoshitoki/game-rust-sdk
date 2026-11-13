@@ -1,0 +1,145 @@
+{
+  "batch": "SDK-5-20",
+  "crate": "0.22.0",
+  "protocol": 6,
+  "schema": 7,
+  "mechanism": 37,
+  "criteria": {
+    "DP01": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::delta_configuration_and_typed_create_are_versioned_and_strict",
+        "two_members::tests::capacity::delta::delta_dto_rejects_unknown_and_null_patch_fields"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json"
+      ]
+    },
+    "DP02": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::delta_real_frames_interoperate_with_client_and_emit_smaller_deltas",
+        "two_members::tests::capacity::delta::delta_collection_diff_preserves_removal_reorder_null_and_empty"
+      ],
+      "reports": [
+        "native-verification.json",
+        "interop-verification.json"
+      ]
+    },
+    "DP03": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::delta_sent_base_advances_only_for_exact_current_drained_recipient",
+        "two_members::tests::capacity::delta::delta_enqueued_full_and_sent_delta_cannot_be_used_as_ready",
+        "two_members::tests::capacity::delta::delta_ready_full_is_pinned_when_sent_history_rolls_over",
+        "two_members::tests::capacity::delta::delta_undrained_output_is_not_a_sent_baseline"
+      ],
+      "reports": [
+        "native-verification.json"
+      ]
+    },
+    "DP04": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::delta_failed_initial_full_gets_replacement_full",
+        "two_members::tests::capacity::delta::delta_failed_delta_never_advances_base",
+        "two_members::tests::capacity::delta::delta_cancelled_delta_never_advances_base",
+        "two_members::tests::capacity::delta::delta_timeout_replaces_own_stream_while_seven_peers_keep_progressing"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json"
+      ]
+    },
+    "DP05": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::delta_client_cache_loss_and_resync_are_atomic_and_idempotent",
+        "two_members::tests::capacity::delta::delta_request_full_cannot_reuse_an_old_connection_or_change_peer",
+        "two_members::tests::capacity::delta::delta_request_full_requires_a_real_view_and_cannot_hot_restore_financial_recovery"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json",
+        "browser/report.json"
+      ]
+    },
+    "DP06": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::delta_background_foreground_requires_new_sent_full_and_preserves_costs"
+      ],
+      "reports": [
+        "native-verification.json",
+        "browser/report.json"
+      ]
+    },
+    "DP07": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::delta_unsent_coalescing_and_inflight_storage_are_bounded",
+        "two_members::tests::capacity::delta::delta_periodic_full_refreshes_without_changing_epoch",
+        "two_members::tests::capacity::delta::delta_expired_sent_baseline_starts_new_epoch_full",
+        "two_members::tests::capacity::delta::delta_large_patch_uses_full_instead_of_growing_payload",
+        "two_members::tests::capacity::delta::delta_public_runtime_hundred_cycles_deliver_terminal_full_and_release_threads"
+      ],
+      "reports": [
+        "native-verification.json"
+      ]
+    },
+    "DP08": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::delta_decoder_rejects_duplicate_conflicts_and_old_frames_without_mutating",
+        "two_members::tests::capacity::delta::delta_decoder_rejects_wrong_key_owner_epoch_base_and_missing_cache",
+        "two_members::tests::capacity::delta::delta_bad_collection_order_or_remove_does_not_partially_apply"
+      ],
+      "reports": [
+        "native-verification.json",
+        "interop-verification.json"
+      ]
+    },
+    "DP09": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::delta_terminal_full_failure_can_recover_after_world_closed",
+        "two_members::tests::capacity::delta::delta_closed_grace_expiry_is_explicit_and_does_not_undo_assets",
+        "two_members::tests::capacity::delta::delta_terminal_resync_uses_frozen_view_not_survivor_positions",
+        "two_members::tests::capacity::delta::delta_unknown_terminal_core_continues_after_publication_expiry",
+        "two_members::tests::capacity::delta::delta_member_terminal_delivery_expires_without_stopping_other_members",
+        "two_members::tests::capacity::delta::delta_expiry_notice_survives_output_backpressure"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json"
+      ]
+    },
+    "DP10": {
+      "rustTests": [],
+      "reports": [
+        "browser/report.json",
+        "public/report.json",
+        "delivery/independent-verification.json"
+      ]
+    },
+    "DP11": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::delta_frozen_financial_recovery_has_no_baselines_or_world"
+      ],
+      "reports": [
+        "native-verification.json",
+        "crashes/report.json"
+      ]
+    },
+    "DP12": {
+      "rustTests": [],
+      "reports": [
+        "native-verification.json",
+        "delivery/independent-verification.json",
+        "delivery/source-verification.json",
+        "legacy4/report.json",
+        "legacy5/report.json",
+        "local-preview.json"
+      ]
+    }
+  },
+  "limitations": [
+    "固定完整名单1～8必需成员，继承有限PVE白名单；full/delta仅逐成员本人视图",
+    "匹配/自动机器人、16/24模式、PvP、观战及完整隐私/战斗组合未验",
+    "金融恢复仅Closed责任账，不恢复World、基线或在途帧",
+    "不关闭完整R2/M01/M14；原48场景/50向量无新增运行",
+    "历史清理例外保留，批次起点实际存在旧文件逐字节保护"
+  ]
+}

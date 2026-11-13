@@ -1,0 +1,97 @@
+{
+  "batch": "SDK-5-2",
+  "scope": "finite DEF stack, shared expiry; not full M03/M04",
+  "criteria": {
+    "SK01": {
+      "rustTests": [
+        "config::status::stack_tests::stack_loads_version20_and_declares_finite_support",
+        "config::status::stack_tests::stack_invalid_caps_policies_versions_and_extra_fields_reject_startup",
+        "config::status::stack_tests::stack_accepts_one_and_engineering_cap_and_preserves_legacy19_definitions",
+        "config::status::stack_tests::stack_count_cannot_be_submitted_as_player_intent_or_external_fact"
+      ]
+    },
+    "SK02": {
+      "rustTests": [
+        "world::pve::stack_tests::stack_keeps_identity_and_refreshes_shared_deadline_even_at_cap",
+        "world::pve::stack_tests::stack_rejected_contacts_do_not_change_existing_layers_or_deadlines"
+      ]
+    },
+    "SK03": {
+      "rustTests": [
+        "world::pve::stack_tests::stack_real_hits_use_previous_layers_then_cap_and_restore_after_expiry",
+        "world::pve::stack_tests::stack_modifier_multiplies_before_single_rounding_and_global_caps"
+      ]
+    },
+    "SK04": {
+      "rustTests": [
+        "world::pve::stack_tests::stack_source_scoping_and_latest_owner_are_consistent_for_all_layers",
+        "world::pve::stack_tests::stack_does_not_change_legacy19_status_wire_shape",
+        "world::pve::status_tests::status_full_slot_still_refreshes_or_ignores_existing_instance",
+        "world::pve::status_tests::status_source_scoping_separates_monster_and_participant_and_refresh_updates_owner"
+      ],
+      "nodeCases": [
+        "legacy19.extraction",
+        "legacy19.death"
+      ]
+    },
+    "SK05": {
+      "rustTests": [
+        "world::pve::stack_tests::stack_at_deadline_replaces_whole_group_and_same_tick_hits_are_ordered",
+        "world::pve::stack_tests::stack_public_retries_and_transport_receipts_never_add_layers_or_extend_deadline"
+      ]
+    },
+    "SK06": {
+      "rustTests": [
+        "world::pve::stack_tests::stack_full_slots_allow_existing_layers_but_mixed_group_rejection_is_atomic",
+        "world::pve::stack_tests::stack_self_rejection_preserves_existing_layers_and_costs",
+        "world::pve::stack_tests::stack_many_layers_use_one_slot_and_one_close_removal",
+        "world::pve::status_tests::status_event_burst_faults_with_frozen_responsibility_and_releases_world",
+        "config::status::tests::status_publication_budget_is_checked_for_all_reserved_entities"
+      ]
+    },
+    "SK07": {
+      "rustTests": [
+        "world::pve::stack_tests::stack_background_time_and_reset_clear_whole_group_without_reusing_identity",
+        "world::pve::stack_tests::stack_encounter_round_reset_clears_all_layers_and_old_source_cannot_reapply",
+        "world::pve::status_tests::status_new_connection_preserves_instance_and_rejects_old_generation",
+        "world::pve::status_tests::status_true_return_reset_invalidates_sources_and_old_projectile_binding",
+        "world::pve::status_tests::status_target_death_clears_its_instances_and_owned_effects",
+        "world::pve::status_tests::status_leave_extraction_and_close_release_instances_including_foreign_sources"
+      ],
+      "nodeCases": [
+        "a-extraction"
+      ]
+    },
+    "SK08": {
+      "rustTests": [],
+      "nodeCases": [
+        "a-extraction",
+        "a-death",
+        "b-extraction",
+        "b-death"
+      ],
+      "touchCases": [
+        "extraction",
+        "death"
+      ]
+    },
+    "SK09": {
+      "rustTests": [],
+      "crashBoundaries": [
+        "active",
+        "after_intent_persist",
+        "after_storage_commit"
+      ],
+      "recoveriesPerBoundary": 2
+    },
+    "SK10": {
+      "rustTests": [],
+      "reports": [
+        "artifacts/sdk-5-2/baseline-verification.json",
+        "artifacts/sdk-5-2/verification.json",
+        "artifacts/sdk-5-2/delivery/independent-verification.json",
+        "artifacts/sdk-5-2/delivery/source-verification.json"
+      ]
+    }
+  }
+}

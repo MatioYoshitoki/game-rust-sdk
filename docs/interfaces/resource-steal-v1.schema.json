@@ -1,0 +1,532 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://match-kernel.local/interfaces/resource-steal-v1.schema.json",
+  "title": "Explicit resource steal fragments",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/resource_steal"
+    },
+    {
+      "$ref": "#/$defs/resource_stolen"
+    },
+    {
+      "$ref": "#/$defs/trigger_effect"
+    },
+    {
+      "$ref": "#/$defs/life_steal_cap"
+    },
+    {
+      "$ref": "#/$defs/life_steal_definition"
+    },
+    {
+      "$ref": "#/$defs/life_steal_status"
+    }
+  ],
+  "$defs": {
+    "resource_steal": {
+      "type": "object",
+      "properties": {
+        "hp_current_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "spirit_current_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "hp_policy": {
+          "enum": [
+            "direct_transfer",
+            "damage"
+          ]
+        },
+        "status_bonus": {
+          "$ref": "#/$defs/status_bonus"
+        }
+      },
+      "required": [
+        "hp_current_bps",
+        "spirit_current_bps"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "anyOf": [
+            {
+              "properties": {
+                "hp_current_bps": {
+                  "minimum": 1
+                }
+              }
+            },
+            {
+              "properties": {
+                "spirit_current_bps": {
+                  "minimum": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "if": {
+            "properties": {
+              "hp_current_bps": {
+                "const": 0
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "required": [
+                "hp_policy"
+              ]
+            }
+          },
+          "else": {
+            "required": [
+              "hp_policy"
+            ]
+          }
+        }
+      ]
+    },
+    "resource_stolen": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "resource_stolen"
+        },
+        "source": {
+          "type": "object",
+          "required": [
+            "kind",
+            "id",
+            "generation"
+          ],
+          "properties": {
+            "kind": {
+              "enum": [
+                "participant",
+                "monster"
+              ]
+            },
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "generation": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            }
+          },
+          "additionalProperties": false
+        },
+        "target": {
+          "type": "object",
+          "required": [
+            "kind",
+            "id",
+            "generation"
+          ],
+          "properties": {
+            "kind": {
+              "enum": [
+                "participant",
+                "monster"
+              ]
+            },
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "generation": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            }
+          },
+          "additionalProperties": false
+        },
+        "action_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "hp_policy": {
+          "enum": [
+            "direct_transfer",
+            "damage"
+          ]
+        },
+        "requested_hp": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "requested_spirit": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "hp_removed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "spirit_removed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "hp_restored": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "spirit_restored": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "spirit_excess": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "hp_multiplier_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "adjusted_hp_return": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 42949672950000
+        },
+        "hp_excess": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 42949672950000
+        }
+      },
+      "required": [
+        "kind",
+        "source",
+        "target",
+        "requested_hp",
+        "requested_spirit",
+        "hp_removed",
+        "spirit_removed",
+        "hp_restored",
+        "spirit_restored",
+        "spirit_excess",
+        "hp_multiplier_bps",
+        "adjusted_hp_return",
+        "hp_excess"
+      ],
+      "additionalProperties": false
+    },
+    "trigger_effect": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "steal_other"
+        },
+        "steal": {
+          "$ref": "#/$defs/resource_steal"
+        }
+      },
+      "required": [
+        "kind",
+        "steal"
+      ],
+      "additionalProperties": false
+    },
+    "life_steal_cap": {
+      "type": "object",
+      "properties": {
+        "life_steal_cap_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        }
+      },
+      "required": [
+        "life_steal_cap_bps"
+      ],
+      "additionalProperties": false
+    },
+    "life_steal_definition": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "mechanism": {
+          "const": "timed_attribute_modifier"
+        },
+        "attribute": {
+          "const": "life_steal"
+        },
+        "modifier_bps": {
+          "type": "integer",
+          "minimum": -10000,
+          "maximum": 100000
+        },
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "duplicate_policy": {
+          "enum": [
+            "refresh",
+            "ignore",
+            "stack"
+          ]
+        },
+        "source_scoped": {
+          "type": "boolean"
+        },
+        "max_stacks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        }
+      },
+      "required": [
+        "id",
+        "mechanism",
+        "attribute",
+        "modifier_bps",
+        "duration_ms",
+        "duplicate_policy",
+        "source_scoped"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "duplicate_policy": {
+                "const": "stack"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "max_stacks"
+            ]
+          },
+          "else": {
+            "not": {
+              "required": [
+                "max_stacks"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "life_steal_status": {
+      "type": "object",
+      "properties": {
+        "instance_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "definition_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "attribute": {
+          "const": "life_steal"
+        },
+        "modifier_bps": {
+          "type": "integer",
+          "minimum": -10000,
+          "maximum": 100000
+        },
+        "source": {
+          "type": "object",
+          "required": [
+            "kind",
+            "id",
+            "generation"
+          ],
+          "properties": {
+            "kind": {
+              "enum": [
+                "participant",
+                "monster"
+              ]
+            },
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "generation": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            }
+          },
+          "additionalProperties": false
+        },
+        "target": {
+          "type": "object",
+          "required": [
+            "kind",
+            "id",
+            "generation"
+          ],
+          "properties": {
+            "kind": {
+              "enum": [
+                "participant",
+                "monster"
+              ]
+            },
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "generation": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            }
+          },
+          "additionalProperties": false
+        },
+        "applied_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "expires_at_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "stacks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "max_stacks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        }
+      },
+      "required": [
+        "instance_id",
+        "definition_id",
+        "source",
+        "target",
+        "attribute",
+        "modifier_bps",
+        "applied_at_ms",
+        "expires_at_ms"
+      ],
+      "additionalProperties": false,
+      "dependentRequired": {
+        "stacks": [
+          "max_stacks"
+        ],
+        "max_stacks": [
+          "stacks"
+        ]
+      }
+    },
+    "skill_requirement": {
+      "type": "object",
+      "properties": {
+        "skill_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "equipped_any_of": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          }
+        },
+        "minimum_mastery": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127
+        },
+        "maximum_mastery": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127
+        }
+      },
+      "required": [
+        "skill_id"
+      ],
+      "additionalProperties": false
+    },
+    "status_bonus": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "enum": [
+            "multiply_base",
+            "add_current_bps"
+          ]
+        },
+        "qualification": {
+          "$ref": "#/$defs/skill_requirement"
+        },
+        "subject": {
+          "enum": [
+            "owner",
+            "other"
+          ]
+        },
+        "definition_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "per_stack_bps": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000
+        },
+        "maximum_bonus_bps": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000
+        }
+      },
+      "required": [
+        "mode",
+        "subject",
+        "definition_id",
+        "per_stack_bps",
+        "maximum_bonus_bps"
+      ]
+    }
+  }
+}

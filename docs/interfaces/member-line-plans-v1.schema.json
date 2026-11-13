@@ -1,0 +1,1458 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://match-kernel.local/schema/member-line-plans-v1",
+  "title": "Mechanism 42 multiplayer fixed capsule area plans",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "protocol_version",
+    "key",
+    "request_id",
+    "config_id",
+    "config_hash",
+    "seed",
+    "participants"
+  ],
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "connection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "generation"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "participant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "participant_id",
+        "authenticated_principal",
+        "connection"
+      ],
+      "properties": {
+        "participant_id": {
+          "$ref": "#/$defs/id"
+        },
+        "authenticated_principal": {
+          "$ref": "#/$defs/id"
+        },
+        "connection": {
+          "$ref": "#/$defs/connection"
+        }
+      }
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "entityRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "id",
+        "generation"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "participant",
+            "monster"
+          ]
+        },
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "participantRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entity",
+        "owner_id"
+      ],
+      "properties": {
+        "entity": {
+          "$ref": "#/$defs/entityRef"
+        },
+        "owner_id": {
+          "$ref": "#/$defs/id"
+        }
+      }
+    },
+    "legacyCheckpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "sha256"
+      ],
+      "properties": {
+        "state": {
+          "type": "object",
+          "description": "Original schema-1 IoState, strictly decoded and validated by protocol.rs/recovery.rs; carried unchanged."
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "description": "Opaque legacy member responsibility. The original Rust schema is authoritative; hosts must preserve every field."
+    },
+    "memberCheckpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "participant_id",
+        "checkpoint"
+      ],
+      "properties": {
+        "participant_id": {
+          "$ref": "#/$defs/id"
+        },
+        "checkpoint": {
+          "$ref": "#/$defs/legacyCheckpoint"
+        }
+      }
+    },
+    "ioStateV4": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "identity_sha256",
+        "logical_ms",
+        "output_sequence",
+        "recovery_generation",
+        "members"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "identity_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "logical_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "output_sequence": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "recovery_generation": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "members": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/memberCheckpoint"
+          }
+        }
+      }
+    },
+    "checkpointV4": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "sha256"
+      ],
+      "properties": {
+        "state": {
+          "$ref": "#/$defs/ioStateV4"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "recoveryV4": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "generation",
+        "checkpoint"
+      ],
+      "properties": {
+        "generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "checkpoint": {
+          "$ref": "#/$defs/checkpointV4"
+        }
+      }
+    },
+    "stateV6": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "phase",
+        "active_at_ms",
+        "extraction_point",
+        "extraction_open"
+      ],
+      "properties": {
+        "phase": {
+          "enum": [
+            "preparing",
+            "deploying",
+            "active",
+            "draining",
+            "closed",
+            "faulted"
+          ]
+        },
+        "active_at_ms": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "extraction_point": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "extraction_open": {
+          "type": "boolean"
+        }
+      }
+    },
+    "publicMemberV4": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entity",
+        "position",
+        "hp",
+        "max_hp",
+        "phase",
+        "protected"
+      ],
+      "properties": {
+        "entity": {
+          "$ref": "#/$defs/entityRef"
+        },
+        "position": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "hp": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "max_hp": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "phase": {
+          "enum": [
+            "deploying",
+            "active",
+            "settling",
+            "terminal"
+          ]
+        },
+        "protected": {
+          "type": "boolean"
+        }
+      }
+    },
+    "privateMemberV4": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "participant",
+        "position",
+        "hp",
+        "max_hp",
+        "spirit",
+        "max_spirit",
+        "effective_atk",
+        "effective_def",
+        "inventory_revision",
+        "phase",
+        "protected",
+        "foreground",
+        "ready",
+        "statuses",
+        "inventory",
+        "player_skills",
+        "pending_action",
+        "basic_ready_at_ms",
+        "recovery_until_ms",
+        "extraction_finishes_ms"
+      ],
+      "properties": {
+        "participant": {
+          "$ref": "#/$defs/participantRef"
+        },
+        "position": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "hp": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "max_hp": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "spirit": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "max_spirit": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "effective_atk": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "effective_def": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "inventory_revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "phase": {
+          "enum": [
+            "deploying",
+            "active",
+            "settling",
+            "terminal"
+          ]
+        },
+        "protected": {
+          "type": "boolean"
+        },
+        "foreground": {
+          "type": "boolean"
+        },
+        "ready": {
+          "type": "boolean"
+        },
+        "statuses": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "inventory": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "player_skills": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "pending_action": {
+          "anyOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "basic_ready_at_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "recovery_until_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "extraction_finishes_ms": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "shield_total": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        }
+      },
+      "$comment": "Nested statuses/items/actions use existing Rust StatusView, ItemAmount, PlayerSkillView and PlayerActionView contracts."
+    },
+    "monsterV4": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entity",
+        "template_id",
+        "position",
+        "hp",
+        "max_hp",
+        "radius",
+        "returning",
+        "target"
+      ],
+      "properties": {
+        "entity": {
+          "$ref": "#/$defs/entityRef"
+        },
+        "template_id": {
+          "$ref": "#/$defs/id"
+        },
+        "position": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "hp": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "max_hp": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "radius": {
+          "type": "number",
+          "minimum": 0
+        },
+        "returning": {
+          "type": "boolean"
+        },
+        "target": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/entityRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "statuses": {
+          "type": "array",
+          "maxItems": 32,
+          "items": {
+            "$ref": "#/$defs/projectedStatus"
+          }
+        },
+        "shield_total": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "resourceV4": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "position",
+        "quantity",
+        "item_id",
+        "owner",
+        "expires_at_ms"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "position": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "quantity": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "item_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "owner": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/entityRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expires_at_ms": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "projectileV4": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "source",
+        "position",
+        "radius"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "source": {
+          "$ref": "#/$defs/entityRef"
+        },
+        "position": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "radius": {
+          "type": "number",
+          "minimum": 0
+        },
+        "unit_target": {
+          "$ref": "#/$defs/unitTarget"
+        }
+      }
+    },
+    "membersDelta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "upsert",
+        "removed",
+        "order"
+      ],
+      "properties": {
+        "upsert": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/publicMemberV4"
+          }
+        },
+        "removed": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/entityRef"
+          }
+        },
+        "order": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/entityRef"
+          }
+        }
+      }
+    },
+    "monstersDelta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "upsert",
+        "removed",
+        "order"
+      ],
+      "properties": {
+        "upsert": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/monsterV4"
+          }
+        },
+        "removed": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/entityRef"
+          }
+        },
+        "order": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/entityRef"
+          }
+        }
+      }
+    },
+    "resourcesDelta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "upsert",
+        "removed",
+        "order"
+      ],
+      "properties": {
+        "upsert": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/resourceV4"
+          }
+        },
+        "removed": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "order": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        }
+      }
+    },
+    "projectilesDelta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "upsert",
+        "removed",
+        "order"
+      ],
+      "properties": {
+        "upsert": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/projectileV4"
+          }
+        },
+        "removed": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "order": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        }
+      }
+    },
+    "snapshotV4": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "phase",
+        "active_at_ms",
+        "extraction_point",
+        "extraction_open",
+        "logical_ms",
+        "self",
+        "members",
+        "monsters",
+        "resources",
+        "projectiles",
+        "areas"
+      ],
+      "properties": {
+        "phase": {
+          "enum": [
+            "preparing",
+            "deploying",
+            "active",
+            "draining",
+            "closed",
+            "faulted"
+          ]
+        },
+        "active_at_ms": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "extraction_point": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "extraction_open": {
+          "type": "boolean"
+        },
+        "logical_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "self": {
+          "$ref": "#/$defs/privateMemberV4"
+        },
+        "members": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/publicMemberV4"
+          }
+        },
+        "monsters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/monsterV4"
+          }
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/resourceV4"
+          }
+        },
+        "projectiles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/projectileV4"
+          }
+        },
+        "areas": {
+          "type": "array",
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/areaPlan"
+          }
+        }
+      }
+    },
+    "deltaV6": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "logical_ms"
+      ],
+      "properties": {
+        "logical_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "state": {
+          "$ref": "#/$defs/stateV6"
+        },
+        "own": {
+          "$ref": "#/$defs/privateMemberV4"
+        },
+        "members": {
+          "$ref": "#/$defs/membersDelta"
+        },
+        "monsters": {
+          "$ref": "#/$defs/monstersDelta"
+        },
+        "resources": {
+          "$ref": "#/$defs/resourcesDelta"
+        },
+        "projectiles": {
+          "$ref": "#/$defs/projectilesDelta"
+        },
+        "areas": {
+          "type": "array",
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/areaPlan"
+          }
+        }
+      }
+    },
+    "payloadV6": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "snapshot",
+            "reason"
+          ],
+          "properties": {
+            "kind": {
+              "const": "full"
+            },
+            "snapshot": {
+              "$ref": "#/$defs/snapshotV4"
+            },
+            "reason": {
+              "enum": [
+                "initial",
+                "periodic",
+                "expired",
+                "failure",
+                "timeout",
+                "resync",
+                "lifecycle",
+                "terminal",
+                "size"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "base_publication_id",
+            "base_revision",
+            "delta"
+          ],
+          "properties": {
+            "kind": {
+              "const": "delta"
+            },
+            "base_publication_id": {
+              "$ref": "#/$defs/id"
+            },
+            "base_revision": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "delta": {
+              "$ref": "#/$defs/deltaV6"
+            }
+          }
+        }
+      ]
+    },
+    "publicationEnvelopeV6": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "publication_id",
+        "recipient_id",
+        "connection",
+        "stream_epoch",
+        "revision",
+        "payload"
+      ],
+      "properties": {
+        "key": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "incarnation"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "incarnation": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            }
+          }
+        },
+        "publication_id": {
+          "$ref": "#/$defs/id"
+        },
+        "recipient_id": {
+          "$ref": "#/$defs/id"
+        },
+        "connection": {
+          "$ref": "#/$defs/connection"
+        },
+        "stream_epoch": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "payload": {
+          "$ref": "#/$defs/payloadV6"
+        }
+      }
+    },
+    "requestFull": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "stream_epoch"
+      ],
+      "properties": {
+        "kind": {
+          "const": "request_full"
+        },
+        "stream_epoch": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "replicationConfig": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ack_timeout_ms",
+        "baseline_ttl_ms",
+        "full_interval_ms",
+        "terminal_grace_ms"
+      ],
+      "properties": {
+        "ack_timeout_ms": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 60000
+        },
+        "baseline_ttl_ms": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 60000
+        },
+        "full_interval_ms": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 60000
+        },
+        "terminal_grace_ms": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 60000
+        }
+      },
+      "$comment": "Rust validates relative bounds TTL>=ack, period<=TTL and grace>=2*ack."
+    },
+    "statusEntity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "id",
+        "generation"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "participant",
+            "monster"
+          ]
+        },
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "projectedStatus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "instance_id",
+        "definition_id",
+        "source",
+        "target",
+        "applied_at_ms",
+        "expires_at_ms",
+        "modifier_bps"
+      ],
+      "properties": {
+        "instance_id": {
+          "$ref": "#/$defs/id"
+        },
+        "definition_id": {
+          "$ref": "#/$defs/id"
+        },
+        "source": {
+          "$ref": "#/$defs/statusEntity"
+        },
+        "target": {
+          "$ref": "#/$defs/statusEntity"
+        },
+        "applied_at_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "expires_at_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "modifier_bps": {
+          "type": "integer"
+        },
+        "periodic": {
+          "type": "object"
+        },
+        "attribute": {
+          "enum": [
+            "atk",
+            "def",
+            "healing_received"
+          ]
+        },
+        "stacks": {
+          "type": "integer"
+        },
+        "max_stacks": {
+          "type": "integer"
+        },
+        "shield": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "granted",
+            "remaining"
+          ],
+          "properties": {
+            "granted": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4294967295
+            },
+            "remaining": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4294967295
+            }
+          }
+        }
+      },
+      "$comment": "Source must equal recipient entity or NPC self; target must equal containing NPC. Rust and JS decoders enforce semantic identity and ordering."
+    },
+    "unitTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "generation"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "areaPlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "source",
+        "skill_id",
+        "mechanism",
+        "center",
+        "radius",
+        "created_at_ms",
+        "activates_at_ms",
+        "expires_at_ms",
+        "interval_ms",
+        "next_tick_at_ms",
+        "completed_ticks",
+        "total_ticks",
+        "contact_policy"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "source": {
+          "$ref": "#/$defs/entityRef"
+        },
+        "skill_id": {
+          "$ref": "#/$defs/id"
+        },
+        "mechanism": {
+          "enum": [
+            "circle",
+            "field",
+            "line_field"
+          ]
+        },
+        "center": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "radius": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 128
+        },
+        "created_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "activates_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "expires_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "interval_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 60000
+        },
+        "next_tick_at_ms": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "completed_ticks": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 128
+        },
+        "total_ticks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "contact_policy": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/areaContactPolicy"
+            }
+          ]
+        },
+        "line": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "start",
+            "end",
+            "width"
+          ],
+          "properties": {
+            "start": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 2,
+              "maxItems": 2
+            },
+            "end": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 2,
+              "maxItems": 2
+            },
+            "width": {
+              "type": "number",
+              "minimum": 0.2,
+              "maximum": 256
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "mechanism": {
+                "const": "circle"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "interval_ms": {
+                "const": 0
+              },
+              "completed_ticks": {
+                "const": 0
+              },
+              "total_ticks": {
+                "const": 1
+              },
+              "contact_policy": {
+                "type": "null"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "interval_ms": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 60000
+              },
+              "contact_policy": {
+                "$ref": "#/$defs/areaContactPolicy"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "mechanism": {
+                "const": "line_field"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "line"
+            ]
+          },
+          "else": {
+            "not": {
+              "required": [
+                "line"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "areaContact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target",
+        "last_hit_at_ms",
+        "next_eligible_at_ms"
+      ],
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/unitTarget"
+        },
+        "last_hit_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "next_eligible_at_ms": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "areaContactPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_targets_per_tick",
+        "max_total_hits",
+        "repeat_interval_ms",
+        "used_hits",
+        "remaining_hits",
+        "contacts"
+      ],
+      "properties": {
+        "max_targets_per_tick": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32
+        },
+        "max_total_hits": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "repeat_interval_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 60000
+        },
+        "used_hits": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127
+        },
+        "remaining_hits": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "contacts": {
+          "type": "array",
+          "maxItems": 128,
+          "items": {
+            "$ref": "#/$defs/areaContact"
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "protocol_version": {
+      "const": 6
+    },
+    "key": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "incarnation"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "incarnation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "request_id": {
+      "$ref": "#/$defs/id"
+    },
+    "config_id": {
+      "$ref": "#/$defs/id"
+    },
+    "config_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "seed": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4294967295
+    },
+    "participants": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "items": {
+        "$ref": "#/$defs/participant"
+      }
+    },
+    "publication_mode": {
+      "enum": [
+        "batched",
+        "interactive"
+      ]
+    },
+    "recovery": {
+      "$ref": "#/$defs/recoveryV4"
+    }
+  }
+}

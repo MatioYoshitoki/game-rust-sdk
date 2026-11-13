@@ -1,0 +1,2800 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://match-kernel.local/schema/member-skill-slots-v1",
+  "title": "Mechanism 44 ordered private skill cooldown lists",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "protocol_version",
+    "key",
+    "request_id",
+    "config_id",
+    "config_hash",
+    "seed",
+    "participants"
+  ],
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "connection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "generation"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "participant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "participant_id",
+        "authenticated_principal",
+        "connection"
+      ],
+      "properties": {
+        "participant_id": {
+          "$ref": "#/$defs/id"
+        },
+        "authenticated_principal": {
+          "$ref": "#/$defs/id"
+        },
+        "connection": {
+          "$ref": "#/$defs/connection"
+        },
+        "skills": {
+          "$ref": "#/$defs/skillLoadout"
+        }
+      }
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "entityRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "id",
+        "generation"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "participant",
+            "monster"
+          ]
+        },
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "participantRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entity",
+        "owner_id"
+      ],
+      "properties": {
+        "entity": {
+          "$ref": "#/$defs/entityRef"
+        },
+        "owner_id": {
+          "$ref": "#/$defs/id"
+        }
+      }
+    },
+    "legacyCheckpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "sha256"
+      ],
+      "properties": {
+        "state": {
+          "type": "object",
+          "description": "Original schema-1 IoState, strictly decoded and validated by protocol.rs/recovery.rs; carried unchanged."
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "description": "Opaque legacy member responsibility. The original Rust schema is authoritative; hosts must preserve every field."
+    },
+    "memberCheckpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "participant_id",
+        "checkpoint"
+      ],
+      "properties": {
+        "participant_id": {
+          "$ref": "#/$defs/id"
+        },
+        "checkpoint": {
+          "$ref": "#/$defs/legacyCheckpoint"
+        }
+      }
+    },
+    "ioStateV4": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "identity_sha256",
+        "logical_ms",
+        "output_sequence",
+        "recovery_generation",
+        "members"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "identity_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "logical_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "output_sequence": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "recovery_generation": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "members": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/memberCheckpoint"
+          }
+        },
+        "skill_control": {
+          "$ref": "#/$defs/skillControlCheckpoint"
+        }
+      }
+    },
+    "checkpointV4": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "sha256"
+      ],
+      "properties": {
+        "state": {
+          "$ref": "#/$defs/ioStateV4"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "recoveryV4": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "generation",
+        "checkpoint"
+      ],
+      "properties": {
+        "generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "checkpoint": {
+          "$ref": "#/$defs/checkpointV4"
+        }
+      }
+    },
+    "stateV6": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "phase",
+        "active_at_ms",
+        "extraction_point",
+        "extraction_open"
+      ],
+      "properties": {
+        "phase": {
+          "enum": [
+            "preparing",
+            "deploying",
+            "active",
+            "draining",
+            "closed",
+            "faulted"
+          ]
+        },
+        "active_at_ms": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "extraction_point": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "extraction_open": {
+          "type": "boolean"
+        }
+      }
+    },
+    "publicMemberV4": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entity",
+        "position",
+        "hp",
+        "max_hp",
+        "phase",
+        "protected"
+      ],
+      "properties": {
+        "entity": {
+          "$ref": "#/$defs/entityRef"
+        },
+        "position": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "hp": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "max_hp": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "phase": {
+          "enum": [
+            "deploying",
+            "active",
+            "settling",
+            "terminal"
+          ]
+        },
+        "protected": {
+          "type": "boolean"
+        }
+      }
+    },
+    "privateMemberV4": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "participant",
+        "position",
+        "hp",
+        "max_hp",
+        "spirit",
+        "max_spirit",
+        "effective_atk",
+        "effective_def",
+        "inventory_revision",
+        "phase",
+        "protected",
+        "foreground",
+        "ready",
+        "statuses",
+        "inventory",
+        "player_skills",
+        "pending_action",
+        "basic_ready_at_ms",
+        "recovery_until_ms",
+        "extraction_finishes_ms"
+      ],
+      "properties": {
+        "participant": {
+          "$ref": "#/$defs/participantRef"
+        },
+        "position": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "hp": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "max_hp": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "spirit": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "max_spirit": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "effective_atk": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "effective_def": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "inventory_revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "phase": {
+          "enum": [
+            "deploying",
+            "active",
+            "settling",
+            "terminal"
+          ]
+        },
+        "protected": {
+          "type": "boolean"
+        },
+        "foreground": {
+          "type": "boolean"
+        },
+        "ready": {
+          "type": "boolean"
+        },
+        "statuses": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "inventory": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "player_skills": {
+          "type": "array",
+          "maxItems": 8,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "skill_id",
+              "ready_at_ms"
+            ],
+            "properties": {
+              "skill_id": {
+                "$ref": "#/$defs/id"
+              },
+              "ready_at_ms": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              }
+            }
+          }
+        },
+        "pending_action": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/rv_pending_view"
+            }
+          ]
+        },
+        "basic_ready_at_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "recovery_until_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "extraction_finishes_ms": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "shield_total": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "skill_loadout_revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "active_channel": {
+          "$ref": "#/$defs/activeChannel"
+        }
+      },
+      "$comment": "Nested statuses/items/actions use existing Rust StatusView, ItemAmount, PlayerSkillView and PlayerActionView contracts."
+    },
+    "monsterV4": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entity",
+        "template_id",
+        "position",
+        "hp",
+        "max_hp",
+        "radius",
+        "returning",
+        "target"
+      ],
+      "properties": {
+        "entity": {
+          "$ref": "#/$defs/entityRef"
+        },
+        "template_id": {
+          "$ref": "#/$defs/id"
+        },
+        "position": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "hp": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "max_hp": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "radius": {
+          "type": "number",
+          "minimum": 0
+        },
+        "returning": {
+          "type": "boolean"
+        },
+        "target": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/entityRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "statuses": {
+          "type": "array",
+          "maxItems": 32,
+          "items": {
+            "$ref": "#/$defs/projectedStatus"
+          }
+        },
+        "shield_total": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "resourceV4": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "position",
+        "quantity",
+        "item_id",
+        "owner",
+        "expires_at_ms"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "position": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "quantity": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "item_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "owner": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/entityRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expires_at_ms": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "projectileV4": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "source",
+        "position",
+        "radius"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "source": {
+          "$ref": "#/$defs/entityRef"
+        },
+        "position": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "radius": {
+          "type": "number",
+          "minimum": 0
+        },
+        "unit_target": {
+          "$ref": "#/$defs/unitTarget"
+        },
+        "piercing": {
+          "$ref": "#/$defs/piercingPlan"
+        }
+      },
+      "allOf": [
+        {
+          "not": {
+            "required": [
+              "piercing",
+              "unit_target"
+            ]
+          }
+        }
+      ]
+    },
+    "membersDelta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "upsert",
+        "removed",
+        "order"
+      ],
+      "properties": {
+        "upsert": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/publicMemberV4"
+          }
+        },
+        "removed": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/entityRef"
+          }
+        },
+        "order": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/entityRef"
+          }
+        }
+      }
+    },
+    "monstersDelta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "upsert",
+        "removed",
+        "order"
+      ],
+      "properties": {
+        "upsert": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/monsterV4"
+          }
+        },
+        "removed": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/entityRef"
+          }
+        },
+        "order": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/entityRef"
+          }
+        }
+      }
+    },
+    "resourcesDelta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "upsert",
+        "removed",
+        "order"
+      ],
+      "properties": {
+        "upsert": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/resourceV4"
+          }
+        },
+        "removed": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "order": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        }
+      }
+    },
+    "projectilesDelta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "upsert",
+        "removed",
+        "order"
+      ],
+      "properties": {
+        "upsert": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/projectileV4"
+          }
+        },
+        "removed": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "order": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        }
+      }
+    },
+    "snapshotV4": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "phase",
+        "active_at_ms",
+        "extraction_point",
+        "extraction_open",
+        "logical_ms",
+        "self",
+        "members",
+        "monsters",
+        "resources",
+        "projectiles",
+        "areas"
+      ],
+      "properties": {
+        "phase": {
+          "enum": [
+            "preparing",
+            "deploying",
+            "active",
+            "draining",
+            "closed",
+            "faulted"
+          ]
+        },
+        "active_at_ms": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "extraction_point": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "extraction_open": {
+          "type": "boolean"
+        },
+        "logical_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "self": {
+          "$ref": "#/$defs/privateMemberV4"
+        },
+        "members": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/publicMemberV4"
+          }
+        },
+        "monsters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/monsterV4"
+          }
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/resourceV4"
+          }
+        },
+        "projectiles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/projectileV4"
+          }
+        },
+        "areas": {
+          "type": "array",
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/areaPlan"
+          }
+        }
+      }
+    },
+    "deltaV6": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "logical_ms"
+      ],
+      "properties": {
+        "logical_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "state": {
+          "$ref": "#/$defs/stateV6"
+        },
+        "own": {
+          "$ref": "#/$defs/privateMemberV4"
+        },
+        "members": {
+          "$ref": "#/$defs/membersDelta"
+        },
+        "monsters": {
+          "$ref": "#/$defs/monstersDelta"
+        },
+        "resources": {
+          "$ref": "#/$defs/resourcesDelta"
+        },
+        "projectiles": {
+          "$ref": "#/$defs/projectilesDelta"
+        },
+        "areas": {
+          "type": "array",
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/areaPlan"
+          }
+        }
+      }
+    },
+    "payloadV6": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "snapshot",
+            "reason"
+          ],
+          "properties": {
+            "kind": {
+              "const": "full"
+            },
+            "snapshot": {
+              "$ref": "#/$defs/snapshotV4"
+            },
+            "reason": {
+              "enum": [
+                "initial",
+                "periodic",
+                "expired",
+                "failure",
+                "timeout",
+                "resync",
+                "lifecycle",
+                "terminal",
+                "size"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "base_publication_id",
+            "base_revision",
+            "delta"
+          ],
+          "properties": {
+            "kind": {
+              "const": "delta"
+            },
+            "base_publication_id": {
+              "$ref": "#/$defs/id"
+            },
+            "base_revision": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "delta": {
+              "$ref": "#/$defs/deltaV6"
+            }
+          }
+        }
+      ]
+    },
+    "publicationEnvelopeV6": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "publication_id",
+        "recipient_id",
+        "connection",
+        "stream_epoch",
+        "revision",
+        "payload"
+      ],
+      "properties": {
+        "key": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "incarnation"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "incarnation": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            }
+          }
+        },
+        "publication_id": {
+          "$ref": "#/$defs/id"
+        },
+        "recipient_id": {
+          "$ref": "#/$defs/id"
+        },
+        "connection": {
+          "$ref": "#/$defs/connection"
+        },
+        "stream_epoch": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "payload": {
+          "$ref": "#/$defs/payloadV6"
+        }
+      }
+    },
+    "requestFull": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "stream_epoch"
+      ],
+      "properties": {
+        "kind": {
+          "const": "request_full"
+        },
+        "stream_epoch": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "replicationConfig": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ack_timeout_ms",
+        "baseline_ttl_ms",
+        "full_interval_ms",
+        "terminal_grace_ms"
+      ],
+      "properties": {
+        "ack_timeout_ms": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 60000
+        },
+        "baseline_ttl_ms": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 60000
+        },
+        "full_interval_ms": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 60000
+        },
+        "terminal_grace_ms": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 60000
+        }
+      },
+      "$comment": "Rust validates relative bounds TTL>=ack, period<=TTL and grace>=2*ack."
+    },
+    "statusEntity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "id",
+        "generation"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "participant",
+            "monster"
+          ]
+        },
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "projectedStatus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "instance_id",
+        "definition_id",
+        "source",
+        "target",
+        "applied_at_ms",
+        "expires_at_ms",
+        "modifier_bps"
+      ],
+      "properties": {
+        "instance_id": {
+          "$ref": "#/$defs/id"
+        },
+        "definition_id": {
+          "$ref": "#/$defs/id"
+        },
+        "source": {
+          "$ref": "#/$defs/statusEntity"
+        },
+        "target": {
+          "$ref": "#/$defs/statusEntity"
+        },
+        "applied_at_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "expires_at_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "modifier_bps": {
+          "type": "integer"
+        },
+        "periodic": {
+          "type": "object"
+        },
+        "attribute": {
+          "enum": [
+            "atk",
+            "def",
+            "healing_received"
+          ]
+        },
+        "stacks": {
+          "type": "integer"
+        },
+        "max_stacks": {
+          "type": "integer"
+        },
+        "shield": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "granted",
+            "remaining"
+          ],
+          "properties": {
+            "granted": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4294967295
+            },
+            "remaining": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4294967295
+            }
+          }
+        }
+      },
+      "$comment": "Source must equal recipient entity or NPC self; target must equal containing NPC. Rust and JS decoders enforce semantic identity and ordering."
+    },
+    "unitTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "generation"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "areaPlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "source",
+        "skill_id",
+        "mechanism",
+        "center",
+        "radius",
+        "created_at_ms",
+        "activates_at_ms",
+        "expires_at_ms",
+        "interval_ms",
+        "next_tick_at_ms",
+        "completed_ticks",
+        "total_ticks",
+        "contact_policy"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "source": {
+          "$ref": "#/$defs/entityRef"
+        },
+        "skill_id": {
+          "$ref": "#/$defs/id"
+        },
+        "mechanism": {
+          "enum": [
+            "circle",
+            "field",
+            "line_field"
+          ]
+        },
+        "center": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "radius": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 128
+        },
+        "created_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "activates_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "expires_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "interval_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 60000
+        },
+        "next_tick_at_ms": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "completed_ticks": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 128
+        },
+        "total_ticks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "contact_policy": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/areaContactPolicy"
+            }
+          ]
+        },
+        "line": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "start",
+            "end",
+            "width"
+          ],
+          "properties": {
+            "start": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 2,
+              "maxItems": 2
+            },
+            "end": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 2,
+              "maxItems": 2
+            },
+            "width": {
+              "type": "number",
+              "minimum": 0.2,
+              "maximum": 256
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "mechanism": {
+                "const": "circle"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "interval_ms": {
+                "const": 0
+              },
+              "completed_ticks": {
+                "const": 0
+              },
+              "total_ticks": {
+                "const": 1
+              },
+              "contact_policy": {
+                "type": "null"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "interval_ms": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 60000
+              },
+              "contact_policy": {
+                "$ref": "#/$defs/areaContactPolicy"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "mechanism": {
+                "const": "line_field"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "line"
+            ]
+          },
+          "else": {
+            "not": {
+              "required": [
+                "line"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "areaContact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target",
+        "last_hit_at_ms",
+        "next_eligible_at_ms"
+      ],
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/unitTarget"
+        },
+        "last_hit_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "next_eligible_at_ms": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "areaContactPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_targets_per_tick",
+        "max_total_hits",
+        "repeat_interval_ms",
+        "used_hits",
+        "remaining_hits",
+        "contacts"
+      ],
+      "properties": {
+        "max_targets_per_tick": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32
+        },
+        "max_total_hits": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "repeat_interval_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 60000
+        },
+        "used_hits": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127
+        },
+        "remaining_hits": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "contacts": {
+          "type": "array",
+          "maxItems": 128,
+          "items": {
+            "$ref": "#/$defs/areaContact"
+          }
+        }
+      }
+    },
+    "piercingPlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "skill_id",
+        "direction",
+        "speed",
+        "remaining_range",
+        "created_at_ms",
+        "expires_at_ms",
+        "max_hits",
+        "used_hits",
+        "remaining_hits",
+        "repeat_interval_ms",
+        "contacts"
+      ],
+      "properties": {
+        "skill_id": {
+          "$ref": "#/$defs/id"
+        },
+        "direction": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "speed": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 10000
+        },
+        "remaining_range": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 10000
+        },
+        "created_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "expires_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "max_hits": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "used_hits": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127
+        },
+        "remaining_hits": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "repeat_interval_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 60000
+        },
+        "contacts": {
+          "type": "array",
+          "maxItems": 128,
+          "items": {
+            "$ref": "#/$defs/flightContact"
+          }
+        }
+      }
+    },
+    "flightContact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target",
+        "hit_at_ms",
+        "next_eligible_at_ms"
+      ],
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/unitTarget"
+        },
+        "hit_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "next_eligible_at_ms": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      }
+    },
+    "skillLoadoutId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "skillLoadoutMatchKey": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "incarnation"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/skillLoadoutId"
+        },
+        "incarnation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "skillLoadout": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "owned_skill_ids",
+        "equipped_skill_ids"
+      ],
+      "properties": {
+        "owned_skill_ids": {
+          "type": "array",
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/skillLoadoutId"
+          }
+        },
+        "equipped_skill_ids": {
+          "type": "array",
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/skillLoadoutId"
+          }
+        }
+      }
+    },
+    "setSkillLoadout": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "participant_id",
+        "entity_generation",
+        "operation_id",
+        "expected_revision",
+        "loadout"
+      ],
+      "properties": {
+        "key": {
+          "$ref": "#/$defs/skillLoadoutMatchKey"
+        },
+        "participant_id": {
+          "$ref": "#/$defs/skillLoadoutId"
+        },
+        "entity_generation": {
+          "const": 1
+        },
+        "operation_id": {
+          "$ref": "#/$defs/skillLoadoutId"
+        },
+        "expected_revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "loadout": {
+          "$ref": "#/$defs/skillLoadout"
+        }
+      }
+    },
+    "skillLoadoutReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation_id",
+        "revision",
+        "equipped_skill_ids"
+      ],
+      "properties": {
+        "operation_id": {
+          "$ref": "#/$defs/skillLoadoutId"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "equipped_skill_ids": {
+          "type": "array",
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/skillLoadoutId"
+          }
+        }
+      }
+    },
+    "skillLoadoutState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "loadout",
+        "revision",
+        "declared"
+      ],
+      "properties": {
+        "loadout": {
+          "$ref": "#/$defs/skillLoadout"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "declared": {
+          "type": "boolean"
+        }
+      }
+    },
+    "skillLoadoutOperation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "request",
+        "receipt"
+      ],
+      "properties": {
+        "request": {
+          "$ref": "#/$defs/setSkillLoadout"
+        },
+        "receipt": {
+          "$ref": "#/$defs/skillLoadoutReceipt"
+        }
+      }
+    },
+    "skillControlCheckpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "members",
+        "operations"
+      ],
+      "properties": {
+        "members": {
+          "type": "object",
+          "minProperties": 1,
+          "maxProperties": 8,
+          "propertyNames": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/skillLoadoutState"
+          }
+        },
+        "operations": {
+          "type": "array",
+          "maxItems": 128,
+          "items": {
+            "$ref": "#/$defs/skillLoadoutOperation"
+          }
+        }
+      }
+    },
+    "skillLoadoutChanged": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "revision",
+        "equipped_skill_ids"
+      ],
+      "properties": {
+        "kind": {
+          "const": "skill_loadout_changed"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "equipped_skill_ids": {
+          "type": "array",
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/skillLoadoutId"
+          }
+        }
+      }
+    },
+    "ownLoadoutProjection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "skill_loadout_revision",
+        "player_skills"
+      ],
+      "properties": {
+        "skill_loadout_revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "player_skills": {
+          "type": "array",
+          "maxItems": 8,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "skill_id",
+              "ready_at_ms"
+            ],
+            "properties": {
+              "skill_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              "ready_at_ms": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              }
+            }
+          }
+        }
+      }
+    },
+    "skillLibraryProjection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "skill_library"
+      ],
+      "properties": {
+        "skill_library": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 63,
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "mechanism"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              "mechanism": {
+                "enum": [
+                  "projectile",
+                  "unit_projectile",
+                  "ground_circle",
+                  "ground_field",
+                  "line_field",
+                  "piercing_projectile",
+                  "self_status",
+                  "ally_heal",
+                  "ally_shield"
+                ]
+              }
+            },
+            "$comment": "Mechanism parameters are validated by the SDK skill loader; this fragment validates the library container and identity."
+          }
+        }
+      }
+    },
+    "skillLoadoutCommand": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "request"
+      ],
+      "properties": {
+        "type": {
+          "const": "set_skill_loadout"
+        },
+        "request": {
+          "$ref": "#/$defs/setSkillLoadout"
+        }
+      }
+    },
+    "activeChannel": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "action_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "skill_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "direction": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "started_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "ends_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "next_pulse_at_ms": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pulses": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 128
+        },
+        "total_pulses": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "recovery": {
+          "const": true
+        },
+        "target": {
+          "$ref": "#/$defs/entityRef"
+        }
+      },
+      "required": [
+        "action_id",
+        "skill_id",
+        "direction",
+        "started_at_ms",
+        "ends_at_ms",
+        "next_pulse_at_ms",
+        "pulses"
+      ],
+      "dependentRequired": {
+        "recovery": [
+          "total_pulses"
+        ],
+        "target": [
+          "total_pulses"
+        ]
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "recovery"
+            ]
+          },
+          "then": {
+            "properties": {
+              "direction": {
+                "const": [
+                  0,
+                  0
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "rv_phase_movement": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "free"
+            }
+          },
+          "required": [
+            "kind"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "locked"
+            }
+          },
+          "required": [
+            "kind"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "slow"
+            },
+            "speed_bps": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9999
+            }
+          },
+          "required": [
+            "kind",
+            "speed_bps"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "interrupt_on_new_move"
+            },
+            "min_turn_degrees": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 180
+            },
+            "min_destination_distance": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 10000
+            }
+          },
+          "required": [
+            "kind",
+            "min_turn_degrees",
+            "min_destination_distance"
+          ]
+        }
+      ]
+    },
+    "rv_cast_movement": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "preparation": {
+          "$ref": "#/$defs/rv_phase_movement"
+        },
+        "recovery": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/rv_phase_movement"
+            },
+            {
+              "not": {
+                "properties": {
+                  "kind": {
+                    "const": "interrupt_on_new_move"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "active": {
+          "$ref": "#/$defs/rv_phase_movement"
+        }
+      },
+      "required": [
+        "preparation",
+        "recovery"
+      ]
+    },
+    "rv_cast_limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mobile_fixed_windup_max_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600000
+        }
+      },
+      "required": [
+        "mobile_fixed_windup_max_ms"
+      ]
+    },
+    "rv_resource_limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "max_hp": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000000000
+        },
+        "max_spirit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000000000
+        },
+        "max_spirit_cost": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8000000
+        }
+      },
+      "required": [
+        "max_hp",
+        "max_spirit",
+        "max_spirit_cost"
+      ]
+    },
+    "rv_recovery_cancel": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "after_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600000
+        },
+        "by_move": {
+          "type": "boolean"
+        },
+        "by_explicit_action": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "after_ms"
+      ]
+    },
+    "rv_charge_aim": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "min_interval_ms": {
+          "type": "integer",
+          "minimum": 50,
+          "maximum": 5000
+        },
+        "max_turn_deg_per_sec": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 720
+        }
+      },
+      "required": [
+        "min_interval_ms",
+        "max_turn_deg_per_sec"
+      ]
+    },
+    "rv_charge": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "min_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5000
+        },
+        "max_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5000
+        },
+        "min_damage_bps": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000
+        },
+        "aim_update": {
+          "$ref": "#/$defs/rv_charge_aim"
+        },
+        "early_release": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "queue_until_min"
+            }
+          },
+          "required": [
+            "kind"
+          ]
+        },
+        "release_windup_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5000
+        }
+      },
+      "required": [
+        "min_ms",
+        "max_ms",
+        "min_damage_bps"
+      ]
+    },
+    "rv_hp_formula": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "fixed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "source_attack_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "target_max_hp_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        }
+      },
+      "required": [
+        "fixed",
+        "source_attack_bps",
+        "target_max_hp_bps"
+      ],
+      "anyOf": [
+        {
+          "properties": {
+            "fixed": {
+              "minimum": 1
+            }
+          }
+        },
+        {
+          "properties": {
+            "source_attack_bps": {
+              "minimum": 1
+            }
+          }
+        },
+        {
+          "properties": {
+            "target_max_hp_bps": {
+              "minimum": 1
+            }
+          }
+        }
+      ]
+    },
+    "rv_spirit_formula": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "fixed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "source_attack_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "target_max_spirit_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        }
+      },
+      "required": [
+        "fixed",
+        "source_attack_bps",
+        "target_max_spirit_bps"
+      ],
+      "anyOf": [
+        {
+          "properties": {
+            "fixed": {
+              "minimum": 1
+            }
+          }
+        },
+        {
+          "properties": {
+            "source_attack_bps": {
+              "minimum": 1
+            }
+          }
+        },
+        {
+          "properties": {
+            "target_max_spirit_bps": {
+              "minimum": 1
+            }
+          }
+        }
+      ]
+    },
+    "rv_channel_recovery": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "hp": {
+          "$ref": "#/$defs/rv_hp_formula"
+        },
+        "spirit": {
+          "$ref": "#/$defs/rv_spirit_formula"
+        },
+        "remainder_policy": {
+          "enum": [
+            "earliest",
+            "final"
+          ]
+        }
+      },
+      "required": [],
+      "minProperties": 1,
+      "anyOf": [
+        {
+          "required": [
+            "hp"
+          ]
+        },
+        {
+          "required": [
+            "spirit"
+          ]
+        }
+      ]
+    },
+    "rv_channel": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 30000
+        },
+        "interval_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 30000
+        },
+        "spirit_per_pulse": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8000000
+        },
+        "pulse_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "recovery": {
+          "$ref": "#/$defs/rv_channel_recovery"
+        }
+      },
+      "required": [
+        "duration_ms",
+        "interval_ms",
+        "spirit_per_pulse"
+      ],
+      "dependentRequired": {
+        "recovery": [
+          "pulse_count"
+        ]
+      }
+    },
+    "rv_aim_view": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "direction": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "updated_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "direction",
+        "updated_at_ms"
+      ]
+    },
+    "rv_charge_view": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "action_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "started_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "min_release_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "auto_commit_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "released_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "release_windup_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5000
+        },
+        "aim": {
+          "$ref": "#/$defs/rv_aim_view"
+        }
+      },
+      "required": [
+        "action_id",
+        "started_at_ms",
+        "min_release_at_ms",
+        "auto_commit_at_ms"
+      ]
+    },
+    "rv_channel_view": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "action_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "skill_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "direction": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "started_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "ends_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "next_pulse_at_ms": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pulses": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 128
+        },
+        "total_pulses": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "recovery": {
+          "const": true
+        }
+      },
+      "required": [
+        "action_id",
+        "skill_id",
+        "direction",
+        "started_at_ms",
+        "ends_at_ms",
+        "next_pulse_at_ms",
+        "pulses"
+      ],
+      "dependentRequired": {
+        "recovery": [
+          "total_pulses"
+        ]
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "recovery"
+            ]
+          },
+          "then": {
+            "properties": {
+              "direction": {
+                "const": [
+                  0,
+                  0
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "rv_recovery_event": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "channel_recovery_pulse"
+        },
+        "action_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "pulse": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "spirit_cost": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8000000
+        },
+        "raw_hp": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "raw_spirit": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "hp_restored": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "spirit_restored": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "scheduled_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "executed_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "kind",
+        "action_id",
+        "pulse",
+        "spirit_cost",
+        "raw_hp",
+        "raw_spirit",
+        "hp_restored",
+        "spirit_restored",
+        "scheduled_at_ms",
+        "executed_at_ms"
+      ]
+    },
+    "rv_resource_commit": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "reserve_at": {
+          "enum": [
+            "accept",
+            "none"
+          ]
+        },
+        "consume_at": {
+          "const": "commit"
+        },
+        "cooldown_starts_at": {
+          "const": "commit"
+        },
+        "refund_before_commit": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "full"
+            }
+          },
+          "required": [
+            "kind"
+          ]
+        }
+      },
+      "required": [
+        "reserve_at",
+        "consume_at",
+        "cooldown_starts_at",
+        "refund_before_commit"
+      ]
+    },
+    "rv_resource_reservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "spirit": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "hp": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "minimum_hp_after_cost": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        }
+      },
+      "required": [
+        "spirit",
+        "hp",
+        "minimum_hp_after_cost"
+      ]
+    },
+    "rv_reservation_unit": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        }
+      },
+      "required": [
+        "id",
+        "generation"
+      ]
+    },
+    "rv_pending_view": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "skill_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "commits_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "action_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "resource_reservation": {
+          "$ref": "#/$defs/rv_resource_reservation"
+        },
+        "charge": {
+          "$ref": "#/$defs/rv_charge_view"
+        },
+        "ground_position": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "unit_target": {
+          "$ref": "#/$defs/rv_reservation_unit"
+        },
+        "ally_target": {
+          "$ref": "#/$defs/rv_reservation_unit"
+        }
+      },
+      "required": [
+        "skill_id",
+        "commits_at_ms"
+      ],
+      "dependentRequired": {
+        "resource_reservation": [
+          "action_id"
+        ]
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "resource_reservation"
+            ]
+          },
+          "then": {
+            "properties": {
+              "skill_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "properties": {
+    "protocol_version": {
+      "const": 6
+    },
+    "key": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "incarnation"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "incarnation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "request_id": {
+      "$ref": "#/$defs/id"
+    },
+    "config_id": {
+      "$ref": "#/$defs/id"
+    },
+    "config_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "seed": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4294967295
+    },
+    "participants": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "items": {
+        "$ref": "#/$defs/participant"
+      }
+    },
+    "publication_mode": {
+      "enum": [
+        "batched",
+        "interactive"
+      ]
+    },
+    "recovery": {
+      "$ref": "#/$defs/recoveryV4"
+    }
+  }
+}

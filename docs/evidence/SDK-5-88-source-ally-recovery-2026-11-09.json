@@ -1,0 +1,245 @@
+{
+  "batch": "SDK-5-88",
+  "delivery": "DELIVERY-01",
+  "workPackages": [
+    "R3.1",
+    "R3.2",
+    "R3.3"
+  ],
+  "sdkVersion": "0.133.0",
+  "date": "2026-11-09",
+  "mechanismVersion": 105,
+  "protocolVersion": 6,
+  "spec": "docs/batches/SDK-5-88-source-ally-recovery.md",
+  "runtimeSourceSha256": "191ba015c0ca824017212bc933e98ce75181b168a37cb6bdd28a088df15ce52c",
+  "probeBinarySha256": "14af544a8b3ee841480014c23733ceacb423f366f486f4778509b998f40e5e5d",
+  "sample": {
+    "file": "examples/combat-host/source-ally-recovery.json",
+    "sha256": "a5342782f02649d33da168213d920ea8618945c4480e5b7ae732430411271a45",
+    "baseFile": "examples/combat-host/mastery-stages.json",
+    "baseSha256": "f9e8ef814f21c5900f1ce109094144d7ef809ba3e20ac2c619accb182584ca55",
+    "skillIds": [
+      "huichun-jue",
+      "huichun-jue-advanced",
+      "wanmu-guiyuan"
+    ],
+    "testSourcePower": 100,
+    "nativeTest": "src/two_members/source_ally_recovery_tests.rs"
+  },
+  "sourceBinding": {
+    "sourceConfig": {
+      "file": "rust-match-kernel-v1.1/source-config.json",
+      "sha256": "7df9854739b72904fd55d93f4a0e0a0fb0b19026a21b37346d2a0f544704da66",
+      "rows": [
+        {
+          "pointer": "/tables/skills/huichun-jue",
+          "rowSha256": "3f66f6107cad79847f43c83a8f13c0c64989daf094f9393cf394e35e1f98b0f3"
+        },
+        {
+          "pointer": "/tables/skill-cast-lifecycle/huichun-jue",
+          "rowSha256": "e4df2675f50c11ab5b0bb65b7db61bdfe8bd10044b44f3ab44abf5e2d5de591d"
+        },
+        {
+          "pointer": "/tables/skill-targeting/huichun-jue",
+          "rowSha256": "3eabc6e8ebfc8dd4762d0840e0269ad59386b11dc75ad0dba45da62b6a57de88"
+        },
+        {
+          "pointer": "/tables/skills/huichun-jue-advanced",
+          "rowSha256": "6af5f1436e5fcca89e1fcd906113ef7f27a8d401a22f24b39618fab759543a52"
+        },
+        {
+          "pointer": "/tables/skill-cast-lifecycle/huichun-jue-advanced",
+          "rowSha256": "e6fbc0e4834069c79f31c802457da73deafb86a07d08a19a9e09abc8907f6bb9"
+        },
+        {
+          "pointer": "/tables/skill-targeting/huichun-jue-advanced",
+          "rowSha256": "3eabc6e8ebfc8dd4762d0840e0269ad59386b11dc75ad0dba45da62b6a57de88"
+        },
+        {
+          "pointer": "/tables/skills/wanmu-guiyuan",
+          "rowSha256": "0b4e5b0630e07c959ad44b7069043ed4c38bd3123f73251024f5eb809b6a52a7"
+        },
+        {
+          "pointer": "/tables/skill-cast-lifecycle/wanmu-guiyuan",
+          "rowSha256": "e4df2675f50c11ab5b0bb65b7db61bdfe8bd10044b44f3ab44abf5e2d5de591d"
+        },
+        {
+          "pointer": "/tables/skill-targeting/wanmu-guiyuan",
+          "rowSha256": "3eabc6e8ebfc8dd4762d0840e0269ad59386b11dc75ad0dba45da62b6a57de88"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-identities/huichun-jue",
+          "rowSha256": "f9799a1f43716aff284bbc70b62fbcfc83635ac28c55760732c870182145dbc2"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/huichun-jue:stage-1",
+          "rowSha256": "e81da3512a16997c45330b1fd4f2a30ec5f883e2968f264726bb53078ea88920"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/huichun-jue:stage-2",
+          "rowSha256": "3ff8453d9042ca065be4433a59e7d0fe4f16c30bc32b9b00259806d8509bb0e2"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/huichun-jue:stage-3",
+          "rowSha256": "28c944d747ae6acbb1c0852209a20126802add60f9df312c1688c1f65897b226"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/huichun-jue:stage-4",
+          "rowSha256": "4b93d5c218ad5dcade08c16cb172aa5fedc36cfbd0747ff8556d359b7718b080"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/huichun-jue:stage-5",
+          "rowSha256": "fb260bc2ac29d048a0ce69816270e2d0862d0ce94675878a7859e998ae826ab6"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-identities/wanmu-guiyuan",
+          "rowSha256": "2142b8941f29cf992879a7c72cf78516d8e35ddb2639220d40e56f5cf1c91824"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/wanmu-guiyuan:stage-1",
+          "rowSha256": "94323f4b13799c03e891c9f8ae904e27d2800be91afead0a987d77e3ba13b3a9"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/wanmu-guiyuan:stage-2",
+          "rowSha256": "5089dafaad2d1aa50d25b3b9b34f0fabdc5fd1931c675867141b14ddca4b44f7"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/wanmu-guiyuan:stage-3",
+          "rowSha256": "e2e8988a49301363b8c062a0f11bb276e791133cc85e0ae209c73618cd587c91"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/wanmu-guiyuan:stage-4",
+          "rowSha256": "300cde9847ce3373414c46ab678c46e6486f4403c1c8a9a41187315595069fde"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/wanmu-guiyuan:stage-5",
+          "rowSha256": "5f0d8c68d763d2f8fae624383bd3d68d370c9e6ae774a9eed6d24a339dd94bf6"
+        },
+        {
+          "pointer": "/tables/status-effects/effect_vitality",
+          "rowSha256": "3b76388b41f0dacf5c18965031231d340a48b1e08ca6c4bfdf5eb82217e41417"
+        },
+        {
+          "pointer": "/tables/status-effects/effect_guiyuan_mark",
+          "rowSha256": "21d164162b8a2779e108a4c9fcad8dc5aab3c5f4a3fbca5189dcac671b59a713"
+        },
+        {
+          "pointer": "/tables/factors/factor_heal",
+          "rowSha256": "620f12a0f11e904da58600a7f6500f40288a3b1ecf93e619f40e99489fbedc9e"
+        },
+        {
+          "pointer": "/tables/factors/factor_cultivation_state_add",
+          "rowSha256": "a1f3323d6537317dede329663129ec864165395b0c032158aa0daba6da7c21b0"
+        },
+        {
+          "pointer": "/tables/factors/factor_cultivation_area_heal",
+          "rowSha256": "4091f77cbd466e13d3fcfbad29bc6104ebeb70accc64c380b732cc580e6a634d"
+        },
+        {
+          "pointer": "/tables/factors/factor_cultivation_overheal_shield",
+          "rowSha256": "8c94639f9ca1b6efecdf59fd3e6d002e3c575ccddc4242237fbb7dc15b58d12e"
+        }
+      ]
+    },
+    "sourceRules": {
+      "file": "rust-match-kernel-v1.1/source-rules.json",
+      "sha256": "e7fd565d8144b6e6344db4ea136b6a526f9ded7986b13d296103c6debc041469",
+      "documents": [
+        {
+          "path": "docs/designs/skill-roster-cast-redesign.DESIGN.md",
+          "sha256": "3007ac8d4b48ef67e30078a5eb83cd400ae08f263334356a60122ded2f9d364c",
+          "lines": [
+            148,
+            149
+          ]
+        },
+        {
+          "path": "docs/designs/cultivation-combat-identity.DESIGN.md",
+          "sha256": "318480dc7cd726c7aea49cbace50e8c196de95d2914c9df033e6bd0f3a73e322",
+          "lines": [
+            203,
+            207,
+            208,
+            209,
+            210,
+            211
+          ]
+        },
+        {
+          "path": "docs/interfaces/cultivation-combat-identity.INTERFACE.md",
+          "sha256": "9c1323fc11b84a49b7a13e40dc3f28fef85dc2fea389b527543ec1093f45b3b7",
+          "lines": [
+            159,
+            221,
+            543
+          ]
+        }
+      ]
+    }
+  },
+  "contractFilesSha256": {
+    "docs/interfaces/combat-rules-v1.schema.json": "fe48c6320d238e783f36b3af92ea01df1f4d3862be9c3ca63429806be20431ec",
+    "web/replication.mjs": "79e5fd20212deca14e8018cfdee0e6a85ca421508f8fcf3e7be7e251c9c045e8"
+  },
+  "scopeDecisions": {
+    "formulas": "Prefer the explicit structured heal rows. The first advanced heal uses 700% source power and the familiar base heal uses fixed 100 plus 220%. Prose multiplier differences remain open.",
+    "hot": "Freeze the raw tick before applying live target healing-received. Each recipient has its own native status and final tick at expiry. Use a decoder supporting tick_on_expiry.",
+    "overflow": "Convert immediate adjusted surplus at full ratio, subject to the 10% source shield and shared cap.",
+    "targeting": "The primary is another eligible member. Nearby eligible members including the caster can receive the splash.",
+    "remaining": "Self-primary casts, Grove mark and advanced shield, permanent growth and insights remain open."
+  },
+  "checks": {
+    "rustDefault": 2776,
+    "rustAllFeatures": 2776,
+    "rustFocused": 4,
+    "nodeAndH5Adapters": 211,
+    "format": true,
+    "clippy": true,
+    "schemas": true,
+    "sourceRowsBound": 27,
+    "sourceProfilesCompared": 10,
+    "publicH5": {
+      "sdk": "0.133.0",
+      "transport": "Node/H5 HTTP/SSE and SQLite",
+      "seats": 2,
+      "stageIndex": 4,
+      "jadePrimaryHeal": 700,
+      "jadeSplashHeal": 420,
+      "groveHeal": 500,
+      "hotAmounts": [
+        21,
+        42
+      ],
+      "ticks": [
+        5,
+        5
+      ],
+      "shields": [
+        100,
+        100
+      ],
+      "reconnectRestored": true,
+      "lastTickAtDeadline": true,
+      "settlements": 2
+    },
+    "publicH5Entry": {
+      "sdk": "0.133.0",
+      "seats": 2,
+      "stageIndex": 0,
+      "jadeHeal": 500,
+      "groveHeal": 340,
+      "hotRaw": 25,
+      "ticks": [
+        0,
+        3
+      ],
+      "lastTickAtDeadline": true,
+      "shields": [
+        0,
+        0
+      ],
+      "settlements": 2
+    }
+  },
+  "wholeDelivery01Accepted": false
+}

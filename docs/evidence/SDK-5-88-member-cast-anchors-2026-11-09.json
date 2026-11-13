@@ -1,0 +1,102 @@
+{
+  "batch": "SDK-5-88",
+  "delivery": "DELIVERY-01",
+  "crossPackage": "R3.4",
+  "sdkVersion": "0.125.0",
+  "date": "2026-11-09",
+  "mechanismVersion": 105,
+  "protocolVersion": 6,
+  "spec": "docs/batches/SDK-5-88-member-cast-anchors.md",
+  "runtimeSourceSha256": "2d8e8fec4d6a683c7c48055f3fc78db6bcce10c418d32799108a7804085b04a3",
+  "sample": {
+    "file": "examples/combat-host/member-cast-anchor.json",
+    "sha256": "4a8bde5c9faa655dd1e3abaaaaf8a7532a8eebe57874d3a008d717be11b0d6c0",
+    "producerSkillId": "anchor-place",
+    "consumerSkillIds": [
+      "anchor-burst",
+      "anchor-bolt"
+    ],
+    "role": "generic fixture"
+  },
+  "sourceBinding": {
+    "rulesFile": "rust-match-kernel-v1.1/source-rules.json",
+    "rulesFileSha256": "e7fd565d8144b6e6344db4ea136b6a526f9ded7986b13d296103c6debc041469",
+    "sourceDocuments": [
+      {
+        "path": "docs/designs/skill-runtime.DESIGN.md",
+        "sha256": "556aa9683e6f0d8e9ad44a36ae0aaab76e7b4a6261b290251b3f9c7a340316db",
+        "lines": [
+          46,
+          48,
+          49,
+          50,
+          67,
+          73,
+          109,
+          111
+        ]
+      },
+      {
+        "path": "docs/designs/skill-cast-lifecycle.DESIGN.md",
+        "sha256": "89980ef32683ce41f104a9105495e7f55748e90cdae74ffc44be470d0847be2f",
+        "lines": [
+          219,
+          379
+        ]
+      },
+      {
+        "path": "docs/interfaces/skill-runtime.INTERFACE.md",
+        "sha256": "886544c59b05b0f22690157d862652fc6cea8d84683d63be8b7ccff9f3920729",
+        "lines": [
+          17,
+          34,
+          60,
+          63,
+          64
+        ]
+      }
+    ]
+  },
+  "contractFilesSha256": {
+    "docs/interfaces/combat-rules-v1.schema.json": "0f74147f1d9508572dccf69f50cf13a9cf62deb0d1ea7c976930dcb2f4753713",
+    "docs/interfaces/member-piercing-v1.schema.json": "357e21f0c6f654786c5b3b8868e7136fadde4b07a0b3970193750ad39fec2f7c",
+    "docs/interfaces/publications-v6.schema.json": "2921c676a28d6a485d510162afec702b3f5cd695b64c358e2d8a17221a522dbc"
+  },
+  "scopeDecisions": {
+    "placement": "Bind an ordinary ground circle to a fixed-world point. Keep one anchor per member generation and producing skill, with fresh identity on replacement.",
+    "use": "Use an explicit owned anchor ID with configured access distance, visibility and placement checked at accept and commit. Projectile launch checks the configured collision footprint.",
+    "delivery": "Spawn the projectile or circle at the anchor while retaining the original member and action identity. Released effects use a frozen point and the ordinary lifetime.",
+    "lifetime": "An anchor is reusable before its deadline. It shares the area pool and ends on expiry, replacement, source invalid or closure. Departed frozen views omit anchors.",
+    "scratch": "Use one batch scratch directory and the project Cargo cache."
+  },
+  "checks": {
+    "rustDefault": 2734,
+    "rustAllFeatures": 2734,
+    "rustFocused": 8,
+    "nodeAndH5Adapters": 206,
+    "clippy": true,
+    "format": true,
+    "schemas": true,
+    "publicH5": {
+      "sdk": "0.125.0",
+      "transport": "Node/H5 HTTP/SSE and SQLite",
+      "seats": 2,
+      "center": [
+        560,
+        400
+      ],
+      "durationMs": 3000,
+      "circleDamage": 100,
+      "projectileDamage": 100,
+      "spiritSpent": 8,
+      "foreignRejected": true,
+      "restoredAnchor": true,
+      "ownerExitIsolated": true,
+      "settlements": 2
+    }
+  },
+  "openInR3.4": [
+    "Anchor relocation and recast integration",
+    "Remaining world effects and production geometry integration"
+  ]
+}

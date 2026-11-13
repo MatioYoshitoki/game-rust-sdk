@@ -1,0 +1,243 @@
+{
+  "batch": "SDK-5-88",
+  "checkpoint": "core-39",
+  "sdkVersion": "0.102.0",
+  "scope": "exact original S10/S11/S12, opt-in instant self commit and owned terminal action counter",
+  "runtimeSourceSha256": "e8f376dc3fb1f265a3cc58d8147e3101c04deda2970f2984d5e66becb16d98f7",
+  "archiveSha256": "1d0b27eb64a6490ac4cc0f119607aee8720627eb9e70e47c7178302738ac7ad2",
+  "sourceCrateSha256": "f0b056df30875d09e916b08128be87ee4854b4758511047b48f5803768146cc1",
+  "binarySha256": "dc6ed2ea9d6d3c764b458c50ca95f8c43882c75a326809cf05ad1ac9bb4521bd",
+  "packageFiles": 2865,
+  "checks": {
+    "rustDefault": 2581,
+    "rustAllFeatures": 2581,
+    "newRustCases": 7,
+    "focusedRustCases": 563,
+    "node": 187,
+    "clippy": true,
+    "format": true,
+    "offlineIndependentDelivery": true,
+    "publicNodeMembers": [
+      4,
+      8
+    ],
+    "browserMembers": [
+      4,
+      8
+    ],
+    "legacy104": true,
+    "comparedSourceFiles": 463,
+    "consumedSampleCopiesCompared": 86,
+    "schemaRuntimeFragments": 236,
+    "schemaConfigFragments": 352,
+    "invalidFollowupFragmentsRejected": 26,
+    "invalidEnhancementFragmentsRejected": 36
+  },
+  "browserRooms": 50,
+  "sourceExecution": {
+    "routes": "src/verification/source_execution_routes.json",
+    "numericRows": 50,
+    "exactNative": 27,
+    "numericScenario": [
+      "S08"
+    ],
+    "nativeCastScenarios": [
+      "S10",
+      "S11",
+      "S12"
+    ],
+    "openExactScenarios": [
+      "S20",
+      "S28"
+    ],
+    "focusedRustCases": 5,
+    "castScenarioRustCases": 4
+  },
+  "terminalCounters": {
+    "spec": "docs/batches/SDK-5-88-action-terminal-counters.md",
+    "source": {
+      "sourceConfig": {
+        "file": "rust-match-kernel-v1.1/source-config.json",
+        "fileSha256": "7df9854739b72904fd55d93f4a0e0a0fb0b19026a21b37346d2a0f544704da66",
+        "rows": [
+          {
+            "pointer": "/tables/status-effects/effect_yishen_seed/attachedFactors/1",
+            "sha256": "df4291066d4ee8138e497605f20857abe393eaf64c2bf0e4399e3ddfb5889690"
+          },
+          {
+            "pointer": "/tables/cultivation-combat-profiles/wanjian-guizong:stage-1/factors/0",
+            "sha256": "c95b4dfc1319c24006277c95a03fef021e1c5c7a9ccc477fdab7f5729e7c6e40"
+          },
+          {
+            "pointer": "/tables/cultivation-combat-profiles/wanjian-guizong:stage-2/factors/0",
+            "sha256": "f3e7652e40b640cf1f0fc20c3932e179abd19bd4fd9607537f09a90669c7f68e"
+          },
+          {
+            "pointer": "/tables/cultivation-combat-profiles/wanjian-guizong:stage-4/factors/0",
+            "sha256": "5ac35ced1769ac9b756fdf2e66cd4b169971f3f5ed0e7f5cdc317ccde8115241"
+          }
+        ]
+      },
+      "sourceRules": {
+        "file": "rust-match-kernel-v1.1/source-rules.json",
+        "fileSha256": "e7fd565d8144b6e6344db4ea136b6a526f9ded7986b13d296103c6debc041469",
+        "document": "docs/designs/combat-engine.DESIGN.md",
+        "documentSha256": "2b1a9cd20e3cc79e8ab158879e59ff68f807c63ab93c27ae0b40a46aa144d558",
+        "row": "- 多目标虽然分 Tick 接触，但攻击方 `beforeAttack` 只在首次有效接触执行一次，`afterAttack`、吸血、自疗、回灵、护盾和冷却只在 delivery 终态以累计实际伤害执行一次。",
+        "rowSha256": "47c61c477af16e8d34e7246cff98ac5e7ee8b811f4331264820694f8dfc1d6c8"
+      },
+      "seedOwner": "caster",
+      "seedPhase": "afterAttack",
+      "seedGain": 1,
+      "seedExcludedSkill": "yishen-weizhong",
+      "seedMaximumPerAction": 1,
+      "swordIntentMinimumIntervalsMs": [
+        0,
+        0,
+        0
+      ],
+      "targetDependentAggregateSourceRowFound": false,
+      "fullOriginalStageBindingsAccepted": false
+    },
+    "focusedRustCases": 3,
+    "nativeThreePulseContacts": 3,
+    "publicNodeTerminalEvents": 8,
+    "publicH5TerminalEvents": 8
+  },
+  "castInterception": {
+    "spec": "docs/interfaces/cast-interception-v1.md",
+    "publicNode": [
+      {
+        "scenario": "interception-four",
+        "members": 4,
+        "sealMs": 700,
+        "slowMs": 1200,
+        "slowBps": -2500,
+        "cost": 8,
+        "outcomes": 4,
+        "duplicateFree": true,
+        "reconnected": true,
+        "private": true,
+        "settled": 4
+      },
+      {
+        "scenario": "interception-eight",
+        "members": 8,
+        "sealMs": 900,
+        "slowMs": 1500,
+        "slowBps": -2000,
+        "cost": 12,
+        "outcomes": 4,
+        "duplicateFree": true,
+        "reconnected": true,
+        "private": true,
+        "settled": 8
+      }
+    ],
+    "publicH5": [
+      {
+        "scenario": "interception-four",
+        "members": 4,
+        "sealMs": 700,
+        "slowMs": 1200,
+        "slowBps": -2500,
+        "cost": 8,
+        "outcomes": 4,
+        "silenceVisible": true,
+        "reconnected": true,
+        "private": true,
+        "settled": 4
+      },
+      {
+        "scenario": "interception-eight",
+        "members": 8,
+        "sealMs": 900,
+        "slowMs": 1500,
+        "slowBps": -2000,
+        "cost": 12,
+        "outcomes": 4,
+        "silenceVisible": true,
+        "reconnected": true,
+        "private": true,
+        "settled": 8
+      }
+    ],
+    "focusedRustCases": 10,
+    "source": {
+      "sourceConfig": {
+        "file": "rust-match-kernel-v1.1/source-config.json",
+        "fileSha256": "7df9854739b72904fd55d93f4a0e0a0fb0b19026a21b37346d2a0f544704da66",
+        "rows": [
+          {
+            "pointer": "/tables/skills/realm-divine-lock",
+            "sha256": "c746c5c285e8508f7297dfe553b31f464c23f5b85f772a7eddf5eccdf8f82385"
+          },
+          {
+            "pointer": "/tables/status-effects/effect_realm_divine_lock",
+            "sha256": "d521bc7ea277ec1c369b639b56070678ff11c32c1b6b2bec1c0877ed15b6c5fc"
+          },
+          {
+            "pointer": "/tables/status-effects/effect_realm_divine_lock_boss_slow",
+            "sha256": "675b1d736af8b40fd091f1a13dc3f5993faef4c6a3fff1d401fb8feb233d631c"
+          },
+          {
+            "pointer": "/tables/factors/factor_realm_cast_lock",
+            "sha256": "1ce7add8c0e444112ec92668b818cb10ac8817235596803ff30c15a298e6af1d"
+          }
+        ]
+      },
+      "sourceRules": {
+        "file": "rust-match-kernel-v1.1/source-rules.json",
+        "fileSha256": "e7fd565d8144b6e6344db4ea136b6a526f9ded7986b13d296103c6debc041469",
+        "documents": [
+          {
+            "document": "docs/designs/realm-technique-loadout.DESIGN.md",
+            "documentSha256": "05f55416b7a9b0b8511449d02e92178eb2a07ef0d3ac255d3e092a471a17aa52",
+            "row": "| 化神 | 神念锁   | 反制     | 标记一个敌人 5 秒；其下一次普通功法被截断并短暂封脉，首领改为减速      | 单目标、可见、一次性；60 秒冷却                  |",
+            "rowSha256": "45f0578cd53b8fd6e9ca3cea9a4ca32b52cead48bf544e2a24a2f4a6094a936c"
+          },
+          {
+            "document": "docs/designs/factor-system.DESIGN.md",
+            "documentSha256": "6c8c337d624c8ee72f077335df0105709b0d962016538469003fc084787fe429",
+            "row": "普通施法的神念锁预检按 native-combat-core 契约转入最终提交点，核读取并消费当前完整锁、控制免疫标记及Buff；不再由扣费后旧原语近似。`createStatusEffectInstance` 只按正式定义构造实例，供manager与native模板共享，不修改单位、不分配全局ID、不推进生命周期或重复策略。首领迟滞的属性读取/实际减速仍待后续触发链验收。",
+            "rowSha256": "c64b5208a824779b1b9646ec021d8298ca4713af0f1143c30512379a1b1bdef2"
+          }
+        ]
+      },
+      "markMs": 5000,
+      "sealMs": 700,
+      "bossSlowMs": 1200,
+      "bossSlowBps": -2500,
+      "immunity": {
+        "consumeMark": true,
+        "allowCommit": true,
+        "applyFollowup": false
+      },
+      "sealAttribute": "silence",
+      "decision": "docs/decisions/SDK-5-88-cast-interception-policy.md",
+      "fullOriginalRealmTechniqueAccepted": false
+    },
+    "schemaFragments": {
+      "config": 18,
+      "node": 32,
+      "h5States": 24,
+      "h5Events": 8,
+      "invalid": 20
+    }
+  },
+  "supplementalS28NativeProof": "docs/evidence/SDK-5-88-S28-native-probe-2026-11-09.json",
+  "pendingOriginalHpPolicy": true,
+  "wholeTaskAccepted": false,
+  "candidatePassed": true,
+  "evidenceDirectory": "/tmp/sdk88-proof-v102/checkpoints/core-39",
+  "evidenceManifestSha256": "d57342492a37b94827197b099097647c11d48a563f0dc76826ef6e2ec0a6b617",
+  "evidenceFiles": 70,
+  "priorEvidence": {
+    "previousCheckpointAvailable": true,
+    "previousCheckpointManifest": "/tmp/sdk88-proof-v101/checkpoints/core-38-sha256.json",
+    "previousFilesChecked": 70,
+    "previousManifestSha256": "16f3d287a25a4928aad9c9b02bf7c8ae07dc37b0c6816027e9c4863bc5b1822a",
+    "earlierCleanupBaseline": "docs/evidence/SDK-5-88-cleanup-baseline.json",
+    "historicalFilesRecreated": false
+  }
+}

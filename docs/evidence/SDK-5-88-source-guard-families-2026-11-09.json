@@ -1,0 +1,224 @@
+{
+  "batch": "SDK-5-88",
+  "delivery": "DELIVERY-01",
+  "workPackages": [
+    "R3.1",
+    "R3.2",
+    "R3.3"
+  ],
+  "sdkVersion": "0.131.0",
+  "date": "2026-11-09",
+  "mechanismVersion": 105,
+  "protocolVersion": 6,
+  "spec": "docs/batches/SDK-5-88-source-guard-families.md",
+  "runtimeSourceSha256": "0223c09d3650bdde83596448085de32fe9cc78ae4309b7ee41754ae8f1724f65",
+  "probeBinarySha256": "2f4b8e371c8bf62e7e01bbe56c661708a6e8d3d8a82ad689a590b01086273297",
+  "sample": {
+    "file": "examples/combat-host/source-guard-families.json",
+    "sha256": "0f4efea2dc2f83c05ac3e5fad6e39e29bbf226948defa407a3d70d361b0e34ca",
+    "baseFile": "examples/combat-host/mastery-stages.json",
+    "baseSha256": "f9e8ef814f21c5900f1ce109094144d7ef809ba3e20ac2c619accb182584ca55",
+    "families": [
+      "jinxia-buhuai",
+      "hanshan-jin"
+    ],
+    "skillIds": [
+      "jinxia-buhuai",
+      "jinxia-buhuai-advanced",
+      "hanshan-jin",
+      "hanshan-jin-advanced"
+    ],
+    "testPower": 100,
+    "sharedShieldCapBps": 4000,
+    "nativeTest": "src/two_members/source_guard_family_tests.rs"
+  },
+  "sourceBinding": {
+    "sourceConfig": {
+      "file": "rust-match-kernel-v1.1/source-config.json",
+      "sha256": "7df9854739b72904fd55d93f4a0e0a0fb0b19026a21b37346d2a0f544704da66",
+      "rows": [
+        {
+          "pointer": "/tables/factors/factor_cultivation_guard",
+          "rowSha256": "39db876be9b9b35db043afb496af04fa092d35e59d39feaca03d7f5d8fd2acd8"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-identities/jinxia-buhuai",
+          "rowSha256": "60e5447d0fa53c3abe4d7f4139f487ccc633eb4646c84f75c622c39b2b44575a"
+        },
+        {
+          "pointer": "/tables/status-effects/effect_guard_value",
+          "rowSha256": "15bdc28672a3b0622143f143bef10b3b95ec1fabb41c33a8a68a7fb682ee8580"
+        },
+        {
+          "pointer": "/tables/skills/jinxia-buhuai",
+          "rowSha256": "a43d9eb6f2ae701f7a939ab36873f68d4d12822db471cab94b3099cd121a0557"
+        },
+        {
+          "pointer": "/tables/skill-cast-lifecycle/jinxia-buhuai",
+          "rowSha256": "3ae61a2154566bec942a78cb4d9756a25e4e814d5efd6f7ff353cee07d228c38"
+        },
+        {
+          "pointer": "/tables/skill-targeting/jinxia-buhuai",
+          "rowSha256": "7be3613c2328374422b199c94422987b4c20e06b19f16f603232afafe2e91c63"
+        },
+        {
+          "pointer": "/tables/skills/jinxia-buhuai-advanced",
+          "rowSha256": "a6f1c502ea405298c1e5d53cfa0e1b75848ae70d0263f03a92644289f7651c8e"
+        },
+        {
+          "pointer": "/tables/skill-cast-lifecycle/jinxia-buhuai-advanced",
+          "rowSha256": "3ae61a2154566bec942a78cb4d9756a25e4e814d5efd6f7ff353cee07d228c38"
+        },
+        {
+          "pointer": "/tables/skill-targeting/jinxia-buhuai-advanced",
+          "rowSha256": "7be3613c2328374422b199c94422987b4c20e06b19f16f603232afafe2e91c63"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/jinxia-buhuai:stage-1",
+          "rowSha256": "9cd515eec5bf0178dea2580708a2ab20956015d69250988bc817605648112de9"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/jinxia-buhuai:stage-2",
+          "rowSha256": "67844cd890bcf94450de968afcf433a37a0365415cce895a2e19d313fffe8e93"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/jinxia-buhuai:stage-3",
+          "rowSha256": "cd157f083be03a4cc8599e63ffe974e5bb3b61c76c1d40530fa45a7c732ff060"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/jinxia-buhuai:stage-4",
+          "rowSha256": "87fd1199d64c615842ff26cc6a91215ab8eee6c6a784da6c256f9d26a1df3348"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/jinxia-buhuai:stage-5",
+          "rowSha256": "47d037cb984f175da5222abbfb803e6d05a00d7942d8a23cf47310461b5660c0"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-identities/hanshan-jin",
+          "rowSha256": "97584244c59d14922d9ad6a8292e7f121ea403432c8be90eabe87ea4fc6f7794"
+        },
+        {
+          "pointer": "/tables/status-effects/effect_hanshan_guard",
+          "rowSha256": "b514254c407058cd5617522871a578e2eece06e35ebacd998ce6082543c8d12d"
+        },
+        {
+          "pointer": "/tables/skills/hanshan-jin",
+          "rowSha256": "e27ee4e6155078eb316f240dab6e2007835ae8cfc590f46f286acb9114f153ae"
+        },
+        {
+          "pointer": "/tables/skill-cast-lifecycle/hanshan-jin",
+          "rowSha256": "3ae61a2154566bec942a78cb4d9756a25e4e814d5efd6f7ff353cee07d228c38"
+        },
+        {
+          "pointer": "/tables/skill-targeting/hanshan-jin",
+          "rowSha256": "7be3613c2328374422b199c94422987b4c20e06b19f16f603232afafe2e91c63"
+        },
+        {
+          "pointer": "/tables/skills/hanshan-jin-advanced",
+          "rowSha256": "c5b9b75701ea55e8621c502c161879d037f5ec08a572ab5fdd16dedb86efd8eb"
+        },
+        {
+          "pointer": "/tables/skill-cast-lifecycle/hanshan-jin-advanced",
+          "rowSha256": "3ae61a2154566bec942a78cb4d9756a25e4e814d5efd6f7ff353cee07d228c38"
+        },
+        {
+          "pointer": "/tables/skill-targeting/hanshan-jin-advanced",
+          "rowSha256": "7be3613c2328374422b199c94422987b4c20e06b19f16f603232afafe2e91c63"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/hanshan-jin:stage-1",
+          "rowSha256": "18e39fa9d3e3c36444c0408b0ffb76291bf5de5126936ef6a995ac5681cc9fca"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/hanshan-jin:stage-2",
+          "rowSha256": "31d802faf8c0da31ed16504313c4ecf232da4a7f637ea8b75c5b2d08f8aafb93"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/hanshan-jin:stage-3",
+          "rowSha256": "65c60a1dc55e460117181a1608e146c85592bc635947d16f05878f4bfe37b0d0"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/hanshan-jin:stage-4",
+          "rowSha256": "8dd09633e431dba76bd98eb7233a2a0b058a8fa2f3b7fb291be47325799d04af"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/hanshan-jin:stage-5",
+          "rowSha256": "ff218ce6389be628de4e22f4cf1a4b4a11bb35a8fcb148f780cc7947f467f5e3"
+        }
+      ]
+    },
+    "sourceRules": {
+      "file": "rust-match-kernel-v1.1/source-rules.json",
+      "sha256": "e7fd565d8144b6e6344db4ea136b6a526f9ded7986b13d296103c6debc041469",
+      "documents": [
+        {
+          "path": "docs/designs/cultivation-combat-identity.DESIGN.md",
+          "sha256": "318480dc7cd726c7aea49cbace50e8c196de95d2914c9df033e6bd0f3a73e322",
+          "lines": [
+            183,
+            187,
+            188,
+            189,
+            190,
+            191,
+            199
+          ]
+        },
+        {
+          "path": "docs/interfaces/cultivation-combat-identity.INTERFACE.md",
+          "sha256": "9c1323fc11b84a49b7a13e40dc3f28fef85dc2fea389b527543ec1093f45b3b7",
+          "lines": [
+            219,
+            220,
+            246
+          ]
+        }
+      ]
+    }
+  },
+  "contractFilesSha256": {
+    "docs/interfaces/combat-rules-v1.schema.json": "99fe222e5a0cf534ed269c48d4a906eccad5c02654f6c24cecb55bd5434e3755"
+  },
+  "scopeDecisions": {
+    "replacement": "Compare the new pool-capped grant with the live old remainder. Keep weaker or equal attempts. Distinct variants clear the old ledger without releasing a counter.",
+    "end": "Advanced fixtures counter at both break and natural expiry as explicitly selected. End statuses remain independently gated by the existing end switches.",
+    "counter": "The source omits a damage kind and earlier radii. The samples use physical damage and carry each family's final-stage radius back to earlier advanced phases.",
+    "host": "The original skill registry supplies cast costs. Trusted loadouts grant advanced skills at mastery; persistent unlocks and insights retain separate acceptance."
+  },
+  "checks": {
+    "rustDefault": 2766,
+    "rustAllFeatures": 2766,
+    "rustFocused": 5,
+    "nodeAndH5Adapters": 210,
+    "format": true,
+    "clippy": true,
+    "schemas": true,
+    "sourceRowsBound": 27,
+    "stageFactorsVerified": 14,
+    "publicH5": {
+      "sdk": "0.131.0",
+      "transport": "Node/H5 HTTP/SSE and SQLite",
+      "seats": 2,
+      "stageIndex": 4,
+      "initialShield": [
+        280,
+        320
+      ],
+      "recordCaps": [
+        200,
+        220
+      ],
+      "counterByReason": {
+        "depleted": 120,
+        "expired": 132
+      },
+      "replacementReset": true,
+      "reconnectShield": 20,
+      "reconnectRecorded": 220,
+      "expiryLingerBps": 2000,
+      "expiryCounterSlowBps": 3500,
+      "settlements": 2
+    }
+  },
+  "wholeDelivery01Accepted": false
+}

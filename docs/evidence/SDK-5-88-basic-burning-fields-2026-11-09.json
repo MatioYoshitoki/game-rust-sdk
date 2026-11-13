@@ -1,0 +1,154 @@
+{
+  "batch": "SDK-5-88",
+  "delivery": "DELIVERY-01",
+  "crossPackage": "R3.4",
+  "sdkVersion": "0.115.0",
+  "mechanismVersion": 105,
+  "date": "2026-11-09",
+  "scope": "Configuration-driven status-only delayed attacks, per-definition capped periodic healing penalties, lethal periodic propagation, and frozen-ground basic fields.",
+  "spec": "docs/batches/SDK-5-88-basic-burning-fields.md",
+  "runtimeSourceSha256": "9d9ed64da7126ded385553fbbf6ea24e97e25cbb5978d503afb07a660bd449ed",
+  "sourceBinding": {
+    "table": "data/weapon-attack-morphs/WEAPON_ATTACK_MORPHS",
+    "tableFile": "rust-match-kernel-v1.1/resolved-config.json",
+    "tableFileSha256": "6f730cf5a4844f3f67870a720b4fd0ce024f53e6905714344bebb52f53df8e0a",
+    "rowSha256": {
+      "cauldron_flame_field": "19ad7a224e86f16dcd0acdcf5c964c69332e579fc811da3466d2f36a77469ac9",
+      "cauldron_triple_fall": "37650c6c439e1b63602f4e79fc1e068037cf0890ee5b34f99704e13ac92a442b"
+    },
+    "familyRowSha256": "6be6b3f01691cd22d905b8a1bef4f5a9c9246711ba48db3523c5915f74ae40c3",
+    "rulesFile": "rust-match-kernel-v1.1/source-rules.json",
+    "rulesFileSha256": "e7fd565d8144b6e6344db4ea136b6a526f9ded7986b13d296103c6debc041469",
+    "sourceDocuments": [
+      {
+        "path": "docs/designs/combat-engine.DESIGN.md",
+        "sha256": "2b1a9cd20e3cc79e8ab158879e59ff68f807c63ab93c27ae0b40a46aa144d558",
+        "lines": [
+          205,
+          206
+        ]
+      },
+      {
+        "path": "docs/interfaces/combat-engine.INTERFACE.md",
+        "sha256": "36c7d30dc1f9b490692d3b7d5ef1fde79cfeaaafef1973e0dcf854d6656b2ed8",
+        "lines": [
+          110,
+          120,
+          121,
+          122
+        ]
+      }
+    ]
+  },
+  "package": {
+    "archive": "/private/tmp/sdk88-basic-burning-fields-v115/delivery-final/match-kernel-0.115.0-aarch64-apple-darwin.tar.gz",
+    "target": "aarch64-apple-darwin",
+    "sha256": "335bccf66c7c5ce1ee15072393f0c97b10b4ece6831989eda10cc7009dcbce9b",
+    "sourceCrateSha256": "80a8b7b9cb5161f51cf26aee29196cb468382947864fe069a0a064f440ea8896",
+    "binarySha256": "5ca39e578183933b5db03a6705ffa089357029f1420bb0e090253436643b8b72",
+    "packageFiles": 2906
+  },
+  "sample": {
+    "file": "examples/combat-host/basic-burning-profiles.json",
+    "sha256": "4fda0cefb02980c994370999ff97bcd9651377e9e6dae5bfe9b73d13893b5e89",
+    "profiles": [
+      "cauldron_flame_field",
+      "cauldron_triple_fall"
+    ],
+    "basicFieldCapacity": 2
+  },
+  "scopeDecisions": {
+    "ground": "Freeze coordinates on admission. Recheck ground geometry at release and keep the released plan when the previous target is lost.",
+    "stacking": "The source identity owns each status instance. Preserve its next tick on refresh and group healing reduction by definition across sources.",
+    "propagation": "Only lethal ticks of the configured burn source qualify. The burst uses the lethal instance sample and stack count; its own damage cannot recurse. New instances sample the current source.",
+    "damageAndClock": "Only the field attack uses its configured critical rule. The ordinary basic cooldown starts after delivery, and field pulses run independently. Burn expiry is exclusive and the field includes the final scheduled pulse.",
+    "capacity": "The sample uses a shared two-slot field pool and the world NPC limit of 32 as the burst candidate cap.",
+    "wire": "Rust BasicImpactView.target is optional. Existing fixed-delay JSON keeps target; ground_field instead sends position."
+  },
+  "checks": {
+    "rustDefault": {
+      "passed": 2671,
+      "logSha256": "f54c2b9b5a17795cd67d852aff7ad9ea9a793be70226439a92ba411c31750165"
+    },
+    "rustAllFeatures": {
+      "passed": 2671,
+      "logSha256": "0868912f9c2a9ec6f768b0690eb6f11b75f07d7d47ccde3ad53f2e7c2e6d602a"
+    },
+    "rustPackagedEmptyCache": {
+      "passed": 5,
+      "logSha256": "c86951603e32934fb796ea61cbb37304ad1bf80ca398fbcdb8eadea9d5570f81"
+    },
+    "nodeAndH5Adapters": {
+      "passed": 196,
+      "logSha256": "eb7b935edf8dfd2051d32f73ee4704f762eac9227c162fad096fecd7bc253134"
+    },
+    "clippy": true,
+    "format": true,
+    "schema": {
+      "accepted": 8,
+      "rejected": 13
+    },
+    "publicH5HttpSseAndSqlite": {
+      "sdk": "0.115.0",
+      "transport": "H5 HTTP/SSE + Node + SQLite",
+      "validGround": true,
+      "mixedInputRejected": true,
+      "seedDirectDamage": 0,
+      "independentBurns": 2,
+      "reconnectedField": true,
+      "replacedField": true,
+      "fieldDamage": 9,
+      "intervalMs": 500,
+      "settled": 2
+    },
+    "previousFieldProfilesPublicH5": {
+      "sdk": "0.115.0",
+      "transport": "H5 HTTP/SSE + Node + SQLite",
+      "overlap": 2,
+      "reconnectedFields": 2,
+      "towerReplaced": true,
+      "intervalMs": 1000,
+      "vortexDamage": 15,
+      "towerDamage": 18,
+      "settled": 2
+    },
+    "legacy104PublicNode": [
+      {
+        "scenario": "four",
+        "members": 4,
+        "source": "P00",
+        "target": "power-target",
+        "powerBps": 5000,
+        "damage": [
+          66,
+          100,
+          66,
+          66
+        ],
+        "settled": 4
+      },
+      {
+        "scenario": "eight",
+        "members": 8,
+        "source": "P00",
+        "target": "power-target",
+        "powerBps": 10000,
+        "damage": [
+          66,
+          133,
+          66,
+          66
+        ],
+        "settled": 8
+      }
+    ],
+    "packagedRuntimeFilesCompared": 395,
+    "sampleCopiesCompared": 91,
+    "bundleVerification": "Package files verified: 2906"
+  },
+  "open": [
+    "The other five named morphs",
+    "Equipment-instance morph resolution, in-match weapon changes, skill-based wind-blade push and remaining world effects",
+    "Original resource-steal HP policy and remaining production mode and host acceptance"
+  ]
+}

@@ -1,0 +1,410 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://match-kernel.local/interfaces/character-build-v1.schema.json",
+  "title": "Trusted raw build and native output fragments",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/build"
+    },
+    {
+      "$ref": "#/$defs/rules"
+    },
+    {
+      "$ref": "#/$defs/model"
+    },
+    {
+      "$ref": "#/$defs/growth"
+    },
+    {
+      "$ref": "#/$defs/private_powers"
+    },
+    {
+      "$ref": "#/$defs/status_sources"
+    },
+    {
+      "$ref": "#/$defs/source_selector"
+    },
+    {
+      "$ref": "#/$defs/heal"
+    }
+  ],
+  "$defs": {
+    "build": {
+      "type": "object",
+      "properties": {
+        "power_points": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "skill_power_points": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "element_resistance_points": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "powers": {
+          "type": "object",
+          "maxProperties": 64,
+          "propertyNames": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/growth"
+          }
+        }
+      },
+      "required": [
+        "power_points",
+        "skill_power_points",
+        "element_resistance_points",
+        "powers"
+      ],
+      "additionalProperties": false
+    },
+    "rules": {
+      "type": "object",
+      "properties": {
+        "conversion": {
+          "type": "object",
+          "properties": {
+            "hp_bps": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            },
+            "spirit_bps": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            },
+            "atk_bps": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            },
+            "def_bps": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            },
+            "spd_bps": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            },
+            "element_resistance_bps": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            }
+          },
+          "required": [
+            "hp_bps",
+            "spirit_bps",
+            "atk_bps",
+            "def_bps",
+            "spd_bps",
+            "element_resistance_bps"
+          ],
+          "additionalProperties": false
+        },
+        "maximum_input_points": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "power_models": {
+          "type": "object",
+          "minProperties": 1,
+          "maxProperties": 64,
+          "propertyNames": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/model"
+          }
+        }
+      },
+      "required": [
+        "conversion",
+        "maximum_input_points",
+        "power_models"
+      ],
+      "additionalProperties": false
+    },
+    "model": {
+      "type": "object",
+      "properties": {
+        "rank_base": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 16,
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000000
+          }
+        },
+        "quality_add_bps": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 128,
+          "items": {
+            "type": "integer",
+            "minimum": -10000,
+            "maximum": 1000000
+          }
+        },
+        "level_add_bps": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 128,
+          "items": {
+            "type": "integer",
+            "minimum": -10000,
+            "maximum": 1000000
+          }
+        },
+        "mastery_add_bps": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 128,
+          "items": {
+            "type": "integer",
+            "minimum": -10000,
+            "maximum": 1000000
+          }
+        },
+        "external_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "maximum_power": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000000000
+        }
+      },
+      "required": [
+        "rank_base",
+        "quality_add_bps",
+        "level_add_bps",
+        "mastery_add_bps",
+        "external_bps",
+        "maximum_power"
+      ],
+      "additionalProperties": false
+    },
+    "growth": {
+      "type": "object",
+      "properties": {
+        "model_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "rank": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 15
+        },
+        "quality": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127
+        },
+        "level": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127
+        },
+        "mastery": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127
+        }
+      },
+      "required": [
+        "model_id",
+        "rank",
+        "quality",
+        "level",
+        "mastery"
+      ],
+      "additionalProperties": false
+    },
+    "private_powers": {
+      "type": "object",
+      "properties": {
+        "skill_powers": {
+          "type": "object",
+          "maxProperties": 8,
+          "propertyNames": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 4294967295
+          }
+        }
+      },
+      "required": [
+        "skill_powers"
+      ],
+      "additionalProperties": false
+    },
+    "status_sources": {
+      "type": "object",
+      "properties": {
+        "status_power_sources": {
+          "type": "object",
+          "maxProperties": 16,
+          "propertyNames": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          }
+        }
+      },
+      "required": [
+        "status_power_sources"
+      ],
+      "additionalProperties": false
+    },
+    "source_selector": {
+      "type": "object",
+      "properties": {
+        "source_skill_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        }
+      },
+      "required": [
+        "source_skill_id"
+      ],
+      "additionalProperties": false
+    },
+    "heal": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "heal_resolved"
+        },
+        "heal_kind": {
+          "enum": [
+            "ally_skill",
+            "self_skill",
+            "triggered",
+            "basic_attack",
+            "life_steal",
+            "resource_steal"
+          ]
+        },
+        "source": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "enum": [
+                "participant",
+                "monster"
+              ]
+            },
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "generation": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            }
+          },
+          "required": [
+            "kind",
+            "id",
+            "generation"
+          ],
+          "additionalProperties": false
+        },
+        "target": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "enum": [
+                "participant",
+                "monster"
+              ]
+            },
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "generation": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            }
+          },
+          "required": [
+            "kind",
+            "id",
+            "generation"
+          ],
+          "additionalProperties": false
+        },
+        "raw_heal": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "multiplier_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "adjusted_heal": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "hp_restored": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        }
+      },
+      "required": [
+        "kind",
+        "heal_kind",
+        "source",
+        "target",
+        "raw_heal",
+        "multiplier_bps",
+        "adjusted_heal",
+        "hp_restored"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

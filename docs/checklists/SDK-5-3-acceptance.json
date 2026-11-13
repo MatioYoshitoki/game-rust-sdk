@@ -1,0 +1,99 @@
+{
+  "batch": "SDK-5-3",
+  "scope": "finite ATK/DEF selectors and per-plan attack capture; not full M03/M04",
+  "criteria": {
+    "AT01": {
+      "rustTests": [
+        "config::status::attribute_tests::attribute_support_and_generic_selectors_are_explicit",
+        "config::status::attribute_tests::attribute_invalid_versions_selectors_caps_and_extra_fields_reject",
+        "config::status::attribute_tests::attribute_caps_are_tuning_and_direct_writes_remain_unavailable"
+      ]
+    },
+    "AT02": {
+      "rustTests": [
+        "world::pve::attribute_tests::attribute_aggregation_is_separate_clamped_wide_and_rounds_once",
+        "world::pve::attribute_tests::attribute_positive_and_negative_instances_cancel_without_touching_defense",
+        "world::pve::attribute_tests::attribute_source_groups_and_latest_owner_cover_capped_reapplication",
+        "world::pve::attribute_tests::attribute_duplicate_policies_and_hundred_closes_share_lifecycle"
+      ]
+    },
+    "AT03": {
+      "rustTests": [
+        "world::pve::attribute_tests::attribute_self_commit_changes_this_shot_and_expiry_restores_basic_damage",
+        "world::pve::attribute_tests::attribute_attack_and_defense_combine_without_double_scaling",
+        "world::pve::attribute_tests::attribute_zero_attack_keeps_configured_minimum_damage"
+      ]
+    },
+    "AT04": {
+      "rustTests": [
+        "world::pve::attribute_tests::attribute_preparation_uses_commit_state_and_exact_expiry_precedes_commit",
+        "world::pve::attribute_tests::attribute_flight_freezes_attack_but_reads_defense_at_contact",
+        "world::pve::attribute_tests::attribute_player_basic_reads_effective_attack_once",
+        "world::pve::attribute_tests::attribute_monster_projectile_self_buff_freezes_even_after_source_death",
+        "world::pve::attribute_tests::attribute_hit_debuff_changes_subsequent_melee_not_defense_constant"
+      ]
+    },
+    "AT05": {
+      "rustTests": [
+        "world::pve::attribute_tests::attribute_area_reads_attack_at_release",
+        "world::pve::attribute_tests::attribute_heavy_plan_freezes_at_warning_creation",
+        "world::pve::attribute_tests::attribute_counter_window_freezes_attack_before_later_contact",
+        "world::pve::attribute_tests::attribute_timed_position_freezes_failure_and_success_budgets"
+      ]
+    },
+    "AT06": {
+      "rustTests": [
+        "world::pve::attribute_tests::attribute_capacity_rejection_and_source_cleanup_are_atomic",
+        "world::pve::attribute_tests::attribute_duplicate_policies_and_hundred_closes_share_lifecycle",
+        "world::pve::stack_tests::stack_public_retries_and_transport_receipts_never_add_layers_or_extend_deadline",
+        "world::pve::status_tests::status_new_connection_preserves_instance_and_rejects_old_generation",
+        "world::pve::status_tests::status_true_return_reset_invalidates_sources_and_old_projectile_binding",
+        "world::pve::stack_tests::stack_encounter_round_reset_clears_all_layers_and_old_source_cannot_reapply"
+      ],
+      "nodeCases": [
+        "a-extraction"
+      ]
+    },
+    "AT07": {
+      "rustTests": [],
+      "nodeCases": [
+        "a-extraction",
+        "a-death",
+        "b-extraction",
+        "b-death"
+      ],
+      "touchCases": [
+        "extraction",
+        "death"
+      ]
+    },
+    "AT08": {
+      "rustTests": [],
+      "crashBoundaries": [
+        "active",
+        "after_intent_persist",
+        "after_storage_commit"
+      ],
+      "recoveriesPerBoundary": 2
+    },
+    "AT09": {
+      "rustTests": [
+        "world::pve::attribute_tests::attribute_old_19_20_snapshots_omit_new_fields_and_match_damage",
+        "config::status::attribute_tests::attribute_legacy_19_and_20_definitions_keep_their_wire_form"
+      ],
+      "reports": [
+        "artifacts/sdk-5-3/baseline-verification.json",
+        "artifacts/sdk-5-3/verification.json",
+        "artifacts/sdk-5-3/delivery/independent-verification.json"
+      ]
+    },
+    "AT10": {
+      "rustTests": [],
+      "reports": [
+        "artifacts/sdk-5-3/delivery/source-verification.json",
+        "artifacts/sdk-5-3/delivery/independent-verification.json",
+        "artifacts/sdk-5-3/baseline-verification.json"
+      ]
+    }
+  }
+}

@@ -1,0 +1,498 @@
+{
+  "batch": "SDK-5-94",
+  "source": "rust-match-kernel-v1.1/scenarios.json",
+  "sha256": "84d5e7f8ac78f1fb478bf1ff5ab446527f3ed4d6b1623782b2e7badd0e981a00",
+  "executedSourceScenarios": 41,
+  "completeOriginalSet": 48,
+  "test": "two_members::source_scenario_tests",
+  "counts": {
+    "executed": 39,
+    "executed-prior": 1,
+    "pending-geometry": 1,
+    "pending": 4,
+    "pending-domain": 1,
+    "pending-host": 1,
+    "executed-divergence": 1
+  },
+  "divergences": [
+    {
+      "scenarios": [
+        "S01"
+      ],
+      "issue": "activation timestamp: kernel activates inline with the last ready input (active_at_ms 0); source oracle expects the next fixed step (30)",
+      "handling": "arbitrated A: inline activation stands"
+    },
+    {
+      "scenarios": [
+        "S02",
+        "S03"
+      ],
+      "issue": "aborted deployment phase: kernel completes the abort synchronously (closed); source names the interim draining",
+      "handling": "arbitrated A: closed terminal assertion stands"
+    },
+    {
+      "scenarios": [
+        "S13"
+      ],
+      "issue": "member in-flight shots are cleared when the member settles; the source fixture pins endOnSourceInvalid=false and expects the frozen payload to hit",
+      "handling": "fully closed: end_on_source_invalid added (0.182.0) and detached settlement wired through eligibility and delivery (0.183.0); S13 matches the oracle"
+    },
+    {
+      "scenarios": [
+        "S42"
+      ],
+      "issue": "on an unknown admission receipt the kernel retries with a fresh attempt id before the query resolves; the source oracle resolves by query first and issues no new debit attempt",
+      "handling": "arbitrated A: retry-first stands, no-double-charge invariant asserted"
+    }
+  ],
+  "bindings": [
+    {
+      "id": "S01",
+      "status": "executed",
+      "note": "deploying→B ready→activate exactly once; activeAtMs divergence registered: kernel activates inline at 0, source expects next step 30",
+      "domains": [
+        "F-01"
+      ],
+      "title": "全部就绪只激活一次"
+    },
+    {
+      "id": "S02",
+      "status": "executed",
+      "note": "refused admission: empty inventory, no Activated; phase divergence registered: kernel settles abort at closed, source names draining",
+      "domains": [
+        "F-01",
+        "F-13"
+      ],
+      "title": "部署扣费失败不能给物品"
+    },
+    {
+      "id": "S03",
+      "status": "executed",
+      "note": "deployment timeout aborts without activation; same closed/draining mapping as S02",
+      "domains": [
+        "F-01",
+        "F-14"
+      ],
+      "title": "缺席部署超时"
+    },
+    {
+      "id": "S04",
+      "status": "executed",
+      "note": "Move [1,0] + 30ms: exact [5.4,0] via authoritative replica snapshot",
+      "domains": [
+        "F-02"
+      ],
+      "title": "普通移动一个固定步"
+    },
+    {
+      "id": "S05",
+      "status": "executed",
+      "note": "NaN direction: INVALID_MESSAGE typed + JSON envelope, position unchanged",
+      "domains": [
+        "F-02"
+      ],
+      "title": "非有限输入不部分写入"
+    },
+    {
+      "id": "S06",
+      "status": "executed",
+      "note": "Background clears movement, protected stays true after Foreground, no intent replay",
+      "domains": [
+        "F-02",
+        "F-11"
+      ],
+      "title": "保护先停止，前台不复活旧移动"
+    },
+    {
+      "id": "S07",
+      "status": "executed",
+      "note": "wall contact at radius 16 (x<=34) and every 30ms step <= 5.4",
+      "domains": [
+        "F-02"
+      ],
+      "title": "墙体与普通位移预算"
+    },
+    {
+      "id": "S08",
+      "status": "executed-prior",
+      "note": "covered by the SDK-5-93 vector matrix (numericVectorIds all bound)",
+      "domains": [
+        "F-03"
+      ],
+      "title": "独立伤害与治疗算术"
+    },
+    {
+      "id": "S09",
+      "status": "executed",
+      "note": "100 shield drains 150 damage to 50 HP, shield 0, one absorption record (world-layer authoritative chain)",
+      "domains": [
+        "F-03"
+      ],
+      "title": "护盾吸收后只扣剩余 HP"
+    },
+    {
+      "id": "S10",
+      "status": "executed",
+      "note": "control interrupt publishes ActionInterrupted exactly once at application time (driver fixed); matches the oracle",
+      "domains": [
+        "F-03",
+        "F-04"
+      ],
+      "title": "提交前中断不扣灵力"
+    },
+    {
+      "id": "S11",
+      "status": "executed",
+      "note": "instant self cast replays idempotently: one commit, one charge",
+      "domains": [
+        "F-04"
+      ],
+      "title": "提交重试只生成一次"
+    },
+    {
+      "id": "S12",
+      "status": "executed",
+      "note": "strict ally target dies pre-commit: ActionRejected + full refund, no heal (source name SkillInterrupted mapped)",
+      "domains": [
+        "F-04"
+      ],
+      "title": "严格单位目标死亡不换人"
+    },
+    {
+      "id": "S13",
+      "status": "executed",
+      "note": "end_on_source_invalid (0.182.0) + detached settlement (0.183.0): with the flag the frozen payload flies past its settled source and lands the frozen damage (900); default drops with the source (1000) - full parity with the oracle",
+      "domains": [
+        "F-04"
+      ],
+      "title": "在途弹道不因来源死亡复活来源"
+    },
+    {
+      "id": "S14",
+      "status": "pending-geometry",
+      "note": "unit-wall-unit ordering needs a dedicated large map; the ordering itself is covered by SDK-5-88 piercing suites and S15",
+      "domains": [
+        "F-04"
+      ],
+      "title": "阻挡前接触保留，阻挡后无伤害"
+    },
+    {
+      "id": "S15",
+      "status": "executed",
+      "note": "slow piercing bolt overlaps B for consecutive steps: exactly one 100 hit lands",
+      "domains": [
+        "F-04"
+      ],
+      "title": "目标重复间隔零仅一次"
+    },
+    {
+      "id": "S16",
+      "status": "pending",
+      "note": "heavy/immunity driver",
+      "domains": [
+        "F-05"
+      ],
+      "title": "牵引外免伤，回内受击保留"
+    },
+    {
+      "id": "S17",
+      "status": "pending",
+      "note": "support selection driver",
+      "domains": [
+        "F-05"
+      ],
+      "title": "支援只选同群最低比例"
+    },
+    {
+      "id": "S18",
+      "status": "executed",
+      "note": "contended pickup awards once: loser gets InvalidTarget, resource consumed, B empty",
+      "domains": [
+        "F-06"
+      ],
+      "title": "同一资源两人竞争只发一份"
+    },
+    {
+      "id": "S19",
+      "status": "executed",
+      "note": "full single slot rejects with Capacity, resource stays on the ground",
+      "domains": [
+        "F-06"
+      ],
+      "title": "满包且不可堆叠，资源不丢"
+    },
+    {
+      "id": "S20",
+      "status": "pending-domain",
+      "note": "placementResult is a host-injected placement verdict; in the kernel domain a drop always lands at the bearer's feet",
+      "domains": [
+        "F-06"
+      ],
+      "title": "主动丢弃落点失败保留原物"
+    },
+    {
+      "id": "S21",
+      "status": "executed",
+      "note": "exact-revision claim empties the relic and lifts the items; replay and the other seat are rejected",
+      "domains": [
+        "F-06"
+      ],
+      "title": "遗物修订冲突和重复领取"
+    },
+    {
+      "id": "S22",
+      "status": "executed",
+      "note": "RelicOpened contents go privately to the opener only; the public snapshot carries a content-free summary",
+      "domains": [
+        "F-06",
+        "F-12"
+      ],
+      "title": "遗物内容只有近距开启者可见"
+    },
+    {
+      "id": "S23",
+      "status": "executed",
+      "note": "one-shot pickup never respawns across the full horizon to terminal",
+      "domains": [
+        "F-06"
+      ],
+      "title": "一次性资源不刷新"
+    },
+    {
+      "id": "S24",
+      "status": "executed",
+      "note": "ExtractStart at the last closed step rejects with InvalidState",
+      "domains": [
+        "F-07"
+      ],
+      "title": "开放前拒绝撤离"
+    },
+    {
+      "id": "S25",
+      "status": "executed",
+      "note": "mid-channel hit interrupts exactly once (extraction_interrupted), member stays active, no settlement",
+      "domains": [
+        "F-07"
+      ],
+      "title": "受伤中断撤离而非终局"
+    },
+    {
+      "id": "S26",
+      "status": "executed",
+      "note": "not_committed core settlement keeps the member out of the extracted terminal; the world stays for the retry",
+      "domains": [
+        "F-07",
+        "F-13"
+      ],
+      "title": "核心提交失败不能成功撤离"
+    },
+    {
+      "id": "S27",
+      "status": "executed",
+      "note": "committed core settles once, receipt replay is idempotent, the terminal survives an unresolved facts side",
+      "domains": [
+        "F-07",
+        "F-13"
+      ],
+      "title": "核心提交成功后附属失败不反转"
+    },
+    {
+      "id": "S28",
+      "status": "executed",
+      "note": "the absolute terminal kills protected and immune members alike (pressure window before the single-shot deadline); both die",
+      "domains": [
+        "F-07"
+      ],
+      "title": "绝对终局穿过保护和无敌"
+    },
+    {
+      "id": "S29",
+      "status": "executed",
+      "note": "death split under relics: kept three in the settlement row, one relic stack created; dropped half lives in relic entries (kernel accounting mapped)",
+      "domains": [
+        "F-07",
+        "F-06"
+      ],
+      "title": "死亡只掉局内，单格最少掉一"
+    },
+    {
+      "id": "S30",
+      "status": "pending",
+      "note": "attune lives in the single-player world layer whose b3 fixture catalog is part of the missing regression data directory (same blocker as the historical fixtures); revisit once that directory returns",
+      "domains": [
+        "F-08"
+      ],
+      "title": "PVE 调谐失败不发局内加持"
+    },
+    {
+      "id": "S31",
+      "status": "executed",
+      "note": "a granted boon lands in a slot; leaving the match wipes it and no boon asset leaks into the settlement",
+      "domains": [
+        "F-08"
+      ],
+      "title": "三格加持退场不永久化"
+    },
+    {
+      "id": "S32",
+      "status": "executed",
+      "note": "clearing one seat's training group releases exactly those targets (out of the seat's view); the other seat's runtime and ownership stand; no progression is written",
+      "domains": [
+        "F-09"
+      ],
+      "title": "训练清理保留另一玩家 runtime"
+    },
+    {
+      "id": "S33",
+      "status": "executed",
+      "note": "contest timeout with equal remaining fractions draws both seats; no death relics appear (inventories preserved)",
+      "domains": [
+        "F-09"
+      ],
+      "title": "论剑超时按比例平局不掉物"
+    },
+    {
+      "id": "S34",
+      "status": "executed",
+      "note": "forfeit concludes immediately with exactly one ModeConcluded(Loss); late reconnect changes nothing (driver/config fixed)",
+      "domains": [
+        "F-09",
+        "F-11"
+      ],
+      "title": "判负比连接恢复期限早"
+    },
+    {
+      "id": "S35",
+      "status": "executed",
+      "note": "seal 8 drained by two weighted member kills; the one-shot riot fires at exactly 1.75x and settles to the drained 1.5x tier, never restarting",
+      "domains": [
+        "F-09"
+      ],
+      "title": "遗迹封印归零暴动一次"
+    },
+    {
+      "id": "S36",
+      "status": "pending-host",
+      "note": "cross-match sect aggregation belongs to the host ledger domain (G-03); idempotence already bound by S27/S45",
+      "domains": [
+        "F-09",
+        "F-13"
+      ],
+      "title": "灾变重复结果与宗门快照"
+    },
+    {
+      "id": "S37",
+      "status": "executed",
+      "note": "a consumed checkpoint window cannot be re-credited to the same identity; a single credit never advances the stage",
+      "domains": [
+        "F-10"
+      ],
+      "title": "风眼同一身份不能刷检查点"
+    },
+    {
+      "id": "S38",
+      "status": "executed",
+      "note": "an uncleared wave at the 45s horizon fails both seats in place with no rewards",
+      "domains": [
+        "F-10"
+      ],
+      "title": "火劫未清波失败不晋阶"
+    },
+    {
+      "id": "S39",
+      "status": "executed",
+      "note": "stale generation-1 Move and Leave both STALE_CONNECTION; present, generation 2 kept",
+      "domains": [
+        "F-11"
+      ],
+      "title": "旧连接不能操纵新连接"
+    },
+    {
+      "id": "S40",
+      "status": "executed",
+      "note": "failed transport rebuilds B's baseline with a fresh full before deltas resume; A's acknowledged baseline goes straight to deltas",
+      "domains": [
+        "F-12"
+      ],
+      "title": "只对真正发送者推进基线"
+    },
+    {
+      "id": "S41",
+      "status": "executed",
+      "note": "a generation-1 receipt for the old connection is rejected StaleConnection; the new generation baseline starts from a fresh full",
+      "domains": [
+        "F-12"
+      ],
+      "title": "旧代发送成功不推进新代"
+    },
+    {
+      "id": "S42",
+      "status": "executed-divergence",
+      "note": "the kernel retries an unknown admission with a fresh attempt id before the query resolves (source resolves by query first, no new attempt); no double commit can land - attempts stay pending or resolve via the queried proof",
+      "domains": [
+        "F-13"
+      ],
+      "title": "未知扣费查证后不重复扣"
+    },
+    {
+      "id": "S43",
+      "status": "executed",
+      "note": "match m2 plays a full fixed step while m1 waits in Preparing on its held admission; both stay isolated",
+      "domains": [
+        "F-13",
+        "F-14"
+      ],
+      "title": "A 等 I/O 时 B 局继续"
+    },
+    {
+      "id": "S44",
+      "status": "pending",
+      "note": "per-match input queue capacity is a Runtime-mailbox engineering constant; needs a host parameterization decision",
+      "domains": [
+        "F-14"
+      ],
+      "title": "输入满拒绝且不部分写入"
+    },
+    {
+      "id": "S45",
+      "status": "executed",
+      "note": "close drains: late committed settlement releases world, idempotent close, ledger committed",
+      "domains": [
+        "F-14",
+        "F-13"
+      ],
+      "title": "关闭后迟到提交只收尾"
+    },
+    {
+      "id": "S46",
+      "status": "executed",
+      "note": "fault seals m1 only; m2 stays active and keeps accepting input",
+      "domains": [
+        "F-14"
+      ],
+      "title": "故障只封存本局"
+    },
+    {
+      "id": "S47",
+      "status": "executed",
+      "note": "two independent real runs of the contended-pickup inputs produce equal semantic inventories and event streams",
+      "domains": [
+        "F-14"
+      ],
+      "title": "固定输入重复回放"
+    },
+    {
+      "id": "S48",
+      "status": "executed",
+      "note": "100 create/activate/move/close cycles: closed, no pending outputs or operations",
+      "domains": [
+        "F-14"
+      ],
+      "title": "100 次创建关闭回收"
+    }
+  ],
+  "batches": [
+    "SDK-5-94",
+    "SDK-5-95"
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "batch": "SDK-5-88",
+  "delivery": "DELIVERY-01",
+  "crossPackage": "R3.4",
+  "sdkVersion": "0.117.0",
+  "date": "2026-11-09",
+  "mechanismVersion": 105,
+  "protocolVersion": 6,
+  "spec": "docs/batches/SDK-5-88-basic-flight-and-stack-finisher.md",
+  "runtimeSourceSha256": "8d7524ad7908e19c22e34c72b018f14da13b3d9073fc08de4c1841e3b1de442e",
+  "sample": {
+    "file": "examples/combat-host/basic-flight-and-stack-finisher.json",
+    "sha256": "67171b5f9b10f2d4ee173e1e0647f47b1345ea203c22b6a0e3286292e4210cb3",
+    "profiles": [
+      "cauldron_core_burst",
+      "tower_double_ring"
+    ],
+    "uses": [
+      "examples/combat-host/basic-burning-profiles.json",
+      "examples/combat-host/basic-weapon-profiles.json"
+    ]
+  },
+  "sourceBinding": {
+    "tableFile": "rust-match-kernel-v1.1/resolved-config.json",
+    "tableFileSha256": "6f730cf5a4844f3f67870a720b4fd0ce024f53e6905714344bebb52f53df8e0a",
+    "morphRowsSha256": {
+      "cauldron_core_burst": "8cf02eb00654732961e29b8e7a39b27570bb027d7a8f1544f4fa6e3e645dbea4",
+      "tower_double_ring": "526ea3a622550050ed301563b73c57f779bc84740cab237b011ef43616b5d669"
+    },
+    "rulesFile": "rust-match-kernel-v1.1/source-rules.json",
+    "rulesFileSha256": "e7fd565d8144b6e6344db4ea136b6a526f9ded7986b13d296103c6debc041469",
+    "sourceDocuments": [
+      {
+        "path": "docs/designs/combat-engine.DESIGN.md",
+        "sha256": "2b1a9cd20e3cc79e8ab158879e59ff68f807c63ab93c27ae0b40a46aa144d558",
+        "lines": [
+          207,
+          208,
+          238
+        ]
+      },
+      {
+        "path": "docs/interfaces/combat-engine.INTERFACE.md",
+        "sha256": "36c7d30dc1f9b490692d3b7d5ef1fde79cfeaaafef1973e0dcf854d6656b2ed8",
+        "lines": [
+          78,
+          110,
+          124,
+          127
+        ]
+      }
+    ],
+    "numericMappingsMatched": [
+      "Flight tiers and reach",
+      "Source-scoped burn",
+      "Ordinary and finisher wave",
+      "Floor cap, duration and mitigation"
+    ]
+  },
+  "contractFilesSha256": {
+    "docs/interfaces/member-piercing-v1.schema.json": "7c3be987b90a68baa2e64f1499a1866b48cf3e1bf04ace672e5430b69ccdbea2",
+    "docs/interfaces/publications-v6.schema.json": "99820f72d33075ebb0b23b2c446c7d539eca6883f61d97af12eabe9ce7e31afb"
+  },
+  "scopeDecisions": {
+    "directionAim": "Direction-only release projects the configured maximum range. An explicit point or live unit can select a nearer destination.",
+    "flightWall": "A swept obstruction terminates flight. The burst occurs only at the frozen point, after all valid path contacts for that step.",
+    "towerFinisher": "Five persistent floors select the next committed finisher. It consumes the selected instance at action end. Expiry before commit falls back to ordinary range.",
+    "config": "The sample selects the shared fire elemental damage rule, shared cauldron burn definition and tower suppression definitions.",
+    "scratch": "Both H5 runs reused the same disposable directory. Cargo used the existing build cache."
+  },
+  "checks": {
+    "rustDefault": 2684,
+    "rustAllFeatures": 2684,
+    "rustFocused": 7,
+    "nodeAndH5Adapters": 198,
+    "clippy": true,
+    "format": true,
+    "schemas": true,
+    "publicH5": {
+      "transport": "Node/H5 HTTP/SSE and SQLite",
+      "seats": 2,
+      "flightRehydrated": true,
+      "frozenTier": 2,
+      "burstCount": 1,
+      "stackedFinisher": true,
+      "settlements": 2
+    }
+  },
+  "openInR3.4": [
+    "Equipment instance resolution",
+    "In-match equipment changes",
+    "Skill-based wind-blade displacement and remaining world effects"
+  ]
+}

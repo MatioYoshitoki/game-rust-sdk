@@ -1,0 +1,113 @@
+{
+  "batch": "SDK-5-6",
+  "scope": "finite base-max-HP self HOT using shared periodic queue; not full M04",
+  "criteria": {
+    "HT01": {
+      "rustTests": [
+        "config::status::healing_tests::hot_zero_maximum_budget_and_self_monster_binding_are_valid",
+        "config::status::healing_tests::hot_support_normalization_and_reload_are_explicit",
+        "config::status::healing_tests::hot_legacy_19_to_23_normalized_definitions_gain_no_heal_fields",
+        "config::status::healing_tests::hot_invalid_fields_versions_timing_and_hit_bindings_reject"
+      ]
+    },
+    "HT02": {
+      "rustTests": [
+        "world::pve::healing_tests::hot_attack_defense_shields_and_permanent_facts_are_unchanged",
+        "world::pve::healing_tests::hot_capacity_failure_does_not_refresh_or_charge",
+        "world::pve::healing_tests::hot_maximum_ratio_uses_wide_math_and_never_reduces_overcap_hp",
+        "world::pve::healing_tests::hot_refresh_recaptures_max_hp_and_ignore_keeps_plan",
+        "world::pve::healing_tests::hot_self_entities_keep_independent_groups_and_refresh_identity"
+      ]
+    },
+    "HT03": {
+      "rustTests": [
+        "world::pve::healing_tests::hot_first_last_and_half_open_deadline_are_exact",
+        "world::pve::healing_tests::hot_earlier_scheduled_heal_precedes_later_dot_during_catchup",
+        "world::pve::healing_tests::hot_non_aligned_clock_does_not_drift_and_expiry_wins",
+        "world::pve::healing_tests::hot_same_due_dot_kills_first_even_when_hot_has_older_id",
+        "world::pve::healing_tests::hot_same_due_nonlethal_dot_precedes_heal",
+        "world::pve::healing_tests::hot_same_family_order_is_stable_and_reads_never_advance",
+        "world::pve::healing_tests::hot_public_retry_and_reconnect_preserve_progress"
+      ]
+    },
+    "HT04": {
+      "rustTests": [
+        "world::pve::healing_tests::hot_death_or_generation_change_clears_and_never_revives",
+        "world::pve::healing_tests::hot_full_and_partial_heals_do_not_roll_rng_or_trigger_contact",
+        "world::pve::healing_tests::hot_full_hp_clamps_actual_heal_and_consumes_zero_tick",
+        "world::pve::healing_tests::hot_maximum_ratio_uses_wide_math_and_never_reduces_overcap_hp",
+        "world::pve::healing_tests::hot_same_due_dot_kills_first_even_when_hot_has_older_id",
+        "world::pve::healing_tests::hot_zero_and_tiny_heal_do_not_use_minimum_damage",
+        "world::pve::healing_tests::hot_lethal_dot_naturally_settles_without_resurrection"
+      ]
+    },
+    "HT05": {
+      "rustTests": [
+        "world::pve::healing_tests::hot_capacity_failure_does_not_refresh_or_charge",
+        "world::pve::healing_tests::hot_precommit_cancellation_never_grants_a_plan",
+        "world::pve::healing_tests::hot_real_monster_projectile_commit_uses_the_same_self_effect",
+        "world::pve::healing_tests::hot_real_player_commit_delays_first_heal_and_pays_once",
+        "world::pve::healing_tests::hot_healing_does_not_rewind_boss_phase_or_gain_aggro",
+        "world::pve::healing_tests::hot_does_not_interrupt_extraction_or_active_support"
+      ],
+      "nodeCases": [
+        "a-extraction",
+        "a-death",
+        "b-extraction",
+        "b-death"
+      ]
+    },
+    "HT06": {
+      "rustTests": [
+        "world::pve::healing_tests::hot_death_or_generation_change_clears_and_never_revives",
+        "world::pve::healing_tests::hot_hundred_closes_and_absolute_terminal_leave_no_late_heal",
+        "world::pve::healing_tests::hot_protected_background_and_not_ready_ticks_are_consumed",
+        "world::pve::healing_tests::hot_returning_skips_without_refilling_hp_or_extending_plan",
+        "world::pve::healing_tests::hot_event_burst_with_legal_capacity_releases_world_and_settles",
+        "world::pve::healing_tests::hot_public_retry_and_reconnect_preserve_progress",
+        "world::pve::healing_tests::hot_encounter_reset_clears_plan_and_rejects_old_round"
+      ],
+      "nodeCases": [
+        "a-extraction"
+      ]
+    },
+    "HT07": {
+      "nodeCases": [
+        "a-extraction",
+        "a-death",
+        "b-extraction",
+        "b-death"
+      ],
+      "touchCases": [
+        "extraction",
+        "death"
+      ]
+    },
+    "HT08": {
+      "crashBoundaries": [
+        "active",
+        "after_intent_persist",
+        "after_storage_commit"
+      ],
+      "recoveriesPerBoundary": 2
+    },
+    "HT09": {
+      "rustTests": [
+        "config::status::healing_tests::hot_legacy_19_to_23_normalized_definitions_gain_no_heal_fields",
+        "world::pve::healing_tests::hot_legacy_views_keep_zero_raw_damage_and_omit_heal_fields"
+      ],
+      "reports": [
+        "artifacts/sdk-5-6/baseline-verification.json",
+        "artifacts/sdk-5-6/verification.json",
+        "artifacts/sdk-5-6/delivery/independent-verification.json"
+      ]
+    },
+    "HT10": {
+      "reports": [
+        "artifacts/sdk-5-6/delivery/source-verification.json",
+        "artifacts/sdk-5-6/delivery/independent-verification.json",
+        "artifacts/sdk-5-6/baseline-verification.json"
+      ]
+    }
+  }
+}

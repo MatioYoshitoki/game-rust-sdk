@@ -1,0 +1,130 @@
+{
+  "batch": "SDK-5-88",
+  "delivery": "DELIVERY-01",
+  "crossPackage": "R3.4",
+  "sdkVersion": "0.105.0",
+  "mechanismVersion": 105,
+  "date": "2026-11-09",
+  "scope": "Configurable native piercing basic attacks with optional once-per-action spirit recovery and cooldown at delivery completion.",
+  "spec": "docs/batches/SDK-5-88-basic-delivery-settlement.md",
+  "runtimeSourceSha256": "a64f0d1b323ee64369ede3ccc9e459dd33df8b7dff2886667a13ebcdea0294ea",
+  "package": {
+    "archive": "/private/tmp/sdk88-basic-v105/delivery/match-kernel-0.105.0-aarch64-apple-darwin.tar.gz",
+    "target": "aarch64-apple-darwin",
+    "sha256": "21b2399dc9a5127b267105589468b2ee96d4c76054192b3cba65c56e5e373fc5",
+    "sourceCrateSha256": "5925d99ec1365425f54f2ef4ad9dd2e3915e126c9bb1a6b730984a78a86a3ee8",
+    "binarySha256": "9cae04c0ad1656cca60575743f9abab302b253415cb987e6e298991ac72cdb00",
+    "packageFiles": 2873
+  },
+  "sourceBinding": {
+    "rulesFile": "rust-match-kernel-v1.1/source-rules.json",
+    "rulesSha256": "e7fd565d8144b6e6344db4ea136b6a526f9ded7986b13d296103c6debc041469",
+    "document": "docs/designs/combat-engine.DESIGN.md",
+    "documentSha256": "2b1a9cd20e3cc79e8ab158879e59ff68f807c63ab93c27ae0b40a46aa144d558",
+    "ruleRowSha256": {
+      "186": "47c61c477af16e8d34e7246cff98ac5e7ee8b811f4331264820694f8dfc1d6c8",
+      "188": "679214317a65b6bc4dc4ca22a164756501a63e3d8225c0a879175debf239dee3"
+    },
+    "configFile": "rust-match-kernel-v1.1/resolved-config.json",
+    "configSha256": "6f730cf5a4844f3f67870a720b4fd0ce024f53e6905714344bebb52f53df8e0a",
+    "sourceRows": {
+      "/tables/data~1weapon-basic-attacks/WEAPON_BASIC_ATTACK_PROFILES/sword": "fd00e88d58a3aeb8c620cdc46bc0921893210296093c1e1f58bcea78cf2fe86a",
+      "/tables/data~1combat/COMBAT_CONFIG/playerCombat": "8ee4c4654a2eceb528c9f685f12478b096a0bc5adafb157eb42c36ec50aac0f3"
+    }
+  },
+  "sample": {
+    "file": "examples/combat-host/mastery-stages.json",
+    "sha256": "f9e8ef814f21c5900f1ce109094144d7ef809ba3e20ac2c619accb182584ca55",
+    "catalog": "examples/combat-host/mastery-stages-catalog.json",
+    "planId": "basic-piercing-demo",
+    "maxHits": 2,
+    "releaseMs": 120,
+    "contactsMs": [
+      150,
+      180
+    ],
+    "spiritRestored": 2,
+    "lifeStealRestoredInRust": 30,
+    "cooldownIntervalMs": 700,
+    "readyAtMs": 880,
+    "queuedPromotionMs": 900,
+    "queuedCommittedOnce": true
+  },
+  "scopeDecisions": {
+    "eligibleContact": "valid direct contact including fully absorbed damage",
+    "releasedMiss": "cooldown starts at completion",
+    "connectionProtection": "cancel recovery while preserving the released cooldown obligation",
+    "readyProjection": "delivery deadline until the native terminal step"
+  },
+  "checks": {
+    "rustDefault": {
+      "passed": 2604,
+      "logSha256": "fa964ceb1c2b88384cd8cfd5c5921a3b740b25500ad8d5296707419ad98b7957"
+    },
+    "rustAllFeatures": {
+      "passed": 2604,
+      "logSha256": "4107f9d6311fa4b66dce8592ba2d77e7d2f0afa1db6c63b5766de07fa239781f"
+    },
+    "rustPackagedEmptyCache": {
+      "passed": 7,
+      "logSha256": "ec15a740680d68bc4273286477cda7def1f8a8cd224fa364023f8c9a167af6cb"
+    },
+    "nodeAdapters": 187,
+    "clippy": true,
+    "format": true,
+    "schema": {
+      "accepted": 1,
+      "rejected": 6
+    },
+    "publicNodeAndSqlite": {
+      "sdk": "0.105.0",
+      "protocol": 6,
+      "contacts": 2,
+      "contactSpacingMs": 30,
+      "spiritRestored": 2,
+      "cooldownFromTerminalMs": 700,
+      "lifeStealEvents": 1,
+      "rawLifeSteal": 30,
+      "peerIsolated": true,
+      "closed": true,
+      "settled": 2
+    },
+    "legacy104PublicNode": [
+      {
+        "scenario": "four",
+        "members": 4,
+        "source": "P00",
+        "target": "power-target",
+        "powerBps": 5000,
+        "damage": [
+          66,
+          100,
+          66,
+          66
+        ],
+        "settled": 4
+      },
+      {
+        "scenario": "eight",
+        "members": 8,
+        "source": "P00",
+        "target": "power-target",
+        "powerBps": 10000,
+        "damage": [
+          66,
+          133,
+          66,
+          66
+        ],
+        "settled": 8
+      }
+    ],
+    "packagedSdkFilesCompared": 381,
+    "sampleCopiesCompared": 2
+  },
+  "open": [
+    "Full weapon family and morph deployment, wave geometry, recall and displacement (R3.4)",
+    "Other source cultivation recipes and original resource-steal HP policy",
+    "Deployed client, database and transport acceptance"
+  ]
+}

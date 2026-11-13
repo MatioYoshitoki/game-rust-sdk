@@ -1,0 +1,118 @@
+{
+  "batch": "SDK-5-10",
+  "scope": "M02 finite strict hostile unit projectiles, not friendly/ground/homing or full targeting",
+  "criteria": {
+    "UT01": {
+      "rustTests": [
+        "config::skill_wire::unit_tests::unit_skill_config_projectile_fields_are_required_and_zero_timing_valid",
+        "config::skill_wire::unit_tests::unit_skill_config_rejects_bad_bounds_mixed_fields_and_references",
+        "config::skill_wire::unit_tests::unit_skill_config_requires_capability_schema_and_pve",
+        "config::skill_wire::unit_tests::unit_skill_config_roundtrips_both_slots_and_support",
+        "config::skill_wire::unit_tests::unit_skill_wire_rejects_missing_unknown_and_wrong_target_types"
+      ]
+    },
+    "UT02": {
+      "rustTests": [
+        "world::pve::reset_tests::unit_skill_reset_countdown_hides_and_rejects_target_without_switching",
+        "world::pve::unit_skill_tests::unit_skill_accept_checks_vision_without_granting_self_status",
+        "world::pve::unit_skill_tests::unit_skill_accept_rejects_missing_dead_disabled_returning_old_generation_and_self",
+        "world::pve::unit_skill_tests::unit_skill_mismatched_intents_unknown_skill_and_old_versions_are_rejected",
+        "world::pve::unit_skill_tests::unit_skill_no_resource_readiness_and_protection_cannot_prepare",
+        "world::pve::unit_skill_tests::unit_skill_range_boundary_is_inclusive_and_never_starts_navigation",
+        "world::pve::unit_skill_tests::unit_skill_return_to_home_changes_identity_without_rebinding",
+        "world::pve::unit_skill_tests::unit_skill_views_expose_only_live_enabled_nonreturning_references"
+      ]
+    },
+    "UT03": {
+      "rustTests": [
+        "world::pve::unit_skill_tests::unit_skill_commit_aims_at_current_positions_but_preserves_selected_identity",
+        "world::pve::unit_skill_tests::unit_skill_commit_rechecks_death_disable_returning_generation_range_and_vision_atomically",
+        "world::pve::unit_skill_tests::unit_skill_pending_target_is_not_changed_by_later_selection_or_rejected_cast"
+      ]
+    },
+    "UT04": {
+      "rustTests": [
+        "world::pve::unit_skill_tests::unit_skill_committed_projectile_does_not_home_after_target_moves",
+        "world::pve::unit_skill_tests::unit_skill_committed_target_loss_never_rebinds_or_refunds",
+        "world::pve::unit_skill_tests::unit_skill_direction_projectile_keeps_original_first_contact_behavior",
+        "world::pve::unit_skill_tests::unit_skill_freezes_parameters_and_attack_then_uses_existing_live_defense",
+        "world::pve::unit_skill_tests::unit_skill_intervening_unit_blocks_without_damage_or_hit_status",
+        "world::pve::unit_skill_tests::unit_skill_real_second_target_damage_and_status_never_auto_select_first",
+        "world::pve::unit_skill_tests::unit_skill_wall_wins_equal_contact_and_hit_order_is_stable"
+      ]
+    },
+    "UT05": {
+      "rustTests": [
+        "world::pve::reset_tests::unit_skill_actual_reset_cancels_pending_and_new_round_rejects_old_reference",
+        "world::pve::unit_skill_tests::unit_skill_background_after_commit_preserves_cd_recovery_and_projectile",
+        "world::pve::unit_skill_tests::unit_skill_cancel_background_terminal_and_death_before_due_do_not_spend",
+        "world::pve::unit_skill_tests::unit_skill_commit_resource_decline_and_self_capacity_failure_are_atomic",
+        "world::pve::unit_skill_tests::unit_skill_shared_pending_recovery_and_move_cancel_cannot_bypass",
+        "world::pve::unit_skill_tests::unit_skill_zero_windup_and_cost_still_use_one_fixed_step_pending"
+      ]
+    },
+    "UT06": {
+      "rustTests": [
+        "world::pve::unit_skill_tests::unit_skill_hundred_closes_release_target_preparations_and_frozen_assets",
+        "world::pve::unit_skill_tests::unit_skill_legal_output_peak_keeps_target_views_and_frozen_asset_responsibility_bounded",
+        "world::pve::unit_skill_tests::unit_skill_pending_and_committed_views_keep_frozen_target",
+        "world::pve::unit_skill_tests::unit_skill_primary_and_secondary_cd_aliases_are_independent",
+        "world::pve::unit_skill_tests::unit_skill_public_identity_validation_and_reconnect_do_not_duplicate"
+      ]
+    },
+    "UT07": {
+      "rustTests": [],
+      "reports": [
+        "artifacts/sdk-5-10/verification.json"
+      ],
+      "nodeCases": [
+        "a-extraction",
+        "a-death",
+        "b-extraction",
+        "b-death"
+      ],
+      "touchCases": [
+        "extraction",
+        "death"
+      ],
+      "targetRejections": [
+        "range",
+        "vision",
+        "stale_generation"
+      ],
+      "unitInSecondaryVariant": "b",
+      "selectedTarget": "second hostile; switch UI selection during preparation without retargeting"
+    },
+    "UT08": {
+      "rustTests": [],
+      "reports": [
+        "artifacts/sdk-5-10/verification.json"
+      ],
+      "crashBoundaries": [
+        "active",
+        "after_intent_persist",
+        "after_storage_commit"
+      ],
+      "recoveriesPerBoundary": 2
+    },
+    "UT09": {
+      "rustTests": [
+        "config::skill_wire::unit_tests::unit_skill_config_old_19_to_27_keep_their_shapes",
+        "world::pve::unit_skill_tests::unit_skill_old_snapshots_and_events_omit_target_fields"
+      ],
+      "reports": [
+        "artifacts/sdk-5-10/baseline-verification.json",
+        "artifacts/sdk-5-10/verification.json",
+        "artifacts/sdk-5-10/delivery/independent-verification.json"
+      ]
+    },
+    "UT10": {
+      "rustTests": [],
+      "reports": [
+        "artifacts/sdk-5-10/baseline-verification.json",
+        "artifacts/sdk-5-10/delivery/independent-verification.json",
+        "artifacts/sdk-5-10/delivery/source-verification.json"
+      ]
+    }
+  }
+}

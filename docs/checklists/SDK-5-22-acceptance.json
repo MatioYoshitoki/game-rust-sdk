@@ -1,0 +1,153 @@
+{
+  "batch": "SDK-5-22",
+  "crate": "0.24.0",
+  "protocol": 6,
+  "schema": 7,
+  "mechanism": 39,
+  "criteria": {
+    "MS01": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::shields::mp_shield_configuration_rejects_wrong_version_bindings_budgets_before_io"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json"
+      ]
+    },
+    "MS02": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::shields::mp_shield_public_duplicate_cast_is_once_and_peer_hot_costs_remain_independent",
+        "world::two_members::shield_tests::mp_shield_group_capacity_failure_does_not_partially_refresh",
+        "world::two_members::shield_tests::mp_shield_one_two_four_eight_individual_base_and_total"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json"
+      ]
+    },
+    "MS03": {
+      "rustTests": [
+        "world::two_members::shield_tests::mp_shield_depleted_regrant_gets_new_id",
+        "world::two_members::shield_tests::mp_shield_ignore_preserves_balance_source_and_deadline",
+        "world::two_members::shield_tests::mp_shield_order_earliest_expiry_then_application_then_id",
+        "world::two_members::shield_tests::mp_shield_refresh_refills_own_group_keeps_id_and_foreign_balance",
+        "world::two_members::shield_tests::mp_shield_refresh_transfers_cleanup_to_actual_source",
+        "world::two_members::shield_tests::mp_shield_shared_cap_not_per_source",
+        "world::two_members::shield_tests::mp_shield_zero_grant_no_instance_or_expiration"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json"
+      ]
+    },
+    "MS04": {
+      "rustTests": [
+        "world::two_members::shield_tests::mp_shield_hot_preserves_balance_and_does_not_convert_overheal",
+        "world::two_members::shield_tests::mp_shield_minimum_damage_consumes_one_then_depletes",
+        "world::two_members::shield_tests::mp_shield_npc_self_consumption_is_shared_but_not_multiplied_in_dot",
+        "world::two_members::shield_tests::mp_shield_overkill_consumes_full_shield_before_hp_clamp",
+        "world::two_members::shield_tests::mp_shield_post_defense_before_shield_and_hp"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json",
+        "browser-recheck/report.json"
+      ]
+    },
+    "MS05": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::shields::mp_shield_npc_dot_death_settles_only_target_while_seven_peers_continue",
+        "world::two_members::shield_tests::mp_shield_full_direct_contact_interrupts_extraction",
+        "world::two_members::shield_tests::mp_shield_full_dot_does_not_interrupt_but_hp_loss_does",
+        "world::two_members::shield_tests::mp_shield_terminal_not_delayed_and_never_double_defeats"
+      ],
+      "reports": [
+        "native-verification.json"
+      ]
+    },
+    "MS06": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::shields::mp_shield_public_reconnect_preserves_instance_cadence_and_old_connection_fences",
+        "world::two_members::shield_tests::mp_shield_expiry_excludes_equal_deadline_before_damage",
+        "world::two_members::shield_tests::mp_shield_protection_and_returning_skip_without_consumption"
+      ],
+      "reports": [
+        "native-verification.json",
+        "browser-recheck/report.json"
+      ]
+    },
+    "MS07": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::shields::mp_shield_disconnect_timeout_cleans_lost_source_without_closing_peers",
+        "two_members::tests::capacity::delta::shields::mp_shield_unknown_settlement_cleans_source_at_exit_and_other_sources_continue",
+        "world::two_members::shield_tests::mp_shield_exit_cleans_target_and_outgoing_leaves_seven_peers",
+        "world::two_members::shield_tests::mp_shield_friendly_and_stale_generation_grants_rejected",
+        "world::two_members::shield_tests::mp_shield_npc_reset_cleans_both_relations_and_increments_generation"
+      ],
+      "reports": [
+        "native-verification.json",
+        "crashes/report.json"
+      ]
+    },
+    "MS08": {
+      "rustTests": [
+        "world::two_members::shield_tests::mp_shield_consumption_slices_never_leak_foreign_ids",
+        "world::two_members::shield_tests::mp_shield_member_target_details_are_only_target_private",
+        "world::two_members::shield_tests::mp_shield_npc_aggregate_contains_hidden_foreign_groups"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json",
+        "browser-recheck/report.json"
+      ]
+    },
+    "MS09": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::shields::mp_shield_decoder_balances_null_and_invalid_sources_are_atomic",
+        "two_members::tests::capacity::delta::shields::mp_shield_decoder_refuses_foreign_source_and_wrong_target_atomically",
+        "two_members::tests::capacity::delta::shields::mp_shield_full_delta_and_cache_resync_reconstruct_real_projected_statuses"
+      ],
+      "reports": [
+        "native-verification.json",
+        "interop-verification.json"
+      ]
+    },
+    "MS10": {
+      "rustTests": [],
+      "reports": [
+        "public/report.json",
+        "browser-recheck/report.json"
+      ]
+    },
+    "MS11": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::shields::mp_shield_financial_recovery_does_not_restore_effects_or_world"
+      ],
+      "reports": [
+        "crashes/report.json",
+        "native-verification.json"
+      ]
+    },
+    "MS12": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::shields::mp_shield_hundred_public_runtimes_with_active_shield_release_world_and_financial_debts"
+      ],
+      "reports": [
+        "native-verification.json",
+        "delivery/independent-verification.json",
+        "delivery/source-verification.json",
+        "legacy4/report.json",
+        "legacy5/report.json",
+        "legacy6/report.json",
+        "legacy38/report.json",
+        "local-preview.json"
+      ]
+    }
+  },
+  "limitations": [
+    "Fixed 1-8 required PVE seats; no friendly/PvP, spectators, other player action families or full battle migration",
+    "World/shields/status schedules and publication baselines are not hot recovered; restart settles frozen financial responsibility only",
+    "No new executions of the original 48 scenarios or 50 numeric vectors; roadmap full gaps stay open",
+    "Historical artifact cleanup exception retained; only files actually present at the batch start are protected"
+  ]
+}

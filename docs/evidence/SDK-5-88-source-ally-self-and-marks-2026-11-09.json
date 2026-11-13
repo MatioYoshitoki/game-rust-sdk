@@ -1,0 +1,155 @@
+{
+  "batch": "SDK-5-88",
+  "delivery": "DELIVERY-01",
+  "workPackages": [
+    "R3.1",
+    "R3.2",
+    "R3.3"
+  ],
+  "sdkVersion": "0.134.0",
+  "date": "2026-11-09",
+  "mechanismVersion": 105,
+  "protocolVersion": 6,
+  "spec": "docs/batches/SDK-5-88-source-ally-self-and-marks.md",
+  "runtimeSourceSha256": "cef22aa2ef2ce2ce2e87a4b907fee606cd1611b4e7b927ec492ef624ec539257",
+  "probeBinarySha256": "0214f945475866eaa57629aef0aef78691a7a7120f89374b86791a0eb0bccf4c",
+  "sample": {
+    "file": "examples/combat-host/source-ally-self-and-marks.json",
+    "sha256": "01b3a987957d660c2521ba9832c90d3ee2facbdf4e03f4e945fa0ba0773a747c",
+    "baseFile": "examples/combat-host/source-ally-recovery.json",
+    "baseSha256": "a5342782f02649d33da168213d920ea8618945c4480e5b7ae732430411271a45",
+    "skillIds": [
+      "huichun-jue",
+      "huichun-jue-advanced",
+      "wanmu-guiyuan",
+      "wanmu-guiyuan-advanced"
+    ],
+    "markOwner": "primary_target",
+    "testSourcePower": 100,
+    "nativeTest": "src/two_members/source_ally_self_and_marks_tests.rs"
+  },
+  "sourceBinding": {
+    "sourceConfig": {
+      "file": "rust-match-kernel-v1.1/source-config.json",
+      "sha256": "7df9854739b72904fd55d93f4a0e0a0fb0b19026a21b37346d2a0f544704da66",
+      "rows": [
+        {
+          "pointer": "/tables/skill-targeting/huichun-jue",
+          "rowSha256": "3eabc6e8ebfc8dd4762d0840e0269ad59386b11dc75ad0dba45da62b6a57de88"
+        },
+        {
+          "pointer": "/tables/skill-targeting/huichun-jue-advanced",
+          "rowSha256": "3eabc6e8ebfc8dd4762d0840e0269ad59386b11dc75ad0dba45da62b6a57de88"
+        },
+        {
+          "pointer": "/tables/skill-targeting/wanmu-guiyuan",
+          "rowSha256": "3eabc6e8ebfc8dd4762d0840e0269ad59386b11dc75ad0dba45da62b6a57de88"
+        },
+        {
+          "pointer": "/tables/skill-targeting/wanmu-guiyuan-advanced",
+          "rowSha256": "3eabc6e8ebfc8dd4762d0840e0269ad59386b11dc75ad0dba45da62b6a57de88"
+        },
+        {
+          "pointer": "/tables/skills/wanmu-guiyuan",
+          "rowSha256": "0b4e5b0630e07c959ad44b7069043ed4c38bd3123f73251024f5eb809b6a52a7"
+        },
+        {
+          "pointer": "/tables/skill-cast-lifecycle/wanmu-guiyuan",
+          "rowSha256": "e4df2675f50c11ab5b0bb65b7db61bdfe8bd10044b44f3ab44abf5e2d5de591d"
+        },
+        {
+          "pointer": "/tables/skills/wanmu-guiyuan-advanced",
+          "rowSha256": "a91fb1b30dd8f0e36d95b8110771e1791e3056c450cceead656d623d282e3a97"
+        },
+        {
+          "pointer": "/tables/skill-cast-lifecycle/wanmu-guiyuan-advanced",
+          "rowSha256": "e4df2675f50c11ab5b0bb65b7db61bdfe8bd10044b44f3ab44abf5e2d5de591d"
+        },
+        {
+          "pointer": "/tables/cultivations/wanmu-guiyuan",
+          "rowSha256": "4fc7c62721a980719480a5b81e0e38d640cbb6ae60e5cebbb4c4074ae5661b2f"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-identities/wanmu-guiyuan",
+          "rowSha256": "2142b8941f29cf992879a7c72cf78516d8e35ddb2639220d40e56f5cf1c91824"
+        },
+        {
+          "pointer": "/tables/status-effects/effect_guiyuan_mark",
+          "rowSha256": "21d164162b8a2779e108a4c9fcad8dc5aab3c5f4a3fbca5189dcac671b59a713"
+        },
+        {
+          "pointer": "/tables/factors/factor_cultivation_state_add",
+          "rowSha256": "a1f3323d6537317dede329663129ec864165395b0c032158aa0daba6da7c21b0"
+        },
+        {
+          "pointer": "/tables/factors/factor_heal",
+          "rowSha256": "620f12a0f11e904da58600a7f6500f40288a3b1ecf93e619f40e99489fbedc9e"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/wanmu-guiyuan:stage-1",
+          "rowSha256": "94323f4b13799c03e891c9f8ae904e27d2800be91afead0a987d77e3ba13b3a9"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/wanmu-guiyuan:stage-2",
+          "rowSha256": "5089dafaad2d1aa50d25b3b9b34f0fabdc5fd1931c675867141b14ddca4b44f7"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/wanmu-guiyuan:stage-3",
+          "rowSha256": "e2e8988a49301363b8c062a0f11bb276e791133cc85e0ae209c73618cd587c91"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/wanmu-guiyuan:stage-4",
+          "rowSha256": "300cde9847ce3373414c46ab678c46e6486f4403c1c8a9a41187315595069fde"
+        },
+        {
+          "pointer": "/tables/cultivation-combat-profiles/wanmu-guiyuan:stage-5",
+          "rowSha256": "5f0d8c68d763d2f8fae624383bd3d68d370c9e6ae774a9eed6d24a339dd94bf6"
+        }
+      ]
+    }
+  },
+  "contractFilesSha256": {
+    "docs/interfaces/combat-rules-v1.schema.json": "c7a9f15f84dbeb19e2c892474702ad9785b6546d04e692e4d19008b7c8a3db42",
+    "web/replication.mjs": "febf3872d6d6074cc1fa722e377975d6b5367c849db616c3472b41caba8807cb",
+    "adapters/h5/two-member-server.mjs": "02aa6d0a4fc318a1c85ac5b82d0d1ef60ea4a5d7aa528ad6a7ba05a337cbd750"
+  },
+  "scopeDecisions": {
+    "selfTarget": "Use the original targeting allowSelf rows. Require explicit cast_unit entity and generation, with a private marker on pending self target.",
+    "ownership": "The sample provisionally follows the primary_target named in skill factors. Both primary_target and caster are supported and verified; the core identity row names caster.",
+    "capRelease": "Use a test-only fixed 30 recovery to each eligible member to verify one five-stack consumption and exact event attribution. The sample leaves the official formula unset.",
+    "advancedShield": "Use a test-only 100% overflow conversion to the existing six-second, 10%-cap sample shield. Official advanced shield parameters and growth remain open."
+  },
+  "checks": {
+    "rustDefault": 2780,
+    "rustAllFeatures": 2780,
+    "rustFocused": 4,
+    "nodeAndH5Adapters": 212,
+    "format": true,
+    "clippy": true,
+    "schemas": true,
+    "sourceRowsBound": 18,
+    "publicH5": {
+      "sdk": "0.134.0",
+      "transport": "Node/H5 HTTP/SSE and SQLite",
+      "seats": 2,
+      "pendingSelf": true,
+      "marks": [
+        2,
+        3,
+        5
+      ],
+      "durationMs": 24000,
+      "reconnectRestored": true,
+      "advancedCooldownMs": 12000,
+      "testGroupHeal": [
+        30,
+        30
+      ],
+      "testShield": 100,
+      "peerStacks": 1,
+      "peerMarkOwner": "primary_target",
+      "settlements": 2
+    }
+  },
+  "wholeDelivery01Accepted": false
+}

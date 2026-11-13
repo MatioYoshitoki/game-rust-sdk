@@ -1,0 +1,113 @@
+{
+  "batch": "SDK-5-9",
+  "scope": "M02 finite self-status skills using existing self effects; no strict unit/ground targeting or full skill catalog",
+  "criteria": {
+    "SS01": {
+      "rustTests": [
+        "config::skill_wire::tests::self_skill_configuration_all_self_primary_only_and_zero_timing_are_valid",
+        "config::skill_wire::tests::self_skill_configuration_bounds_counts_and_ids_remain_strict",
+        "config::skill_wire::tests::self_skill_configuration_is_gated_by_version_schema_and_pve",
+        "config::skill_wire::tests::self_skill_configuration_rejects_every_projectile_and_unknown_field",
+        "config::skill_wire::tests::self_skill_configuration_requires_nonempty_unique_resolved_legal_bindings",
+        "config::skill_wire::tests::self_skill_configuration_roundtrips_both_slot_orders_without_projectile_fields"
+      ]
+    },
+    "SS02": {
+      "rustTests": [
+        "config::skill_wire::tests::self_skill_wire_input_rejects_aim_targets_effects_and_amounts",
+        "world::pve::self_skill_tests::self_skill_mismatched_inputs_and_unknown_id_have_no_side_effects",
+        "world::pve::self_skill_tests::self_skill_no_resource_at_acceptance_never_reserves_or_applies",
+        "world::pve::self_skill_tests::self_skill_protection_readiness_and_death_block_acceptance"
+      ]
+    },
+    "SS03": {
+      "rustTests": [
+        "world::pve::self_skill_tests::self_skill_absorption_is_real_and_never_changes_enemy_hp",
+        "world::pve::self_skill_tests::self_skill_attribute_stack_changes_future_projectiles_without_rewriting_in_flight",
+        "world::pve::self_skill_tests::self_skill_commit_applies_states_without_projectile_damage_rng_or_hit_income",
+        "world::pve::self_skill_tests::self_skill_full_health_hot_never_creates_shield_or_spirit",
+        "world::pve::self_skill_tests::self_skill_ignored_states_keep_instances_but_commit_cost_and_cd",
+        "world::pve::self_skill_tests::self_skill_shield_and_hot_have_real_state_effects_without_direct_attack",
+        "world::pve::self_skill_tests::self_skill_works_without_enemy_target_or_aim",
+        "world::pve::self_skill_tests::self_skill_zero_windup_commits_only_on_fixed_step_and_dedicated_pending"
+      ]
+    },
+    "SS04": {
+      "rustTests": [
+        "world::pve::self_skill_tests::self_skill_background_cancels_preparation_and_preserves_committed_deadlines",
+        "world::pve::self_skill_tests::self_skill_cd_deadline_is_inclusive_and_independent_of_projectile",
+        "world::pve::self_skill_tests::self_skill_movement_stop_navigation_and_cancel_do_not_shorten_recovery",
+        "world::pve::self_skill_tests::self_skill_pending_and_recovery_block_projectile_and_basic"
+      ]
+    },
+    "SS05": {
+      "rustTests": [
+        "world::pve::reset_tests::self_skill_reset_cancels_preparation_before_resource_or_effect_commit",
+        "world::pve::self_skill_tests::self_skill_cancel_before_commit_never_charges_or_applies",
+        "world::pve::self_skill_tests::self_skill_capacity_failure_does_not_partially_refresh_grant_or_charge",
+        "world::pve::self_skill_tests::self_skill_freezes_parameters_and_bindings_at_acceptance",
+        "world::pve::self_skill_tests::self_skill_lethal_contact_before_due_never_applies_or_debits",
+        "world::pve::self_skill_tests::self_skill_no_resource_at_commit_is_atomic",
+        "world::pve::self_skill_tests::self_skill_terminal_and_death_before_commit_do_not_apply"
+      ]
+    },
+    "SS06": {
+      "rustTests": [
+        "world::pve::self_skill_tests::self_skill_hundred_closes_release_preparations_states_and_frozen_responsibility",
+        "world::pve::self_skill_tests::self_skill_legal_output_peak_reclaims_world_without_losing_frozen_assets",
+        "world::pve::self_skill_tests::self_skill_pending_view_event_and_late_cancel_keep_authority",
+        "world::pve::self_skill_tests::self_skill_primary_slot_updates_primary_alias",
+        "world::pve::self_skill_tests::self_skill_retries_and_reconnect_preserve_instances_cost_and_deadlines"
+      ]
+    },
+    "SS07": {
+      "rustTests": [],
+      "reports": [
+        "artifacts/sdk-5-9/verification.json"
+      ],
+      "nodeCases": [
+        "a-extraction",
+        "a-death",
+        "b-extraction",
+        "b-death"
+      ],
+      "touchCases": [
+        "extraction",
+        "death"
+      ],
+      "selfPrimaryInVariant": "b",
+      "resourceRejection": "NO_RESOURCE; no cost/CD effects"
+    },
+    "SS08": {
+      "rustTests": [],
+      "reports": [
+        "artifacts/sdk-5-9/verification.json"
+      ],
+      "crashBoundaries": [
+        "active",
+        "after_intent_persist",
+        "after_storage_commit"
+      ],
+      "recoveriesPerBoundary": 2
+    },
+    "SS09": {
+      "rustTests": [
+        "config::skill_wire::tests::self_skill_old_projectile_shape_and_required_parameters_remain",
+        "world::pve::self_skill_tests::self_skill_old_versions_reject_new_input"
+      ],
+      "reports": [
+        "artifacts/sdk-5-9/baseline-verification.json",
+        "artifacts/sdk-5-9/verification.json",
+        "artifacts/sdk-5-9/delivery/independent-verification.json"
+      ]
+    },
+    "SS10": {
+      "rustTests": [],
+      "reports": [
+        "artifacts/sdk-5-9/baseline-verification.json",
+        "artifacts/sdk-5-9/delivery/independent-verification.json",
+        "artifacts/sdk-5-9/delivery/source-verification.json"
+      ]
+    }
+  }
+}

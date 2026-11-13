@@ -1,0 +1,5139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://match-kernel.local/schema/member-piercing-v1",
+  "title": "Mechanism 43 multiplayer piercing projectile publications",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "protocol_version",
+    "key",
+    "request_id",
+    "config_id",
+    "config_hash",
+    "seed",
+    "participants"
+  ],
+  "$defs": {
+    "matchMode": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stages", "results"],
+      "properties": {
+        "stages": {
+          "type": "array", "minItems": 1, "maxItems": 8,
+          "items": {
+            "type": "object", "additionalProperties": false, "required": ["id", "duration_ms", "objective"],
+            "properties": {
+              "id": {"$ref": "#/$defs/id", "maxLength": 64},
+              "duration_ms": {"type": "integer", "minimum": 1, "maximum": 3600000},
+              "objective": {"oneOf": [
+                {"type": "object", "additionalProperties": false, "required": ["kind"], "properties": {"kind": {"enum": ["wait", "contest"]}}},
+                {"type": "object", "additionalProperties": false, "required": ["kind", "schedule_id", "members_required"], "properties": {
+                  "kind": {"const": "checkpoint"}, "schedule_id": {"$ref": "#/$defs/id"},
+                  "members_required": {"type": "integer", "minimum": 1, "maximum": 8}
+                }},
+                {"type": "object", "additionalProperties": false, "required": ["kind", "target_ids"], "properties": {
+                  "kind": {"const": "clear_targets"}, "target_ids": {"type": "array", "minItems": 1, "maxItems": 32, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}
+                }}
+              ]}
+            }
+          }
+        },
+        "results": {
+          "type": "object", "additionalProperties": false, "required": ["win", "loss", "draw"],
+          "properties": {
+            "win": {"$ref": "#/$defs/modeResult"}, "loss": {"$ref": "#/$defs/modeResult"},
+            "draw": {"$ref": "#/$defs/modeResult", "properties": {"policy": {"const": "preserve"}}}
+          }
+        },
+        "respawn": {
+          "type": "object", "additionalProperties": false, "required": ["max_per_member", "delay_ms", "hp_bps", "spirit_bps"],
+          "properties": {
+            "max_per_member": {"type": "integer", "minimum": 1, "maximum": 8},
+            "delay_ms": {"type": "integer", "minimum": 1, "maximum": 3600000},
+            "hp_bps": {"type": "integer", "minimum": 1, "maximum": 10000},
+            "spirit_bps": {"type": "integer", "minimum": 0, "maximum": 10000}
+          }
+        },
+        "disconnect_forfeit_ms": {"type": "integer", "minimum": 1, "maximum": 3600000}
+      }
+    },
+    "modeResult": {
+      "type": "object", "additionalProperties": false, "required": ["result_id", "policy"],
+      "properties": {
+        "result_id": {"$ref": "#/$defs/id", "maxLength": 64},
+        "policy": {"enum": ["preserve", "attrition"]}
+      }
+    },
+    "retainedAreaStatus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "instance_id",
+        "definition_id",
+        "source",
+        "target",
+        "applied_at_ms",
+        "expires_at_ms",
+        "modifier_bps",
+        "attribute",
+        "retained_source"
+      ],
+      "properties": {
+        "instance_id": {
+          "$ref": "#/$defs/id"
+        },
+        "definition_id": {
+          "$ref": "#/$defs/id"
+        },
+        "source": {
+          "$ref": "#/$defs/entityRef",
+          "properties": {
+            "kind": {
+              "const": "monster"
+            }
+          }
+        },
+        "target": {
+          "$ref": "#/$defs/entityRef",
+          "properties": {
+            "kind": {
+              "const": "participant"
+            }
+          }
+        },
+        "applied_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "expires_at_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "modifier_bps": {
+          "type": "integer",
+          "minimum": -10000,
+          "maximum": -1
+        },
+        "attribute": {
+          "const": "movement_slow"
+        },
+        "retained_source": {
+          "const": true
+        }
+      }
+    },
+    "weaponId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "equippedWeaponInstance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "instance_id",
+        "model_id"
+      ],
+      "properties": {
+        "instance_id": {
+          "$ref": "#/$defs/weaponId"
+        },
+        "model_id": {
+          "$ref": "#/$defs/weaponId"
+        },
+        "morph_id": {
+          "$ref": "#/$defs/weaponId"
+        }
+      }
+    },
+    "weaponEquipmentView": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "revision"
+      ],
+      "properties": {
+        "revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "weapon": {
+          "$ref": "#/$defs/equippedWeaponInstance"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "revision": {
+                "const": 0
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "weapon"
+            ]
+          }
+        }
+      ]
+    },
+    "weaponCatalog": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "models",
+        "families"
+      ],
+      "properties": {
+        "models": {
+          "type": "object",
+          "minProperties": 1,
+          "maxProperties": 64,
+          "propertyNames": {
+            "$ref": "#/$defs/weaponId"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/weaponId"
+          }
+        },
+        "families": {
+          "type": "object",
+          "minProperties": 1,
+          "maxProperties": 16,
+          "propertyNames": {
+            "$ref": "#/$defs/weaponId"
+          },
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "base_profile"
+            ],
+            "properties": {
+              "base_profile": {
+                "$ref": "#/$defs/weaponId"
+              },
+              "morphs": {
+                "type": "object",
+                "maxProperties": 32,
+                "propertyNames": {
+                  "$ref": "#/$defs/weaponId"
+                },
+                "additionalProperties": {
+                  "$ref": "#/$defs/weaponId"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "basicFieldCapacity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "basic_field_capacity"
+      ],
+      "properties": {
+        "basic_field_capacity": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 12
+        }
+      }
+    },
+    "basicWaveField": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "plan_id",
+        "trigger",
+        "sampling",
+        "radius",
+        "duration_ms",
+        "interval_ms",
+        "damage_bps",
+        "target_cap",
+        "max_per_source"
+      ],
+      "properties": {
+        "plan_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "trigger": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "primary_contact"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "impact_radius"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "landing"
+                },
+                "impact_radius": {
+                  "type": "number",
+                  "minimum": 0.1,
+                  "maximum": 512
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "ground"
+                }
+              }
+            }
+          ]
+        },
+        "sampling": {
+          "enum": [
+            "live",
+            "frozen"
+          ]
+        },
+        "radius": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 512
+        },
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 60000
+        },
+        "interval_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 60000
+        },
+        "damage_bps": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000
+        },
+        "target_cap": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16
+        },
+        "max_per_source": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 12
+        },
+        "owner_reduction_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "on_tick_statuses": {
+          "type": "array",
+          "maxItems": 4,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "damage_rule": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "damage_kind",
+            "fixed",
+            "cultivation_bps",
+            "armor_penetration_bps",
+            "life_steal_bps",
+            "unavoidable",
+            "ignore_armor",
+            "can_crit"
+          ],
+          "properties": {
+            "damage_kind": {
+              "enum": [
+                "physical",
+                "elemental",
+                "true_damage"
+              ]
+            },
+            "element": {
+              "$ref": "#/$defs/id"
+            },
+            "weapon_element": {
+              "$ref": "#/$defs/id"
+            },
+            "base_power": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1000000
+            },
+            "fixed": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1000000
+            },
+            "cultivation_bps": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1000000
+            },
+            "armor_penetration_bps": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1000000
+            },
+            "armor_penetration_cap_bps": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1000000
+            },
+            "life_steal_bps": {
+              "const": 0
+            },
+            "life_steal_timing": {
+              "const": "contact"
+            },
+            "unavoidable": {
+              "type": "boolean"
+            },
+            "ignore_armor": {
+              "type": "boolean"
+            },
+            "can_crit": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "basicBeamInput": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "direction"
+          ],
+          "properties": {
+            "kind": {
+              "const": "start_attack_beam"
+            },
+            "direction": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "action_id",
+            "direction"
+          ],
+          "properties": {
+            "kind": {
+              "const": "aim_attack_beam"
+            },
+            "action_id": {
+              "$ref": "#/$defs/id"
+            },
+            "direction": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "action_id"
+          ],
+          "properties": {
+            "kind": {
+              "const": "end_attack_beam"
+            },
+            "action_id": {
+              "$ref": "#/$defs/id"
+            }
+          }
+        }
+      ]
+    },
+    "basicBeamConfig": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "plan_id",
+        "interval_ms",
+        "half_width",
+        "target_cap",
+        "damage_bps"
+      ],
+      "properties": {
+        "plan_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "interval_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 60000
+        },
+        "half_width": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 128
+        },
+        "target_cap": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8
+        },
+        "damage_bps": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000
+        }
+      }
+    },
+    "basicBeamView": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "action_id",
+        "plan_id",
+        "source",
+        "direction",
+        "range",
+        "half_width",
+        "interval_ms",
+        "started_at_ms",
+        "next_tick_at_ms",
+        "ticks",
+        "released"
+      ],
+      "properties": {
+        "action_id": {
+          "$ref": "#/$defs/id"
+        },
+        "plan_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "source": {
+          "$ref": "#/$defs/entityRef"
+        },
+        "direction": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "type": "number"
+          }
+        },
+        "range": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 10000
+        },
+        "half_width": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 128
+        },
+        "interval_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 60000
+        },
+        "started_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "next_tick_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "ticks": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "released": {
+          "type": "boolean"
+        }
+      }
+    },
+    "basicFlightContactEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "projectile_id", "source", "target", "position", "hit_at_ms", "target_hits"],
+      "properties": {
+        "kind": { "const": "basic_flight_contact" },
+        "projectile_id": { "$ref": "#/$defs/id" },
+        "source": { "$ref": "#/$defs/entityRef" },
+        "target": { "$ref": "#/$defs/entityRef" },
+        "position": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": { "type": "number" }
+        },
+        "hit_at_ms": { "type": "integer", "minimum": 0, "maximum": 9007199254740991 },
+        "target_hits": { "type": "integer", "minimum": 1, "maximum": 16 }
+      }
+    },
+    "basicFlightBurstEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "projectile_id", "source", "center", "radius", "targets"],
+      "properties": {
+        "kind": { "const": "basic_flight_burst" },
+        "projectile_id": { "$ref": "#/$defs/id" },
+        "source": { "$ref": "#/$defs/entityRef" },
+        "center": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": { "type": "number" }
+        },
+        "radius": { "type": "number", "minimum": 0.1, "maximum": 512 },
+        "targets": {
+          "type": "array",
+          "maxItems": 16,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/entityRef" }
+        }
+      }
+    },
+    "basicImpactEnded": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "impact_id",
+        "reason"
+      ],
+      "properties": {
+        "kind": {
+          "const": "basic_impact_ended"
+        },
+        "impact_id": {
+          "$ref": "#/$defs/id"
+        },
+        "reason": {
+          "enum": [
+            "resolved",
+            "source_invalid",
+            "target_invalid"
+          ]
+        },
+        "segments": {
+          "type": "array",
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/basicImpactSegment"
+          }
+        }
+      }
+    },
+    "basicImpactContact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "impact_id",
+        "source",
+        "target",
+        "scheduled_at_ms"
+      ],
+      "properties": {
+        "kind": {
+          "const": "basic_impact_contact"
+        },
+        "impact_id": {
+          "$ref": "#/$defs/id"
+        },
+        "source": {
+          "$ref": "#/$defs/entityRef"
+        },
+        "target": {
+          "$ref": "#/$defs/entityRef"
+        },
+        "scheduled_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "segment": {
+          "$ref": "#/$defs/basicImpactSegment"
+        }
+      }
+    },
+    "basicImpactSegment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "index",
+        "role",
+        "origin",
+        "target"
+      ],
+      "properties": {
+        "index": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 7
+        },
+        "role": {
+          "enum": [
+            "primary",
+            "secondary",
+            "return",
+            "blast"
+          ]
+        },
+        "origin": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "target": {
+          "$ref": "#/$defs/unitTarget"
+        }
+      }
+    },
+    "basicImpactConfig": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "plan_id",
+        "damage_bps",
+        "timing"
+      ],
+      "properties": {
+        "plan_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "damage_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "timing": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "hitscan"
+                },
+                "refraction": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "radius",
+                    "damage_bps"
+                  ],
+                  "properties": {
+                    "radius": {
+                      "type": "number",
+                      "minimum": 0.1,
+                      "maximum": 10000
+                    },
+                    "damage_bps": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 100000
+                    }
+                  }
+                },
+                "followup": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "kind",
+                        "radius",
+                        "damage_bps",
+                        "max_contacts",
+                        "repeat_decay_bps",
+                        "minimum_damage_bps"
+                      ],
+                      "properties": {
+                        "kind": {
+                          "const": "alternating_refraction"
+                        },
+                        "radius": {
+                          "type": "number",
+                          "minimum": 0.1,
+                          "maximum": 10000
+                        },
+                        "damage_bps": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 100000
+                        },
+                        "max_contacts": {
+                          "type": "integer",
+                          "minimum": 2,
+                          "maximum": 8
+                        },
+                        "repeat_decay_bps": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 10000
+                        },
+                        "minimum_damage_bps": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 100000
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "kind",
+                        "radius",
+                        "damage_bps",
+                        "max_targets"
+                      ],
+                      "properties": {
+                        "kind": {
+                          "const": "target_burst"
+                        },
+                        "radius": {
+                          "type": "number",
+                          "minimum": 0.1,
+                          "maximum": 10000
+                        },
+                        "damage_bps": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 100000
+                        },
+                        "max_targets": {
+                          "type": "integer",
+                          "minimum": 2,
+                          "maximum": 8
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "not": {
+                "required": [
+                  "refraction",
+                  "followup"
+                ]
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "delay_ms"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "fixed_delay"
+                },
+                "delay_ms": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 60000
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "delay_ms",
+                "field"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "ground_field"
+                },
+                "delay_ms": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 60000
+                },
+                "field": {
+                  "$ref": "#/$defs/basicWaveField",
+                  "properties": {
+                    "trigger": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "kind"
+                      ],
+                      "properties": {
+                        "kind": {
+                          "const": "ground"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "contact_status": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status_id"
+          ],
+          "properties": {
+            "status_id": {
+              "$ref": "#/$defs/id"
+            },
+            "death_burst": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "radius",
+                "damage_bps_per_stack",
+                "inherited_stack_bps",
+                "target_cap"
+              ],
+              "properties": {
+                "radius": {
+                  "type": "number",
+                  "minimum": 0.1,
+                  "maximum": 10000
+                },
+                "damage_bps_per_stack": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 100000
+                },
+                "inherited_stack_bps": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 10000
+                },
+                "target_cap": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 32
+                }
+              }
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "contact_status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "timing": {
+                "properties": {
+                  "kind": {
+                    "const": "fixed_delay"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "anyOf": [
+              {
+                "required": [
+                  "contact_status"
+                ]
+              },
+              {
+                "properties": {
+                  "timing": {
+                    "properties": {
+                      "kind": {
+                        "const": "ground_field"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          "then": {
+            "properties": {
+              "damage_bps": {
+                "const": 0
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "damage_bps": {
+                "minimum": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "basicImpactView": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "plan_id",
+        "source",
+        "kind",
+        "origin",
+        "released_at_ms",
+        "impact_at_ms"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "plan_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "source": {
+          "$ref": "#/$defs/entityRef"
+        },
+        "kind": {
+          "enum": [
+            "fixed_delay",
+            "ground_field"
+          ]
+        },
+        "origin": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "target": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "generation"
+          ],
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/id"
+            },
+            "generation": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            }
+          }
+        },
+        "released_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "impact_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "position": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "kind": {
+              "const": "fixed_delay"
+            }
+          },
+          "required": [
+            "target"
+          ],
+          "not": {
+            "required": [
+              "position"
+            ]
+          }
+        },
+        {
+          "properties": {
+            "kind": {
+              "const": "ground_field"
+            }
+          },
+          "required": [
+            "position"
+          ],
+          "not": {
+            "required": [
+              "target"
+            ]
+          }
+        }
+      ]
+    },
+    "basicProjectileFollowup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "plan_id",
+        "primary_damage_bps",
+        "pattern"
+      ],
+      "properties": {
+        "plan_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "primary_damage_bps": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000
+        },
+        "pattern": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "delay_ms",
+                "damage_bps"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "companion"
+                },
+                "delay_ms": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 10000
+                },
+                "damage_bps": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 100000
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "hits",
+                "interval_ms",
+                "damage_bps",
+                "attack_speed_bps_per_hit"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "volley"
+                },
+                "hits": {
+                  "type": "integer",
+                  "minimum": 2,
+                  "maximum": 8
+                },
+                "interval_ms": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 10000
+                },
+                "damage_bps": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 100000
+                },
+                "attack_speed_bps_per_hit": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 5000
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "required_seals",
+                "overtravel",
+                "corridor_half_width",
+                "additional_damage_bps",
+                "recall_damage_bps",
+                "settle_delay_ms",
+                "interval_ms",
+                "slow_status"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "seal_recall"
+                },
+                "required_seals": {
+                  "type": "integer",
+                  "minimum": 2,
+                  "maximum": 8
+                },
+                "overtravel": {
+                  "type": "number",
+                  "minimum": 0.1,
+                  "maximum": 500
+                },
+                "corridor_half_width": {
+                  "type": "number",
+                  "minimum": 0.1,
+                  "maximum": 128
+                },
+                "additional_damage_bps": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 100000
+                },
+                "recall_damage_bps": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 100000
+                },
+                "settle_delay_ms": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 10000
+                },
+                "interval_ms": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 10000
+                },
+                "slow_status": {
+                  "$ref": "#/$defs/id"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "max_targets",
+                "search_radius",
+                "damage_bps",
+                "mark_duration_ms",
+                "hits_to_stun",
+                "stun_status",
+                "resistant_profiles"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "ricochet"
+                },
+                "max_targets": {
+                  "type": "integer",
+                  "minimum": 2,
+                  "maximum": 8
+                },
+                "search_radius": {
+                  "type": "number",
+                  "minimum": 0.1,
+                  "maximum": 10000
+                },
+                "damage_bps": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 100000
+                },
+                "mark_duration_ms": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 60000
+                },
+                "hits_to_stun": {
+                  "type": "integer",
+                  "minimum": 2,
+                  "maximum": 8
+                },
+                "stun_status": {
+                  "$ref": "#/$defs/id"
+                },
+                "resistant_profiles": {
+                  "type": "array",
+                  "uniqueItems": true,
+                  "items": {
+                    "$ref": "#/$defs/id"
+                  }
+                },
+                "return_to_owner": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "speed_bps",
+                    "shield_status",
+                    "base_max_hp_bps",
+                    "per_extra_max_hp_bps",
+                    "max_hp_bps"
+                  ],
+                  "properties": {
+                    "speed_bps": {
+                      "type": "integer",
+                      "minimum": 1000,
+                      "maximum": 40000
+                    },
+                    "shield_status": {
+                      "$ref": "#/$defs/id"
+                    },
+                    "base_max_hp_bps": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 10000
+                    },
+                    "per_extra_max_hp_bps": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 10000
+                    },
+                    "max_hp_bps": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 10000
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "basic_profiles": {
+      "type": "object",
+      "maxProperties": 32,
+      "propertyNames": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 64
+      },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "settle_on_end",
+          "mechanism",
+          "windup_ms",
+          "interval_ms",
+          "range",
+          "projectile_speed"
+        ],
+        "properties": {
+          "wave": {
+            "$ref": "#/$defs/basicWaveConfig"
+          },
+          "settle_on_end": {
+            "const": true
+          },
+          "piercing": {
+            "$ref": "#/$defs/basicPiercingConfig"
+          },
+          "mechanism": {
+            "const": "projectile"
+          },
+          "windup_ms": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 3600000
+          },
+          "interval_ms": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 3600000
+          },
+          "range": {
+            "type": "number",
+            "minimum": 0.1,
+            "maximum": 10000
+          },
+          "projectile_speed": {
+            "type": "number",
+            "minimum": 0.1,
+            "maximum": 10000
+          },
+          "unavoidable": {
+            "type": "boolean"
+          },
+          "ignore_armor": {
+            "type": "boolean"
+          },
+          "effects": {
+            "$ref": "#/$defs/basicEffects"
+          },
+          "impact": {
+            "$ref": "#/$defs/basicImpactConfig"
+          },
+          "beam": {
+            "$ref": "#/$defs/basicBeamConfig"
+          },
+          "projectile_followup": {
+            "$ref": "#/$defs/basicProjectileFollowup"
+          },
+          "charge": {
+            "$ref": "#/$defs/basicChargeConfig"
+          },
+          "stacked_wave": {
+            "$ref": "#/$defs/basicStackedWave"
+          }
+        },
+        "dependentRequired": {
+          "stacked_wave": ["wave"]
+        },
+        "not": {
+          "anyOf": [
+            {
+              "required": ["charge", "stacked_wave"]
+            },
+            {
+              "required": [
+                "wave",
+                "piercing"
+              ]
+            },
+            {
+              "required": [
+                "wave",
+                "impact"
+              ]
+            },
+            {
+              "required": [
+                "wave",
+                "beam"
+              ]
+            },
+            {
+              "required": [
+                "piercing",
+                "impact"
+              ]
+            },
+            {
+              "required": [
+                "piercing",
+                "beam"
+              ]
+            },
+            {
+              "required": [
+                "impact",
+                "beam"
+              ]
+            },
+            {
+              "required": [
+                "wave",
+                "projectile_followup"
+              ]
+            },
+            {
+              "required": [
+                "impact",
+                "projectile_followup"
+              ]
+            },
+            {
+              "required": [
+                "beam",
+                "projectile_followup"
+              ]
+            },
+            {
+              "required": [
+                "piercing",
+                "projectile_followup"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "basicWaveConfig": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "plan_id",
+        "geometry",
+        "speed",
+        "target_cap",
+        "primary_damage_bps",
+        "additional_damage_bps"
+      ],
+      "properties": {
+        "plan_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "geometry": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "cone_degrees"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "directional"
+                },
+                "cone_degrees": {
+                  "type": "number",
+                  "minimum": 0.1,
+                  "maximum": 180
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "radial"
+                }
+              }
+            }
+          ]
+        },
+        "speed": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 10000
+        },
+        "target_cap": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16
+        },
+        "primary_damage_bps": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000
+        },
+        "additional_damage_bps": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000
+        },
+        "behavior": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "distance",
+                "rehit_immunity_ms",
+                "resistant_profiles",
+                "reduced_status"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "push"
+                },
+                "distance": {
+                  "type": "number",
+                  "minimum": 0.1,
+                  "maximum": 500
+                },
+                "rehit_immunity_ms": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 60000
+                },
+                "resistant_profiles": {
+                  "type": "array",
+                  "uniqueItems": true,
+                  "items": {
+                    "$ref": "#/$defs/id"
+                  }
+                },
+                "reduced_status": {
+                  "$ref": "#/$defs/id"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "pull_distance",
+                "resistant_profiles",
+                "mark_duration_ms",
+                "marked_damage_bonus_bps",
+                "alternate"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "alternate"
+                },
+                "pull_distance": {
+                  "type": "number",
+                  "minimum": 0.1,
+                  "maximum": 500
+                },
+                "resistant_profiles": {
+                  "type": "array",
+                  "uniqueItems": true,
+                  "items": {
+                    "$ref": "#/$defs/id"
+                  }
+                },
+                "mark_duration_ms": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 60000
+                },
+                "marked_damage_bonus_bps": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 10000
+                },
+                "alternate": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "plan_id",
+                    "range",
+                    "speed",
+                    "primary_damage_bps",
+                    "additional_damage_bps"
+                  ],
+                  "properties": {
+                    "plan_id": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64
+                    },
+                    "range": {
+                      "type": "number",
+                      "minimum": 0.1,
+                      "maximum": 10000
+                    },
+                    "speed": {
+                      "type": "number",
+                      "minimum": 0.1,
+                      "maximum": 10000
+                    },
+                    "primary_damage_bps": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 100000
+                    },
+                    "additional_damage_bps": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 100000
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "distance",
+                "resistant_profiles",
+                "reduced_status"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "radial_push"
+                },
+                "distance": {
+                  "type": "number",
+                  "minimum": 0.1,
+                  "maximum": 500
+                },
+                "resistant_profiles": {
+                  "type": "array",
+                  "uniqueItems": true,
+                  "items": {
+                    "$ref": "#/$defs/id"
+                  }
+                },
+                "reduced_status": {
+                  "$ref": "#/$defs/id"
+                }
+              }
+            }
+          ]
+        },
+        "field": {
+          "$ref": "#/$defs/basicWaveField",
+          "allOf": [
+            {
+              "properties": {
+                "trigger": {
+                  "not": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "kind"
+                    ],
+                    "properties": {
+                      "kind": {
+                        "const": "ground"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "behavior"
+            ],
+            "properties": {
+              "behavior": {
+                "properties": {
+                  "kind": {
+                    "const": "radial_push"
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "geometry": {
+                "properties": {
+                  "kind": {
+                    "const": "radial"
+                  }
+                }
+              }
+            }
+          },
+          "else": {
+            "if": {
+              "required": [
+                "behavior"
+              ]
+            },
+            "then": {
+              "properties": {
+                "geometry": {
+                  "properties": {
+                    "kind": {
+                      "const": "directional"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "not": {
+            "required": [
+              "behavior",
+              "field"
+            ]
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "field"
+            ],
+            "properties": {
+              "field": {
+                "properties": {
+                  "trigger": {
+                    "properties": {
+                      "kind": {
+                        "const": "landing"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "geometry": {
+                "properties": {
+                  "kind": {
+                    "const": "radial"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "basicPiercingConfig": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "plan_id",
+        "max_hits"
+      ],
+      "properties": {
+        "plan_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "max_hits": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        }
+      }
+    },
+    "basicEffects": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "on_end_damage_self_heal_max_hp_bps": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000
+        },
+        "on_release_self_status": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "on_end_damage_self_status": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "on_end_damage_target_status": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "choices"
+          ],
+          "properties": {
+            "choices": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              "uniqueItems": true,
+              "minItems": 1,
+              "maxItems": 8
+            },
+            "target_profile_bps": {
+              "type": "object",
+              "propertyNames": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              "additionalProperties": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 10000
+              }
+            }
+          }
+        }
+      },
+      "minProperties": 1
+    },
+    "basicWaveView": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "plan_id",
+        "source",
+        "origin",
+        "geometry",
+        "range",
+        "speed",
+        "released_at_ms",
+        "pending"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "plan_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "source": {
+          "$ref": "#/$defs/entityRef"
+        },
+        "origin": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "geometry": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "direction",
+                "cone_degrees"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "directional"
+                },
+                "direction": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                },
+                "cone_degrees": {
+                  "type": "number",
+                  "minimum": 0.1,
+                  "maximum": 180
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "radial"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "from"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "landing"
+                },
+                "from": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                }
+              }
+            }
+          ]
+        },
+        "range": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 10000
+        },
+        "speed": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 10000
+        },
+        "released_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "pending": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "target",
+              "at_ms"
+            ],
+            "properties": {
+              "target": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "id",
+                  "generation"
+                ],
+                "properties": {
+                  "id": {
+                    "$ref": "#/$defs/id"
+                  },
+                  "generation": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 4294967295
+                  }
+                }
+              },
+              "at_ms": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              }
+            }
+          },
+          "minItems": 1,
+          "maxItems": 16
+        }
+      }
+    },
+    "basic_delivery_fields": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "dependentRequired": {
+        "stacked_wave": ["wave"]
+      },
+      "not": {
+        "anyOf": [
+          {
+            "required": ["charge", "stacked_wave"]
+          },
+          {
+            "required": [
+              "wave",
+              "piercing"
+            ]
+          },
+          {
+            "required": [
+              "wave",
+              "impact"
+            ]
+          },
+          {
+            "required": [
+              "wave",
+              "beam"
+            ]
+          },
+          {
+            "required": [
+              "piercing",
+              "impact"
+            ]
+          },
+          {
+            "required": [
+              "piercing",
+              "beam"
+            ]
+          },
+          {
+            "required": [
+              "impact",
+              "beam"
+            ]
+          },
+          {
+            "required": [
+              "wave",
+              "projectile_followup"
+            ]
+          },
+          {
+            "required": [
+              "impact",
+              "projectile_followup"
+            ]
+          },
+          {
+            "required": [
+              "beam",
+              "projectile_followup"
+            ]
+          },
+          {
+            "required": [
+              "piercing",
+              "projectile_followup"
+            ]
+          }
+        ]
+      },
+      "if": {
+        "anyOf": [
+          {
+            "required": [
+              "wave"
+            ]
+          },
+          {
+            "required": [
+              "effects"
+            ]
+          },
+          {
+            "required": [
+              "impact"
+            ]
+          },
+          {
+            "required": [
+              "beam"
+            ]
+          },
+          {
+            "required": [
+              "projectile_followup"
+            ]
+          },
+          {
+            "required": ["charge"]
+          }
+        ]
+      },
+      "then": {
+        "required": [
+          "settle_on_end"
+        ],
+        "properties": {
+          "settle_on_end": {
+            "const": true
+          }
+        }
+      },
+      "properties": {
+        "wave": {
+          "$ref": "#/$defs/basicWaveConfig"
+        },
+        "settle_on_end": {
+          "type": "boolean"
+        },
+        "piercing": {
+          "$ref": "#/$defs/basicPiercingConfig"
+        },
+        "effects": {
+          "$ref": "#/$defs/basicEffects"
+        },
+        "impact": {
+          "$ref": "#/$defs/basicImpactConfig"
+        },
+        "beam": {
+          "$ref": "#/$defs/basicBeamConfig"
+        },
+        "projectile_followup": {
+          "$ref": "#/$defs/basicProjectileFollowup"
+        },
+        "charge": {
+          "$ref": "#/$defs/basicChargeConfig"
+        },
+        "stacked_wave": {
+          "$ref": "#/$defs/basicStackedWave"
+        }
+      }
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "connection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "generation"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "participant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "participant_id",
+        "authenticated_principal",
+        "connection"
+      ],
+      "not": { "required": ["weapon", "basic_profile"] },
+      "properties": {
+        "weapon": { "$ref": "#/$defs/equippedWeaponInstance" },
+        "basic_profile": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "participant_id": {
+          "$ref": "#/$defs/id"
+        },
+        "authenticated_principal": {
+          "$ref": "#/$defs/id"
+        },
+        "connection": {
+          "$ref": "#/$defs/connection"
+        }
+      }
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "entityRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "id",
+        "generation"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "participant",
+            "monster"
+          ]
+        },
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "participantRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entity",
+        "owner_id"
+      ],
+      "properties": {
+        "entity": {
+          "$ref": "#/$defs/entityRef"
+        },
+        "owner_id": {
+          "$ref": "#/$defs/id"
+        }
+      }
+    },
+    "legacyCheckpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "sha256"
+      ],
+      "properties": {
+        "state": {
+          "type": "object",
+          "description": "Original schema-1 IoState, strictly decoded and validated by protocol.rs/recovery.rs; carried unchanged."
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "description": "Opaque legacy member responsibility. The original Rust schema is authoritative; hosts must preserve every field."
+    },
+    "memberCheckpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "participant_id",
+        "checkpoint"
+      ],
+      "properties": {
+        "participant_id": {
+          "$ref": "#/$defs/id"
+        },
+        "checkpoint": {
+          "$ref": "#/$defs/legacyCheckpoint"
+        }
+      }
+    },
+    "ioStateV4": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "identity_sha256",
+        "logical_ms",
+        "output_sequence",
+        "recovery_generation",
+        "members"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "identity_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "logical_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "output_sequence": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "recovery_generation": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "members": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/memberCheckpoint"
+          }
+        }
+      }
+    },
+    "checkpointV4": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "sha256"
+      ],
+      "properties": {
+        "state": {
+          "$ref": "#/$defs/ioStateV4"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "recoveryV4": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "generation",
+        "checkpoint"
+      ],
+      "properties": {
+        "generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "checkpoint": {
+          "$ref": "#/$defs/checkpointV4"
+        }
+      }
+    },
+    "stateV6": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "phase",
+        "active_at_ms",
+        "extraction_point",
+        "extraction_open"
+      ],
+      "properties": {
+        "phase": {
+          "enum": [
+            "preparing",
+            "deploying",
+            "active",
+            "draining",
+            "closed",
+            "faulted"
+          ]
+        },
+        "active_at_ms": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "extraction_point": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "extraction_open": {
+          "type": "boolean"
+        }
+      }
+    },
+    "publicMemberV4": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entity",
+        "position",
+        "hp",
+        "max_hp",
+        "phase",
+        "protected"
+      ],
+      "properties": {
+        "entity": {
+          "$ref": "#/$defs/entityRef"
+        },
+        "position": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "hp": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "max_hp": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "phase": {
+          "enum": [
+            "deploying",
+            "active",
+            "settling",
+            "terminal"
+          ]
+        },
+        "protected": {
+          "type": "boolean"
+        },
+        "basic_seals": {
+          "type": "array",
+          "maxItems": 8,
+          "items": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {
+              "type": "number"
+            }
+          }
+        }
+      }
+    },
+    "privateMemberV4": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "participant",
+        "position",
+        "hp",
+        "max_hp",
+        "spirit",
+        "max_spirit",
+        "effective_atk",
+        "effective_def",
+        "inventory_revision",
+        "phase",
+        "protected",
+        "foreground",
+        "ready",
+        "statuses",
+        "inventory",
+        "player_skills",
+        "pending_action",
+        "basic_ready_at_ms",
+        "recovery_until_ms",
+        "extraction_finishes_ms"
+      ],
+      "properties": {
+        "checkpoint_progress": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 4,
+          "items": {
+            "$ref": "#/$defs/checkpointProgress"
+          }
+        },
+        "equipment": {
+          "$ref": "#/$defs/weaponEquipmentView"
+        },
+        "basic_profile": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "basic_wave_phase": {
+          "enum": [
+            "primary",
+            "alternate"
+          ]
+        },
+        "basic_projectile_progress": {
+          "$ref": "#/$defs/basicProjectileProgress"
+        },
+        "participant": {
+          "$ref": "#/$defs/participantRef"
+        },
+        "position": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "hp": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "max_hp": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "spirit": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "max_spirit": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "effective_atk": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "effective_def": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "inventory_revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "phase": {
+          "enum": [
+            "deploying",
+            "active",
+            "settling",
+            "terminal"
+          ]
+        },
+        "protected": {
+          "type": "boolean"
+        },
+        "foreground": {
+          "type": "boolean"
+        },
+        "ready": {
+          "type": "boolean"
+        },
+        "statuses": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "if": {
+              "required": [
+                "retained_source"
+              ]
+            },
+            "then": {
+              "$ref": "#/$defs/retainedAreaStatus"
+            }
+          }
+        },
+        "inventory": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "player_skills": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "pending_action": {
+          "anyOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "basic_ready_at_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "recovery_until_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "extraction_finishes_ms": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "shield_total": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        }
+      },
+      "$comment": "Nested statuses/items/actions use existing Rust StatusView, ItemAmount, PlayerSkillView and PlayerActionView contracts."
+    },
+    "monsterV4": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entity",
+        "template_id",
+        "position",
+        "hp",
+        "max_hp",
+        "radius",
+        "returning",
+        "target"
+      ],
+      "properties": {
+        "entity": {
+          "$ref": "#/$defs/entityRef"
+        },
+        "template_id": {
+          "$ref": "#/$defs/id"
+        },
+        "position": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "hp": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "max_hp": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "radius": {
+          "type": "number",
+          "minimum": 0
+        },
+        "returning": {
+          "type": "boolean"
+        },
+        "target": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/entityRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "statuses": {
+          "type": "array",
+          "maxItems": 32,
+          "items": {
+            "$ref": "#/$defs/projectedStatus"
+          }
+        },
+        "shield_total": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "resourceV4": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "position",
+        "quantity",
+        "item_id",
+        "owner",
+        "expires_at_ms"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "position": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "quantity": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "item_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "owner": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/entityRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expires_at_ms": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "basicProjectileSegment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "action_id",
+        "plan_id",
+        "index",
+        "launched_at_ms",
+        "aim_point"
+      ],
+      "properties": {
+        "action_id": {
+          "$ref": "#/$defs/id"
+        },
+        "plan_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "index": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8
+        },
+        "launched_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "aim_point": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "type": "number"
+          }
+        },
+        "role": {
+          "enum": [
+            "seal_outbound",
+            "seal_recall",
+            "ricochet",
+            "return_to_owner",
+            "charged_flight"
+          ]
+        },
+        "tier": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "role"
+            ],
+            "properties": {
+              "role": {
+                "const": "charged_flight"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "tier"
+            ],
+            "properties": {
+              "index": {
+                "const": 0
+              }
+            }
+          },
+          "else": {
+            "not": {
+              "required": [
+                "tier"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "basicProjectileProgress": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "stored",
+        "maximum",
+        "attack_speed_bonus_bps"
+      ],
+      "properties": {
+        "stored": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8
+        },
+        "maximum": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 8
+        },
+        "attack_speed_bonus_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        }
+      }
+    },
+    "projectileV4": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "source",
+        "position",
+        "radius"
+      ],
+      "properties": {
+        "basic_segment": {
+          "$ref": "#/$defs/basicProjectileSegment"
+        },
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "source": {
+          "$ref": "#/$defs/entityRef"
+        },
+        "position": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "radius": {
+          "type": "number",
+          "minimum": 0
+        },
+        "unit_target": {
+          "$ref": "#/$defs/unitTarget"
+        },
+        "piercing": {
+          "$ref": "#/$defs/piercingPlan"
+        }
+      },
+      "allOf": [
+        {
+          "not": {
+            "required": [
+              "piercing",
+              "unit_target"
+            ]
+          }
+        }
+      ]
+    },
+    "membersDelta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "upsert",
+        "removed",
+        "order"
+      ],
+      "properties": {
+        "upsert": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/publicMemberV4"
+          }
+        },
+        "removed": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/entityRef"
+          }
+        },
+        "order": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/entityRef"
+          }
+        }
+      }
+    },
+    "monstersDelta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "upsert",
+        "removed",
+        "order"
+      ],
+      "properties": {
+        "upsert": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/monsterV4"
+          }
+        },
+        "removed": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/entityRef"
+          }
+        },
+        "order": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/entityRef"
+          }
+        }
+      }
+    },
+    "resourcesDelta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "upsert",
+        "removed",
+        "order"
+      ],
+      "properties": {
+        "upsert": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/resourceV4"
+          }
+        },
+        "removed": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "order": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        }
+      }
+    },
+    "projectilesDelta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "upsert",
+        "removed",
+        "order"
+      ],
+      "properties": {
+        "upsert": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/projectileV4"
+          }
+        },
+        "removed": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "order": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        }
+      }
+    },
+    "checkpointZone": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schedule_id",
+        "window_index",
+        "center",
+        "radius",
+        "opens_at_ms",
+        "expires_at_ms"
+      ],
+      "properties": {
+        "avoid": {"const": true},
+        "schedule_id": {
+          "$ref": "#/$defs/id"
+        },
+        "window_index": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32
+        },
+        "center": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "type": "number"
+          }
+        },
+        "radius": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 512
+        },
+        "opens_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "expires_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      }
+    },
+    "checkpointProgress": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schedule_id",
+        "collected",
+        "required",
+        "total_windows",
+        "last_window_index"
+      ],
+      "properties": {
+        "schedule_id": {
+          "$ref": "#/$defs/id"
+        },
+        "collected": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 32
+        },
+        "required": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32
+        },
+        "total_windows": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32
+        },
+        "last_window_index": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 32
+        },
+        "counter": {
+          "type": "object", "additionalProperties": false,
+          "required": ["window_index", "target", "opens_at_ms", "expires_at_ms"],
+          "properties": {
+            "on_contact": {"const": true},
+            "window_index": {"type": "integer", "minimum": 1, "maximum": 32},
+            "target": {"$ref": "#/$defs/unitTarget"},
+            "opens_at_ms": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+            "expires_at_ms": {"type": "integer", "minimum": 1, "maximum": 9007199254740991}
+          }
+        }
+      }
+    },
+    "checkpointCounterBoon": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "by_level"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "by_level": {"type": "array", "minItems": 1, "maxItems": 3,
+          "items": {"type": "integer", "minimum": 0, "maximum": 60000}}
+      }
+    },
+    "checkpointCounter": {
+      "type": "object", "additionalProperties": false,
+      "required": ["activation", "target_ids", "range", "base_damage"],
+      "properties": {
+        "activation": {"enum": ["manual", "on_reach", "first_contact"]},
+        "target_ids": {"type": "array", "minItems": 1, "maxItems": 32, "items": {"$ref": "#/$defs/id"}},
+        "range": {"type": "number", "minimum": 0.1, "maximum": 1000},
+        "base_damage": {"type": "integer", "minimum": 1, "maximum": 1000000},
+        "window_ms": {"type": "integer", "minimum": 1, "maximum": 60000},
+        "window_extension": {"$ref": "#/$defs/checkpointCounterBoon"},
+        "damage_bonus": {"$ref": "#/$defs/checkpointCounterBoon", "properties": {
+          "by_level": {"items": {"maximum": 10000}}
+        }}
+      },
+      "allOf": [{
+        "if": {"properties": {"activation": {"enum": ["manual", "first_contact"]}}},
+        "then": {"required": ["window_ms"]},
+        "else": {"not": {"anyOf": [{"required": ["window_ms"]}, {"required": ["window_extension"]}]}}
+      }]
+    },
+    "checkpointSchedules": {
+      "type": "array",
+      "minItems": 0,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "first_delay_ms",
+          "interval_ms",
+          "window_ms",
+          "radius",
+          "required",
+          "centers"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/id"
+          },
+          "first_delay_ms": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "interval_ms": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "window_ms": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 60000
+          },
+          "radius": {
+            "type": "number",
+            "minimum": 0.1,
+            "maximum": 512
+          },
+          "required": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 32
+          },
+          "counter": {"$ref": "#/$defs/checkpointCounter"},
+          "qualification": {"enum": ["reach", "avoid"]},
+          "centers": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 32,
+            "items": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      }
+    },
+    "snapshotV4": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "phase",
+        "active_at_ms",
+        "extraction_point",
+        "extraction_open",
+        "logical_ms",
+        "self",
+        "members",
+        "monsters",
+        "resources",
+        "projectiles",
+        "areas"
+      ],
+      "properties": {
+        "checkpoint_zones": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 4,
+          "items": {
+            "$ref": "#/$defs/checkpointZone"
+          }
+        },
+        "basic_beams": {
+          "type": "array",
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/basicBeamView"
+          }
+        },
+        "basic_impacts": {
+          "type": "array",
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/basicImpactView"
+          }
+        },
+        "basic_waves": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/basicWaveView"
+          },
+          "minItems": 0,
+          "maxItems": 8
+        },
+        "phase": {
+          "enum": [
+            "preparing",
+            "deploying",
+            "active",
+            "draining",
+            "closed",
+            "faulted"
+          ]
+        },
+        "active_at_ms": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "extraction_point": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "extraction_open": {
+          "type": "boolean"
+        },
+        "logical_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "self": {
+          "$ref": "#/$defs/privateMemberV4"
+        },
+        "members": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/publicMemberV4"
+          }
+        },
+        "monsters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/monsterV4"
+          }
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/resourceV4"
+          }
+        },
+        "projectiles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/projectileV4"
+          }
+        },
+        "areas": {
+          "type": "array",
+          "maxItems": 20,
+          "items": {
+            "$ref": "#/$defs/areaPlan"
+          }
+        }
+      }
+    },
+    "deltaV6": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "logical_ms"
+      ],
+      "properties": {
+        "checkpoint_zones": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 4,
+          "items": {
+            "$ref": "#/$defs/checkpointZone"
+          }
+        },
+        "basic_beams": {
+          "type": "array",
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/basicBeamView"
+          }
+        },
+        "basic_impacts": {
+          "type": "array",
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/basicImpactView"
+          }
+        },
+        "basic_waves": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/basicWaveView"
+          },
+          "minItems": 0,
+          "maxItems": 8
+        },
+        "logical_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "state": {
+          "$ref": "#/$defs/stateV6"
+        },
+        "own": {
+          "$ref": "#/$defs/privateMemberV4"
+        },
+        "members": {
+          "$ref": "#/$defs/membersDelta"
+        },
+        "monsters": {
+          "$ref": "#/$defs/monstersDelta"
+        },
+        "resources": {
+          "$ref": "#/$defs/resourcesDelta"
+        },
+        "projectiles": {
+          "$ref": "#/$defs/projectilesDelta"
+        },
+        "areas": {
+          "type": "array",
+          "maxItems": 20,
+          "items": {
+            "$ref": "#/$defs/areaPlan"
+          }
+        }
+      }
+    },
+    "payloadV6": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "snapshot",
+            "reason"
+          ],
+          "properties": {
+            "kind": {
+              "const": "full"
+            },
+            "snapshot": {
+              "$ref": "#/$defs/snapshotV4"
+            },
+            "reason": {
+              "enum": [
+                "initial",
+                "periodic",
+                "expired",
+                "failure",
+                "timeout",
+                "resync",
+                "lifecycle",
+                "terminal",
+                "size"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "base_publication_id",
+            "base_revision",
+            "delta"
+          ],
+          "properties": {
+            "kind": {
+              "const": "delta"
+            },
+            "base_publication_id": {
+              "$ref": "#/$defs/id"
+            },
+            "base_revision": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "delta": {
+              "$ref": "#/$defs/deltaV6"
+            }
+          }
+        }
+      ]
+    },
+    "publicationEnvelopeV6": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "publication_id",
+        "recipient_id",
+        "connection",
+        "stream_epoch",
+        "revision",
+        "payload"
+      ],
+      "properties": {
+        "key": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "incarnation"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "incarnation": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            }
+          }
+        },
+        "publication_id": {
+          "$ref": "#/$defs/id"
+        },
+        "recipient_id": {
+          "$ref": "#/$defs/id"
+        },
+        "connection": {
+          "$ref": "#/$defs/connection"
+        },
+        "stream_epoch": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "payload": {
+          "$ref": "#/$defs/payloadV6"
+        }
+      }
+    },
+    "requestFull": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "stream_epoch"
+      ],
+      "properties": {
+        "kind": {
+          "const": "request_full"
+        },
+        "stream_epoch": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "replicationConfig": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ack_timeout_ms",
+        "baseline_ttl_ms",
+        "full_interval_ms",
+        "terminal_grace_ms"
+      ],
+      "properties": {
+        "ack_timeout_ms": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 60000
+        },
+        "baseline_ttl_ms": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 60000
+        },
+        "full_interval_ms": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 60000
+        },
+        "terminal_grace_ms": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 60000
+        }
+      },
+      "$comment": "Rust validates relative bounds TTL>=ack, period<=TTL and grace>=2*ack."
+    },
+    "statusEntity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "id",
+        "generation"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "participant",
+            "monster"
+          ]
+        },
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "projectedStatus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "instance_id",
+        "definition_id",
+        "source",
+        "target",
+        "applied_at_ms",
+        "expires_at_ms",
+        "modifier_bps"
+      ],
+      "properties": {
+        "instance_id": {
+          "$ref": "#/$defs/id"
+        },
+        "definition_id": {
+          "$ref": "#/$defs/id"
+        },
+        "source": {
+          "$ref": "#/$defs/statusEntity"
+        },
+        "target": {
+          "$ref": "#/$defs/statusEntity"
+        },
+        "applied_at_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "expires_at_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "modifier_bps": {
+          "type": "integer"
+        },
+        "periodic": {
+          "type": "object"
+        },
+        "attribute": {
+          "enum": [
+            "atk",
+            "def",
+            "healing_received"
+          ]
+        },
+        "stacks": {
+          "type": "integer"
+        },
+        "max_stacks": {
+          "type": "integer"
+        },
+        "shield": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "granted",
+            "remaining"
+          ],
+          "properties": {
+            "granted": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4294967295
+            },
+            "remaining": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4294967295
+            }
+          }
+        }
+      },
+      "$comment": "Source must equal recipient entity or NPC self; target must equal containing NPC. Rust and JS decoders enforce semantic identity and ordering."
+    },
+    "unitTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "generation"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "areaPlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "source",
+        "skill_id",
+        "mechanism",
+        "center",
+        "radius",
+        "created_at_ms",
+        "activates_at_ms",
+        "expires_at_ms",
+        "interval_ms",
+        "next_tick_at_ms",
+        "completed_ticks",
+        "total_ticks",
+        "contact_policy"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "source": {
+          "$ref": "#/$defs/entityRef"
+        },
+        "skill_id": {
+          "$ref": "#/$defs/id"
+        },
+        "mechanism": {
+          "enum": [
+            "circle",
+            "field",
+            "line_field",
+            "basic_field",
+            "moving_enter",
+            "npc_ground_field",
+            "npc_ground_strike",
+            "member_ground_trap",
+            "member_cast_anchor"
+          ]
+        },
+        "center": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "radius": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 512
+        },
+        "created_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "activates_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "expires_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "interval_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 60000
+        },
+        "next_tick_at_ms": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "completed_ticks": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 128
+        },
+        "total_ticks": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 128
+        },
+        "contact_policy": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/areaContactPolicy"
+            },
+            {
+              "$ref": "#/$defs/npcGroundFieldContactPolicy"
+            }
+          ]
+        },
+        "line": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "start",
+            "end",
+            "width"
+          ],
+          "properties": {
+            "start": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 2,
+              "maxItems": 2
+            },
+            "end": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 2,
+              "maxItems": 2
+            },
+            "width": {
+              "type": "number",
+              "minimum": 0.2,
+              "maximum": 256
+            }
+          }
+        },
+        "basic_action_id": {
+          "$ref": "#/$defs/id"
+        },
+        "attached_anchor_id": {"$ref": "#/$defs/id"},
+        "anchor_recast": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["action_id", "expires_at_ms", "max_count", "used_count"],
+          "properties": {
+            "action_id": {"$ref": "#/$defs/id"},
+            "expires_at_ms": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+            "max_count": {"type": "integer", "minimum": 1, "maximum": 8},
+            "behaviors": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 3,
+              "uniqueItems": true,
+              "items": {"enum": ["relocate", "return_to_source", "end"]}
+            },
+            "used_count": {"type": "integer", "minimum": 0, "maximum": 8}
+          }
+        },
+        "movement": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "origin",
+            "direction",
+            "speed",
+            "distance",
+            "committed"
+          ],
+          "properties": {
+            "origin": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {
+                "type": "number"
+              }
+            },
+            "direction": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {
+                "type": "number"
+              }
+            },
+            "speed": {
+              "type": "number",
+              "minimum": 0.1,
+              "maximum": 10000
+            },
+            "distance": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 10000
+            },
+            "committed": {
+              "type": "boolean"
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {"required": ["attached_anchor_id"]},
+          "then": {"properties": {"mechanism": {"const": "field"}}}
+        },
+        {
+          "if": {
+            "properties": {
+              "mechanism": {
+                "const": "member_cast_anchor"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "source": {
+                "properties": {
+                  "kind": {
+                    "const": "participant"
+                  }
+                }
+              },
+              "radius": {
+                "const": 0
+              },
+              "interval_ms": {
+                "const": 0
+              },
+              "next_tick_at_ms": {
+                "type": "null"
+              },
+              "total_ticks": {
+                "const": 0
+              },
+              "completed_ticks": {
+                "const": 0
+              },
+              "contact_policy": {
+                "type": "null"
+              }
+            },
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "line"
+                  ]
+                },
+                {
+                  "required": [
+                    "basic_action_id"
+                  ]
+                },
+                {
+                  "required": [
+                    "movement"
+                  ]
+                }
+              ]
+            }
+          },
+          "else": {
+            "not": {"required": ["anchor_recast"]},
+            "properties": {
+              "radius": {
+                "minimum": 0.1
+              }
+            },
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "mechanism": {
+                      "const": "npc_ground_field"
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "source": {
+                      "properties": {
+                        "kind": {
+                          "const": "monster"
+                        }
+                      }
+                    },
+                    "interval_ms": {
+                      "minimum": 1
+                    },
+                    "next_tick_at_ms": {
+                      "type": "integer",
+                      "maximum": 9007199254740991
+                    },
+                    "total_ticks": {
+                      "minimum": 1
+                    },
+                    "contact_policy": {
+                      "$ref": "#/$defs/npcGroundFieldContactPolicy"
+                    }
+                  },
+                  "not": {
+                    "anyOf": [
+                      {
+                        "required": [
+                          "line"
+                        ]
+                      },
+                      {
+                        "required": [
+                          "basic_action_id"
+                        ]
+                      },
+                      {
+                        "required": [
+                          "movement"
+                        ]
+                      }
+                    ]
+                  }
+                },
+                "else": {
+                  "if": {
+                    "properties": {
+                      "mechanism": {
+                        "const": "npc_ground_strike"
+                      }
+                    }
+                  },
+                  "then": {
+                    "properties": {
+                      "source": {
+                        "properties": {
+                          "kind": {
+                            "const": "monster"
+                          }
+                        }
+                      },
+                      "interval_ms": {
+                        "const": 0
+                      },
+                      "next_tick_at_ms": {
+                        "type": "integer",
+                        "maximum": 9007199254740991
+                      },
+                      "total_ticks": {
+                        "const": 1
+                      },
+                      "completed_ticks": {
+                        "const": 0
+                      },
+                      "contact_policy": {
+                        "type": "null"
+                      }
+                    },
+                    "not": {
+                      "anyOf": [
+                        {
+                          "required": [
+                            "line"
+                          ]
+                        },
+                        {
+                          "required": [
+                            "basic_action_id"
+                          ]
+                        },
+                        {
+                          "required": [
+                            "movement"
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  "else": {
+                    "if": {
+                      "properties": {
+                        "mechanism": {
+                          "const": "member_ground_trap"
+                        }
+                      }
+                    },
+                    "then": {
+                      "properties": {
+                        "source": {
+                          "properties": {
+                            "kind": {
+                              "const": "participant"
+                            }
+                          }
+                        },
+                        "radius": {
+                          "maximum": 128
+                        },
+                        "interval_ms": {
+                          "const": 0
+                        },
+                        "next_tick_at_ms": {
+                          "type": "null"
+                        },
+                        "total_ticks": {
+                          "const": 0
+                        },
+                        "completed_ticks": {
+                          "const": 0
+                        },
+                        "contact_policy": {
+                          "$ref": "#/$defs/areaContactPolicy"
+                        }
+                      },
+                      "not": {
+                        "anyOf": [
+                          {
+                            "required": [
+                              "line"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "basic_action_id"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "movement"
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "else": {
+                      "allOf": [
+                        {
+                          "if": {
+                            "properties": {
+                              "mechanism": {
+                                "const": "moving_enter"
+                              }
+                            }
+                          },
+                          "then": {
+                            "required": [
+                              "movement"
+                            ],
+                            "properties": {
+                              "source": {
+                                "properties": {
+                                  "kind": {
+                                    "const": "monster"
+                                  }
+                                }
+                              },
+                              "contact_policy": {
+                                "$ref": "#/$defs/areaContactPolicy"
+                              },
+                              "interval_ms": {
+                                "const": 0
+                              },
+                              "next_tick_at_ms": {
+                                "type": "null"
+                              },
+                              "completed_ticks": {
+                                "const": 0
+                              },
+                              "total_ticks": {
+                                "const": 0
+                              }
+                            },
+                            "not": {
+                              "anyOf": [
+                                {
+                                  "required": [
+                                    "line"
+                                  ]
+                                },
+                                {
+                                  "required": [
+                                    "basic_action_id"
+                                  ]
+                                }
+                              ]
+                            }
+                          },
+                          "else": {
+                            "allOf": [
+                              {
+                                "if": {
+                                  "properties": {
+                                    "mechanism": {
+                                      "const": "basic_field"
+                                    }
+                                  }
+                                },
+                                "then": {
+                                  "required": [
+                                    "basic_action_id"
+                                  ],
+                                  "properties": {
+                                    "contact_policy": {
+                                      "type": "null"
+                                    },
+                                    "interval_ms": {
+                                      "type": "integer",
+                                      "minimum": 1,
+                                      "maximum": 60000
+                                    }
+                                  }
+                                },
+                                "else": {
+                                  "allOf": [
+                                    {
+                                      "if": {
+                                        "properties": {
+                                          "mechanism": {
+                                            "const": "circle"
+                                          }
+                                        }
+                                      },
+                                      "then": {
+                                        "properties": {
+                                          "interval_ms": {
+                                            "const": 0
+                                          },
+                                          "completed_ticks": {
+                                            "const": 0
+                                          },
+                                          "total_ticks": {
+                                            "const": 1
+                                          },
+                                          "contact_policy": {
+                                            "type": "null"
+                                          }
+                                        }
+                                      },
+                                      "else": {
+                                        "properties": {
+                                          "interval_ms": {
+                                            "type": "integer",
+                                            "minimum": 1,
+                                            "maximum": 60000
+                                          },
+                                          "contact_policy": {
+                                            "$ref": "#/$defs/areaContactPolicy"
+                                          }
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "not": {
+                                        "required": [
+                                          "basic_action_id"
+                                        ]
+                                      },
+                                      "properties": {
+                                        "radius": {
+                                          "maximum": 128
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              },
+                              {
+                                "if": {
+                                  "properties": {
+                                    "mechanism": {
+                                      "const": "line_field"
+                                    }
+                                  }
+                                },
+                                "then": {
+                                  "required": [
+                                    "line"
+                                  ]
+                                },
+                                "else": {
+                                  "not": {
+                                    "required": [
+                                      "line"
+                                    ]
+                                  }
+                                }
+                              },
+                              {
+                                "not": {
+                                  "required": [
+                                    "movement"
+                                  ]
+                                },
+                                "properties": {
+                                  "total_ticks": {
+                                    "minimum": 1
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "npcGroundFieldContactPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_targets_per_tick",
+        "max_total_hits",
+        "repeat_interval_ms",
+        "used_hits",
+        "remaining_hits",
+        "contacts"
+      ],
+      "properties": {
+        "max_targets_per_tick": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16
+        },
+        "max_total_hits": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 256
+        },
+        "repeat_interval_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 60000
+        },
+        "used_hits": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "remaining_hits": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 256
+        },
+        "contacts": {
+          "type": "array",
+          "maxItems": 16,
+          "items": {
+            "$ref": "#/$defs/areaContact"
+          }
+        }
+      }
+    },
+    "areaContact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target",
+        "last_hit_at_ms",
+        "next_eligible_at_ms"
+      ],
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/unitTarget"
+        },
+        "last_hit_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "next_eligible_at_ms": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "areaContactPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_targets_per_tick",
+        "max_total_hits",
+        "repeat_interval_ms",
+        "used_hits",
+        "remaining_hits",
+        "contacts"
+      ],
+      "properties": {
+        "max_targets_per_tick": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32
+        },
+        "max_total_hits": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "repeat_interval_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 60000
+        },
+        "used_hits": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127
+        },
+        "remaining_hits": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "contacts": {
+          "type": "array",
+          "maxItems": 128,
+          "items": {
+            "$ref": "#/$defs/areaContact"
+          }
+        }
+      }
+    },
+    "piercingPlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "skill_id",
+        "direction",
+        "speed",
+        "remaining_range",
+        "created_at_ms",
+        "expires_at_ms",
+        "max_hits",
+        "used_hits",
+        "remaining_hits",
+        "repeat_interval_ms",
+        "contacts"
+      ],
+      "properties": {
+        "skill_id": {
+          "$ref": "#/$defs/id"
+        },
+        "direction": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "speed": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 10000
+        },
+        "remaining_range": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 10000
+        },
+        "created_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "expires_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "max_hits": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "used_hits": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127
+        },
+        "remaining_hits": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "repeat_interval_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 60000
+        },
+        "contacts": {
+          "type": "array",
+          "maxItems": 128,
+          "items": {
+            "$ref": "#/$defs/flightContact"
+          }
+        }
+      }
+    },
+    "flightContact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target",
+        "hit_at_ms",
+        "next_eligible_at_ms"
+      ],
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/unitTarget"
+        },
+        "hit_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "next_eligible_at_ms": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      }
+    },
+    "basicGroundInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "position"
+      ],
+      "properties": {
+        "kind": {
+          "const": "attack_ground"
+        },
+        "position": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        }
+      }
+    },
+    "basicChargeConfig": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_ms",
+        "behavior"
+      ],
+      "properties": {
+        "max_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 30000
+        },
+        "behavior": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "upgrades"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "staged_wave"
+                },
+                "upgrades": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 2,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "after_ms",
+                      "range",
+                      "wave"
+                    ],
+                    "properties": {
+                      "after_ms": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 29999
+                      },
+                      "range": {
+                        "type": "number",
+                        "minimum": 0.1,
+                        "maximum": 10000
+                      },
+                      "wave": {
+                        "$ref": "#/$defs/basicWaveConfig"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "reduction_bps",
+                "reflect_bps",
+                "reflect_damage_kind"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "guard"
+                },
+                "reduction_bps": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 10000
+                },
+                "reflect_bps": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 10000
+                },
+                "reflect_damage_kind": {
+                  "enum": [
+                    "physical",
+                    "true_damage"
+                  ]
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "ready_interval_ms",
+                "tap_max_ms",
+                "min_distance",
+                "max_distance",
+                "half_width",
+                "target_cap",
+                "primary_damage_bps",
+                "additional_damage_bps",
+                "knockback_distance",
+                "stun_status",
+                "stun_resistant_profiles"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "dash"
+                },
+                "ready_interval_ms": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 60000
+                },
+                "tap_max_ms": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 29999
+                },
+                "min_distance": {
+                  "type": "number",
+                  "minimum": 0.1,
+                  "maximum": 1000
+                },
+                "max_distance": {
+                  "type": "number",
+                  "minimum": 0.1,
+                  "maximum": 1000
+                },
+                "half_width": {
+                  "type": "number",
+                  "minimum": 0.1,
+                  "maximum": 128
+                },
+                "target_cap": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 16
+                },
+                "primary_damage_bps": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 100000
+                },
+                "additional_damage_bps": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 100000
+                },
+                "knockback_distance": {
+                  "type": "number",
+                  "minimum": 0.1,
+                  "maximum": 500
+                },
+                "stun_status": {
+                  "$ref": "#/$defs/id"
+                },
+                "stun_resistant_profiles": {
+                  "type": "array",
+                  "uniqueItems": true,
+                  "items": {
+                    "$ref": "#/$defs/id"
+                  }
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "plan_id",
+                "target_cap",
+                "contact_interval_ms",
+                "status_id",
+                "contact_stacks",
+                "damage_rule",
+                "stages"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "flight"
+                },
+                "plan_id": {
+                  "$ref": "#/$defs/id"
+                },
+                "target_cap": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 16
+                },
+                "contact_interval_ms": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 60000
+                },
+                "status_id": {
+                  "$ref": "#/$defs/id"
+                },
+                "contact_stacks": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 32
+                },
+                "damage_rule": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "damage_kind",
+                    "fixed",
+                    "cultivation_bps",
+                    "armor_penetration_bps",
+                    "life_steal_bps",
+                    "unavoidable",
+                    "ignore_armor",
+                    "can_crit"
+                  ],
+                  "properties": {
+                    "damage_kind": {
+                      "enum": [
+                        "physical",
+                        "elemental",
+                        "true_damage"
+                      ]
+                    },
+                    "element": {
+                      "$ref": "#/$defs/id"
+                    },
+                    "weapon_element": {
+                      "$ref": "#/$defs/id"
+                    },
+                    "base_power": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 1000000
+                    },
+                    "fixed": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 1000000
+                    },
+                    "cultivation_bps": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 1000000
+                    },
+                    "armor_penetration_bps": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 1000000
+                    },
+                    "armor_penetration_cap_bps": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 1000000
+                    },
+                    "life_steal_bps": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 10000
+                    },
+                    "life_steal_timing": {
+                      "enum": [
+                        "contact",
+                        "action_end"
+                      ]
+                    },
+                    "unavoidable": {
+                      "type": "boolean"
+                    },
+                    "ignore_armor": {
+                      "type": "boolean"
+                    },
+                    "can_crit": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "stages": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 3,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "after_ms",
+                      "radius",
+                      "contact_damage_bps",
+                      "max_contacts_per_target",
+                      "burst_damage_bps",
+                      "burst_radius",
+                      "burst_stacks"
+                    ],
+                    "properties": {
+                      "after_ms": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 29999
+                      },
+                      "radius": {
+                        "type": "number",
+                        "minimum": 0.1,
+                        "maximum": 128
+                      },
+                      "contact_damage_bps": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 100000
+                      },
+                      "max_contacts_per_target": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 16
+                      },
+                      "burst_damage_bps": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 100000
+                      },
+                      "burst_radius": {
+                        "type": "number",
+                        "minimum": 0.1,
+                        "maximum": 512
+                      },
+                      "burst_stacks": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 32
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "basicChargeInput": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind"
+          ],
+          "properties": {
+            "kind": {
+              "const": "start_basic_charge"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "session_id"
+          ],
+          "properties": {
+            "kind": {
+              "const": "release_basic_charge"
+            },
+            "session_id": {
+              "$ref": "#/$defs/id"
+            },
+            "target": {
+              "$ref": "#/$defs/unitTarget"
+            },
+            "direction": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {
+                "type": "number"
+              }
+            },
+            "position": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {
+                "type": "number"
+              }
+            }
+          },
+          "oneOf": [
+            {
+              "required": [
+                "target"
+              ]
+            },
+            {
+              "required": [
+                "direction"
+              ]
+            },
+            {
+              "required": [
+                "position"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "session_id"
+          ],
+          "properties": {
+            "kind": {
+              "const": "cancel_basic_charge"
+            },
+            "session_id": {
+              "$ref": "#/$defs/id"
+            }
+          }
+        }
+      ]
+    },
+    "basicStackedWave": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "stack_status",
+        "range",
+        "finisher"
+      ],
+      "properties": {
+        "stack_status": {
+          "$ref": "#/$defs/id"
+        },
+        "range": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 10000
+        },
+        "finisher": {
+          "$ref": "#/$defs/basicWaveConfig"
+        }
+      }
+    }
+  },
+  "properties": {
+    "protocol_version": {
+      "const": 6
+    },
+    "key": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "incarnation"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "incarnation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "request_id": {
+      "$ref": "#/$defs/id"
+    },
+    "config_id": {
+      "$ref": "#/$defs/id"
+    },
+    "config_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "seed": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4294967295
+    },
+    "participants": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "items": {
+        "$ref": "#/$defs/participant"
+      }
+    },
+    "publication_mode": {
+      "enum": [
+        "batched",
+        "interactive"
+      ]
+    },
+    "recovery": {
+      "$ref": "#/$defs/recoveryV4"
+    }
+  }
+}

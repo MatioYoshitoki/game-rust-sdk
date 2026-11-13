@@ -1,0 +1,15 @@
+// Explicit destructive-process acceptance fixture; the ordinary host never kills itself.
+import {readFileSync,writeFileSync} from 'node:fs';
+import {resolve} from 'node:path';
+import {TwoMemberDatabase,TwoMemberHost,readCatalog,newRecord} from './two-member-host.mjs';
+import {businessKind} from './asset-store.mjs';
+const flag=n=>process.argv[process.argv.indexOf(n)+1],binary=resolve(flag('--binary')),manifest=resolve(flag('--configs')),database=new TwoMemberDatabase(flag('--database'));
+const accounts=JSON.parse(readFileSync(flag('--accounts'),'utf8')),boundary=flag('--boundary'),record=newRecord({catalog:readCatalog(binary,manifest),scenario:'eight',accounts,manifest});database.create(record);let host,startedWithActivePeriodic=false;
+function crash(){writeFileSync(flag('--checkpoint'),JSON.stringify(database.room(record.id).checkpoint));writeFileSync(1,JSON.stringify({boundary,roomId:record.id,kernelPid:host.kernel.child.pid,hash:record.originalCreate.config_hash,accounts:database.views(record.id),replication:host.replicationStats,startedWithActivePeriodic})+'\n');process.kill(process.pid,'SIGKILL');}
+host=new TwoMemberHost({autoAck:true,binary,manifest,database,record,ioPolicy:(pid,r)=>{
+ const kind=businessKind(r);
+ if(boundary==='partial_admissions'&&pid==='P02'&&kind==='commit_admission')return {afterCommit:crash};
+ if(boundary==='last_terminal_pending'&&pid==='P07'&&kind==='commit_settlement')return {beforeCommit:crash};
+ if(boundary==='committed_lost_receipt'&&pid==='P03'&&kind==='commit_settlement')return {afterCommit:crash};return {};
+}});
+await host.start();if(boundary==='partial_admissions')await host.until(()=>false,10000);else {await host.joinAndReady();await host.until(()=>host.members.every(m=>m.snapshot.self.ready));for(const m of host.members)await host.input(m.account.participant_id,{kind:'cast_self',skill_id:record.config.additional_skills[0].id});await host.until(()=>host.members.every(m=>m.snapshot.self.statuses.some(s=>s.periodic)));await host.until(()=>host.members.every(m=>m.snapshot.logical_ms>=m.snapshot.self.recovery_until_ms));const m=host.members[0],target=m.snapshot.monsters[0];await host.input(m.account.participant_id,{kind:'cast',skill_id:record.config.skill.id,direction:target.position.map((v,i)=>v-m.snapshot.self.position[i])});await host.until(()=>host.members.some(m=>m.periodic.dotTicks>0)&&host.members.some(m=>m.periodic.hotTicks>0)&&host.members[0].snapshot.monsters.some(n=>n.statuses?.some(s=>s.source.id==='P00')));startedWithActivePeriodic=true;if(boundary==='last_terminal_pending'){for(const m of host.members){const pid=m.account.participant_id;await host.input(pid,{kind:'leave'});await host.until(()=>database.views(record.id).find(a=>a.participant_id===pid).settlements===1);}}else await host.input('P03',{kind:'leave'});await host.until(()=>false,10000);}

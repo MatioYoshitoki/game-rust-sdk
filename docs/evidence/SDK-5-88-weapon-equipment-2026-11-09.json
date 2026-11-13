@@ -1,0 +1,89 @@
+{
+  "batch": "SDK-5-88",
+  "delivery": "DELIVERY-01",
+  "crossPackage": "R3.4",
+  "sdkVersion": "0.118.0",
+  "date": "2026-11-09",
+  "mechanismVersion": 105,
+  "protocolVersion": 6,
+  "spec": "docs/batches/SDK-5-88-weapon-equipment.md",
+  "runtimeSourceSha256": "25f1bf7f8f2f379e63ec3f7cd4d852cd22e15b48c9af2ee8d87c1148b09f62dd",
+  "sample": {
+    "file": "examples/combat-host/weapon-catalog.json",
+    "sha256": "5d5a0f7c27c4ee18bc7af7a3218a7aa13c130c3166b2dcf20d11b04ef9ce7085",
+    "weaponModels": 12,
+    "families": 6,
+    "morphs": 18
+  },
+  "sourceBinding": {
+    "tableFile": "rust-match-kernel-v1.1/resolved-config.json",
+    "tableFileSha256": "6f730cf5a4844f3f67870a720b4fd0ce024f53e6905714344bebb52f53df8e0a",
+    "rulesFile": "rust-match-kernel-v1.1/source-rules.json",
+    "rulesFileSha256": "e7fd565d8144b6e6344db4ea136b6a526f9ded7986b13d296103c6debc041469",
+    "sourceDocuments": [
+      {
+        "path": "docs/designs/combat-engine.DESIGN.md",
+        "sha256": "2b1a9cd20e3cc79e8ab158879e59ff68f807c63ab93c27ae0b40a46aa144d558",
+        "lines": [
+          181,
+          194,
+          196,
+          197,
+          199
+        ]
+      },
+      {
+        "path": "docs/interfaces/combat-engine.INTERFACE.md",
+        "sha256": "36c7d30dc1f9b490692d3b7d5ef1fde79cfeaaafef1973e0dcf854d6656b2ed8",
+        "lines": [
+          111,
+          112,
+          113
+        ]
+      }
+    ]
+  },
+  "contractFilesSha256": {
+    "docs/interfaces/member-piercing-v1.schema.json": "f0a4c8903c1099b74c58e8cbe69d97c5e17cc22ab83741b97bf6166a98115db8",
+    "docs/interfaces/publications-v6.schema.json": "fc139ae389c5fa2435e55ebef3346a91498ca330dab293d37e70b2a9a0ed3ed1"
+  },
+  "scopeDecisions": {
+    "authorization": "The supervising host authenticates and owns the instance grant and durable inventory. A participant cannot supply the equipment assignment as a player input.",
+    "fallback": "Missing, unknown and cross-family morph IDs select the configured family base. An unknown model is rejected. An omitted weapon in a change selects the scenario basic attack.",
+    "commitBoundary": "Existing released non-beam basic deliveries must reach terminal before a different equipment assignment. A held beam ends with its old profile and cooldown. A detached field keeps its armor policy.",
+    "recovery": "The financial-only process checkpoint records accepted operations and can return identical receipts. A same-World reconnect republishes the live combat and equipment.",
+    "statusDefinitions": "Combat rules allow up to 32 definitions. Active instance and per-binding budgets retain their previous caps.",
+    "scratch": "One reused batch scratch directory. Cargo used the shared build cache."
+  },
+  "checks": {
+    "rustDefault": 2689,
+    "rustAllFeatures": 2689,
+    "rustFocused": 5,
+    "nodeAndH5Adapters": 199,
+    "clippy": true,
+    "format": true,
+    "schemas": true,
+    "statusDefinitionLimit": {
+      "sourceCatalog": 22,
+      "accepted": 32,
+      "rejected": 33
+    },
+    "publicH5": {
+      "transport": "Node/H5 HTTP/SSE and SQLite",
+      "seats": 2,
+      "playerControlRejected": 403,
+      "morphFallback": true,
+      "trustedSwap": true,
+      "idempotent": true,
+      "staleRevisionRejected": true,
+      "beamEnded": true,
+      "weaponRehydrated": true,
+      "unequipped": true,
+      "settlements": 2
+    }
+  },
+  "openInR3.4": [
+    "Tribulation wind blade area-entry hit and collision-safe displacement",
+    "Remaining world effects and production geometry integration"
+  ]
+}

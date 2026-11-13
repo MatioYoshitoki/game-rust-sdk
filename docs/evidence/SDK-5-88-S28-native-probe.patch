@@ -1,0 +1,63 @@
+--- a/src/world/two_members/source_cast_scenario_tests.rs
++++ b/src/world/two_members/source_cast_scenario_tests.rs
+@@ -333,4 +333,60 @@
+     assert_eq!(observed.iter().filter(|(owner,e)|*owner==Some(0)&&matches!(e,EventV4::Private{event:Event::ActionRejected{reason:Error::InvalidTarget,action_id:id}} if id==&action_id)).count(),oracle[2]["value"]);
+     assert!(w.members[0].pending.is_none() && w.members[0].cooldowns.is_empty());
+     assert_eq!(w.members[1].hp, 0);
++}
++
++#[test]
++fn source_cast_scenario_s28_absolute_deadline_ignores_both_protection_and_damage_immunity() {
++    let source = source();
++    let terminal = &source["standardTerminalScenario"];
++    assert_eq!(terminal["id"], "S28");
++    assert_eq!(terminal["fixture"], "plain-active");
++    assert_eq!(terminal["given"]["participants.A.protected"], true);
++    assert_eq!(terminal["given"]["participants.A.invincible"], true);
++    let now = u(&terminal["given"], "nowMs");
++    assert_eq!(now, u(&terminal["when"][0], "atMs"));
++    assert_eq!(now, u(&terminal["when"][0], "advanceToMs"));
++    let (mut c, mut w) = fixture(&source, scenario(&source, "S10"));
++    assert_eq!(c.terminal_ms, now);
++    c.pve_mut().status_definitions.push(
++        serde_json::from_value(json!({
++            "id":"scenario-invincible","mechanism":"timed_control","attribute":"damage_immunity",
++            "duration_ms":300,"duplicate_policy":"refresh","source_scoped":true,
++        }))
++        .unwrap(),
++    );
++    let entity = w.members[0].reference.entity.clone();
++    let before = now - c.step_ms;
++    super::periodic_tests::bind(
++        &mut w,
++        &c,
++        Owner::Member(0),
++        entity,
++        "scenario-invincible",
++        before,
++    );
++    w.members[0].protected = true;
++    assert!(w.members.iter().all(|m| m.living()));
++    assert!(w.member_has_status(0, StatusAttribute::DamageImmunity, now));
++    assert!(w.tick(&c, before).is_empty());
++    assert!(w.members.iter().all(|m| m.living()));
++    let terminal_events = w.tick(&c, now);
++    let subjects = terminal_events
++        .iter()
++        .filter_map(|(_, e)| match e {
++            EventV4::MemberChanged {
++                entity,
++                phase: MemberPhase::Settling,
++            } => Some(entity.id.as_str()),
++            _ => None,
++        })
++        .collect::<Vec<_>>();
++    let oracle = terminal["then"].as_array().unwrap();
++    assert_eq!(w.members[0].living(), oracle[0]["value"]);
++    assert_eq!(w.members[1].living(), oracle[1]["value"]);
++    assert_eq!(subjects.len(), oracle[2]["value"]);
++    assert_eq!(subjects, ["A", "B"]);
++    assert!(w.members.iter().all(|m| m.desired == Some(Outcome::Death)));
++    assert!(w.statuses.entries().is_empty());
++    assert!(w.tick(&c, now).is_empty());
+ }

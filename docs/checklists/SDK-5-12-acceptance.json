@@ -1,0 +1,90 @@
+{
+  "batch": "SDK-5-12",
+  "scope": "fixed circle periodic hostile contacts, commit-once cost and source-end policy; not all M05",
+  "criteria": {
+    "GF01": {
+      "rustTests": [
+        "config::skill_wire::field_tests::field_skill_config_both_slots_roundtrip_and_support",
+        "config::skill_wire::field_tests::field_skill_config_requires_duration_interval_and_128_tick_cap",
+        "config::skill_wire::field_tests::field_skill_config_requires_mechanism_30_schema_and_pve",
+        "config::skill_wire::field_tests::field_skill_config_strict_numbers_ownership_and_fields",
+        "config::skill_wire::field_tests::field_skill_zero_step_and_interval_reject_without_division_or_panic"
+      ]
+    },
+    "GF02": {
+      "rustTests": [
+        "world::pve::field_skill_tests::field_skill_commit_resource_and_self_capacity_fail_without_partial_effects",
+        "world::pve::field_skill_tests::field_skill_commit_revalidates_position_range_terrain_and_vision_atomically",
+        "world::pve::field_skill_tests::field_skill_full_capacity_still_allows_self_skill",
+        "world::pve::field_skill_tests::field_skill_mixed_ground_capacity_is_atomic_and_basic_unaffected",
+        "world::pve::field_skill_tests::field_skill_rejects_old_capabilities_and_mismatched_intents"
+      ]
+    },
+    "GF03": {
+      "rustTests": [
+        "world::pve::field_skill_tests::field_skill_128_empty_ticks_advance_once_each_then_end",
+        "world::pve::field_skill_tests::field_skill_exit_and_reentry_only_affect_future_scheduled_contacts",
+        "world::pve::field_skill_tests::field_skill_first_tick_waits_interval_and_end_is_exclusive",
+        "world::pve::field_skill_tests::field_skill_freezes_attack_then_uses_current_defense_and_shields",
+        "world::pve::field_skill_tests::field_skill_kills_and_drops_once_despite_later_pulses",
+        "world::pve::field_skill_tests::field_skill_late_processing_is_bounded_and_never_adds_expiry_pulse",
+        "world::pve::field_skill_tests::field_skill_non_step_timing_uses_scheduled_times_without_drift",
+        "world::pve::field_skill_tests::field_skill_overlaps_are_independent_and_ties_keep_creation_order",
+        "world::pve::field_skill_tests::field_skill_real_contact_order_boundary_obstruction_and_dodge",
+        "world::pve::field_skill_tests::field_skill_skips_dead_disabled_returning_targets_each_pulse",
+        "world::pve::field_skill_tests::field_skill_three_pulses_current_targets_and_hit_statuses_pay_once",
+        "world::pve::field_skill_tests::field_skill_zero_hp_damage_shield_contact_can_apply_hit_status",
+        "world::pve::field_skill_tests::field_skill_zero_windup_warning_still_wait_one_interval"
+      ]
+    },
+    "GF04": {
+      "rustTests": [
+        "world::pve::field_skill_tests::field_skill_background_cancel_and_move_keep_committed_cycles",
+        "world::pve::field_skill_tests::field_skill_death_terminal_and_close_end_once_and_never_refund",
+        "world::pve::field_skill_tests::field_skill_expiry_frees_shared_capacity_before_next_commit",
+        "world::pve::field_skill_tests::field_skill_prepare_cancel_background_leave_never_spend",
+        "world::pve::field_skill_tests::field_skill_shared_recovery_and_pending_cannot_be_bypassed"
+      ]
+    },
+    "GF05": {
+      "rustTests": [
+        "world::pve::field_skill_tests::field_skill_direct_pulse_output_peak_releases_world_and_frozen_assets",
+        "world::pve::field_skill_tests::field_skill_hundred_closes_release_ground_plans_and_frozen_assets",
+        "world::pve::field_skill_tests::field_skill_legal_output_peak_keeps_ground_views_and_frozen_asset_responsibility_bounded",
+        "world::pve::field_skill_tests::field_skill_primary_secondary_cd_aliases_remain_independent",
+        "world::pve::field_skill_tests::field_skill_public_finite_validation_reconnect_and_dedup_preserve_warning",
+        "world::pve::field_skill_tests::field_skill_views_parameters_and_progress_stay_frozen",
+        "world::pve::reset_tests::field_skill_actual_reset_cancels_preparing_and_committed_plans_without_new_round_damage"
+      ]
+    },
+    "GF06": {
+      "rustTests": [],
+      "reports": [
+        "artifacts/sdk-5-12/verification.json"
+      ]
+    },
+    "GF07": {
+      "rustTests": [],
+      "reports": [
+        "artifacts/sdk-5-12/verification.json"
+      ]
+    },
+    "GF08": {
+      "rustTests": [
+        "config::skill_wire::field_tests::field_skill_old_19_to_29_normalized_shapes_omit_periodic_fields",
+        "world::pve::field_skill_tests::field_skill_old_snapshots_omit_field_views_and_events"
+      ],
+      "reports": [
+        "artifacts/sdk-5-12/verification.json",
+        "artifacts/sdk-5-12/baseline-verification.json"
+      ]
+    },
+    "GF09": {
+      "rustTests": [],
+      "reports": [
+        "artifacts/sdk-5-12/delivery/independent-verification.json",
+        "artifacts/sdk-5-12/delivery/source-verification.json"
+      ]
+    }
+  }
+}

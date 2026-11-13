@@ -1,0 +1,92 @@
+{
+  "batch": "SDK-5-13",
+  "scope": "generic identity/time contact budgets first integrated with ground_field; not full M05",
+  "criteria": {
+    "CP01": {
+      "rustTests": [
+        "config::skill_wire::contact_tests::contact_policy_config_both_slots_normalize_and_report_capability",
+        "config::skill_wire::contact_tests::contact_policy_config_omission_preserves_old_field_and_normalized_shape",
+        "config::skill_wire::contact_tests::contact_policy_config_requires_version_schema_pve_and_field",
+        "config::skill_wire::contact_tests::contact_policy_config_strict_bounds_types_and_required_fields",
+        "config::skill_wire::contact_tests::contact_policy_config_zero_repeat_and_maxima_are_legal",
+        "config::skill_wire::contact_tests::contact_policy_does_not_bypass_skill_identity_or_status_reference_checks"
+      ]
+    },
+    "CP02": {
+      "rustTests": [
+        "world::pve::contact_policy_tests::contact_policy_blocked_and_ineligible_targets_never_spend",
+        "world::pve::contact_policy_tests::contact_policy_budget_stays_spent_when_hit_status_capacity_rejects",
+        "world::pve::contact_policy_tests::contact_policy_cycle_and_total_caps_stop_before_extra_damage_and_status",
+        "world::pve::contact_policy_tests::contact_policy_dodge_does_not_spend_slot_budget_or_history",
+        "world::pve::contact_policy_tests::contact_policy_kill_consumes_once_and_never_repeats_drop",
+        "world::pve::contact_policy_tests::contact_policy_nearest_then_id_order_overrides_storage_index",
+        "world::pve::contact_policy_tests::contact_policy_shield_absorption_counts_zero_hp_loss_contact",
+        "world::pve::contact_policy_tests::contact_policy_zero_damage_without_shield_still_consumes_contact"
+      ]
+    },
+    "CP03": {
+      "rustTests": [
+        "contact::tests::contact_budget_128_successes_bound_distinct_history",
+        "contact::tests::contact_budget_exhaustion_cannot_underflow_or_add_history",
+        "contact::tests::contact_budget_instances_and_frozen_configuration_are_independent",
+        "contact::tests::contact_budget_once_uses_full_identity_and_never_resets_on_probe",
+        "contact::tests::contact_budget_positive_interval_is_inclusive_and_uses_supplied_schedule",
+        "world::pve::contact_policy_tests::contact_policy_128_history_is_bounded_published_and_released",
+        "world::pve::contact_policy_tests::contact_policy_configuration_and_attack_are_frozen_at_acceptance",
+        "world::pve::contact_policy_tests::contact_policy_exit_reentry_keeps_old_history_but_new_generation_is_distinct",
+        "world::pve::contact_policy_tests::contact_policy_multiple_regions_have_independent_history_and_budget",
+        "world::pve::contact_policy_tests::contact_policy_once_per_identity_advances_empty_cycles_then_expires",
+        "world::pve::contact_policy_tests::contact_policy_positive_repeat_equal_boundary_and_budget_end",
+        "world::pve::contact_policy_tests::contact_policy_repeat_is_independent_of_scan_and_late_processing"
+      ]
+    },
+    "CP04": {
+      "rustTests": [
+        "world::pve::contact_policy_tests::contact_policy_budget_end_releases_slot_and_new_region_has_fresh_history",
+        "world::pve::contact_policy_tests::contact_policy_budget_has_priority_over_expiry_after_last_legal_pulse",
+        "world::pve::contact_policy_tests::contact_policy_commit_resource_and_self_capacity_fail_without_partial_effects",
+        "world::pve::contact_policy_tests::contact_policy_commit_revalidates_position_range_terrain_and_vision_atomically",
+        "world::pve::contact_policy_tests::contact_policy_death_terminal_and_close_end_once_and_never_refund",
+        "world::pve::contact_policy_tests::contact_policy_old_versions_cannot_prepare_explicit_policy",
+        "world::pve::reset_tests::contact_policy_actual_reset_cancels_preparing_and_committed_plans_without_new_round_damage"
+      ]
+    },
+    "CP05": {
+      "rustTests": [
+        "world::pve::contact_policy_tests::contact_policy_direct_pulse_output_peak_releases_world_and_frozen_assets",
+        "world::pve::contact_policy_tests::contact_policy_hundred_closes_release_ground_plans_and_frozen_assets",
+        "world::pve::contact_policy_tests::contact_policy_public_finite_validation_reconnect_and_dedup_preserve_warning"
+      ]
+    },
+    "CP06": {
+      "rustTests": [],
+      "reports": [
+        "artifacts/sdk-5-13/verification.json"
+      ]
+    },
+    "CP07": {
+      "rustTests": [],
+      "reports": [
+        "artifacts/sdk-5-13/verification.json"
+      ]
+    },
+    "CP08": {
+      "rustTests": [
+        "config::skill_wire::contact_tests::contact_policy_config_old_19_to_30_keep_shapes",
+        "world::pve::contact_policy_tests::contact_policy_old_and_omitted_views_keep_no_new_fields",
+        "world::pve::contact_policy_tests::contact_policy_omitted_field_keeps_original_index_contact_order"
+      ],
+      "reports": [
+        "artifacts/sdk-5-13/verification.json",
+        "artifacts/sdk-5-13/baseline-verification.json"
+      ]
+    },
+    "CP09": {
+      "rustTests": [],
+      "reports": [
+        "artifacts/sdk-5-13/delivery/independent-verification.json",
+        "artifacts/sdk-5-13/delivery/source-verification.json"
+      ]
+    }
+  }
+}

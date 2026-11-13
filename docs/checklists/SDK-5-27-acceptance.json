@@ -1,0 +1,155 @@
+{
+  "batch": "SDK-5-27",
+  "crate": "0.29.0",
+  "protocol": 6,
+  "schema": 7,
+  "mechanism": 44,
+  "criteria": {
+    "MS01": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::slots::member_slots_configuration_count_presence_duplicate_and_last_row_validate_before_io"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json"
+      ]
+    },
+    "MS02": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::slots::member_slots_public_one_two_four_eight_members_and_all_slot_counts",
+        "world::two_members::skill_slot_tests::slots_every_registered_mechanism_resolves_by_id_and_commits",
+        "world::two_members::skill_slot_tests::slots_one_two_four_eight_skills_and_members_publish_configuration_order",
+        "world::two_members::skill_slot_tests::slots_unknown_id_and_wrong_action_kind_never_fall_back_to_primary"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json"
+      ]
+    },
+    "MS03": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::slots::member_slots_duplicate_late_slot_input_charges_and_commits_once",
+        "world::two_members::skill_slot_tests::slots_cooldown_deadline_inclusive_and_other_slots_remain_ready",
+        "world::two_members::skill_slot_tests::slots_each_cost_and_cooldown_is_independent",
+        "world::two_members::skill_slot_tests::slots_same_ids_have_independent_member_facts_and_status_sources"
+      ],
+      "reports": [
+        "native-verification.json",
+        "interop-verification.json"
+      ]
+    },
+    "MS04": {
+      "rustTests": [
+        "world::two_members::skill_slot_tests::slots_basic_attack_has_independent_cooldown_and_shared_preparation",
+        "world::two_members::skill_slot_tests::slots_cancel_and_protection_interrupt_while_move_preserves_unpaid_preparation",
+        "world::two_members::skill_slot_tests::slots_preparing_cannot_be_replaced_by_another_slot",
+        "world::two_members::skill_slot_tests::slots_recovery_is_shared_and_cannot_be_shortened_by_switching",
+        "world::two_members::skill_slot_tests::slots_switching_after_cancel_never_resets_previous_cooldown"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json"
+      ]
+    },
+    "MS05": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::slots::member_slots_last_row_history_and_output_budgets_are_not_trimmed",
+        "world::two_members::skill_slot_tests::slots_commit_resource_decline_leaves_all_other_slots_and_effects_unchanged",
+        "world::two_members::skill_slot_tests::slots_ground_and_line_revalidation_before_commit_has_no_partial_cost",
+        "world::two_members::skill_slot_tests::slots_last_self_status_group_capacity_failure_is_atomic",
+        "world::two_members::skill_slot_tests::slots_late_unit_target_generation_is_revalidated_at_commit",
+        "world::two_members::skill_slot_tests::slots_plan_capacity_competition_does_not_create_extra_capacity",
+        "world::two_members::skill_slot_tests::slots_prepare_resource_failure_is_atomic_for_each_slot"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json"
+      ]
+    },
+    "MS06": {
+      "rustTests": [
+        "world::two_members::skill_slot_tests::slots_distinct_plans_and_self_effects_coexist_on_shared_world",
+        "world::two_members::skill_slot_tests::slots_last_field_uses_real_contact_budget_and_damage_pipeline"
+      ],
+      "reports": [
+        "native-verification.json",
+        "interop-verification.json"
+      ]
+    },
+    "MS07": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::slots::member_slots_reconnect_preserves_all_cooldowns_recovery_and_old_connection_fence",
+        "two_members::tests::capacity::delta::slots::member_slots_unknown_settlement_cleans_owner_while_peers_keep_slots_and_plans",
+        "world::two_members::skill_slot_tests::slots_background_preserves_committed_cooldowns_and_plan_deadlines",
+        "world::two_members::skill_slot_tests::slots_exit_cleans_owner_only_while_peer_state_and_cooldowns_remain"
+      ],
+      "reports": [
+        "native-verification.json",
+        "browser/report.json",
+        "public/report.json"
+      ]
+    },
+    "MS08": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::slots::member_slots_bad_lists_times_ids_and_pending_association_are_atomic",
+        "world::two_members::skill_slot_tests::slots_private_ordered_cooldowns_do_not_leak_to_public_members"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json"
+      ]
+    },
+    "MS09": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::slots::member_slots_all_mechanisms_private_order_full_delta_and_cross_language_vectors"
+      ],
+      "reports": [
+        "native-verification.json",
+        "interop-verification.json"
+      ]
+    },
+    "MS10": {
+      "rustTests": [],
+      "reports": [
+        "public/report.json",
+        "browser/report.json",
+        "visual-verification.json"
+      ]
+    },
+    "MS11": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::slots::member_slots_hundred_public_runtimes_with_multiple_committed_skills_release_all_responsibilities",
+        "two_members::tests::capacity::delta::slots::member_slots_recovery_closed_never_restores_cooldowns_or_world"
+      ],
+      "reports": [
+        "native-verification.json",
+        "crashes/report.json"
+      ]
+    },
+    "MS12": {
+      "rustTests": [],
+      "reports": [
+        "native-verification.json",
+        "delivery/source-verification.json",
+        "delivery/independent-verification.json",
+        "legacy4/report.json",
+        "legacy5/report.json",
+        "legacy6/report.json",
+        "legacy38/report.json",
+        "legacy39/report.json",
+        "legacy40/report.json",
+        "legacy41/report.json",
+        "legacy42/report.json",
+        "legacy43/report.json",
+        "local-preview.json"
+      ]
+    }
+  },
+  "limitations": [
+    "Fixed 1-8 required PVE members with static configuration-ordered 1-8 skills; no member-specific loadouts, hot swap, unlock or reordering",
+    "Configuration arrays initialize the count and all gameplay values; the existing shared preparation/recovery, costs, cooldowns and plan mechanisms are reused",
+    "Legacy mechanisms 1-43 keep their two-skill presence/count contract; valid historical publications stay compatible with the updated strict decoder",
+    "Reconnect preserves committed cooldowns/recovery/plans; restart restores only frozen financial obligations, never World/cooldowns/plans/statuses/baselines",
+    "Original 48 scenarios and 50 numeric vectors have no added execution counts; historical user artifact cleanup exception retained"
+  ]
+}

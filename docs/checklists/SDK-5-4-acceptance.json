@@ -1,0 +1,104 @@
+{
+  "batch": "SDK-5-4",
+  "scope": "finite max-HP based absorption shields, refresh/ignore; not full M04",
+  "criteria": {
+    "SH01": {
+      "rustTests": [
+        "config::status::shield_tests::shield_support_and_normalized_definitions_are_explicit_and_reloadable",
+        "config::status::shield_tests::shield_invalid_fields_caps_policies_and_versions_reject",
+        "config::status::shield_tests::shield_caps_are_configuration_and_direct_writes_are_not_inputs"
+      ]
+    },
+    "SH02": {
+      "rustTests": [
+        "world::pve::shield_tests::shield_refresh_refills_only_consumed_budget_and_ignore_keeps_everything",
+        "world::pve::shield_tests::shield_aggregate_cap_clips_only_new_group_and_zero_grant_has_no_slot",
+        "world::pve::shield_tests::shield_source_scoping_and_latest_owner_cleanup_remain_consistent",
+        "world::pve::shield_tests::shield_mixed_binding_capacity_rejects_atomically_without_cost"
+      ]
+    },
+    "SH03": {
+      "rustTests": [
+        "world::pve::shield_tests::shield_absorbs_before_hp_and_depleted_groups_do_not_return",
+        "world::pve::shield_tests::shield_partial_absorption_and_remaining_damage_are_conserved",
+        "world::pve::shield_tests::shield_applies_after_defense_and_before_overkill_hp_clamp",
+        "world::pve::shield_tests::shield_zero_damage_and_minimum_damage_do_not_double_apply",
+        "world::pve::shield_tests::shield_cap_zero_tiny_hp_rounding_and_large_integer_are_bounded"
+      ]
+    },
+    "SH04": {
+      "rustTests": [
+        "world::pve::shield_tests::shield_orders_by_deadline_then_applied_time",
+        "world::pve::shield_tests::shield_stable_id_breaks_exact_ties_without_double_consumption",
+        "world::pve::shield_tests::shield_expiry_precedes_same_tick_hit_and_regrant_uses_new_id",
+        "world::pve::shield_tests::shield_public_input_and_transport_retries_never_refill_partial_shield",
+        "world::pve::shield_tests::shield_dodge_protection_and_zero_contact_do_not_consume",
+        "world::pve::shield_tests::shield_full_absorption_does_not_advance_boss_hp_phase_and_walls_do_not_consume"
+      ]
+    },
+    "SH05": {
+      "rustTests": [
+        "world::pve::shield_tests::shield_full_absorption_preserves_contact_but_not_hp_lifesteal",
+        "world::pve::shield_tests::shield_real_player_skill_applies_target_shield_after_current_hit",
+        "world::pve::shield_tests::shield_basic_and_monster_projectile_both_use_the_same_absorption_chain",
+        "world::pve::shield_tests::shield_area_and_heavy_attacks_consume_shields",
+        "world::pve::shield_tests::shield_counter_after_fully_absorbed_contact_consumes_remaining_shield_once",
+        "world::pve::shield_tests::shield_timed_position_success_and_failure_use_the_common_chain",
+        "world::pve::shield_tests::shield_full_absorption_does_not_advance_boss_hp_phase_and_walls_do_not_consume",
+        "world::pve::status_tests::status_leave_extraction_and_close_release_instances_including_foreign_sources"
+      ]
+    },
+    "SH06": {
+      "rustTests": [
+        "world::pve::shield_tests::shield_hundred_closes_and_background_preserve_or_clear_remaining_budget",
+        "world::pve::shield_tests::shield_encounter_reset_clears_budget_and_rejects_old_round_source",
+        "world::pve::shield_tests::shield_source_scoping_and_latest_owner_cleanup_remain_consistent",
+        "world::pve::status_tests::status_event_burst_faults_with_frozen_responsibility_and_releases_world"
+      ],
+      "nodeCases": [
+        "a-extraction"
+      ]
+    },
+    "SH07": {
+      "rustTests": [],
+      "nodeCases": [
+        "a-extraction",
+        "a-death",
+        "b-extraction",
+        "b-death"
+      ],
+      "touchCases": [
+        "extraction",
+        "death"
+      ]
+    },
+    "SH08": {
+      "rustTests": [],
+      "crashBoundaries": [
+        "active",
+        "after_intent_persist",
+        "after_storage_commit"
+      ],
+      "recoveriesPerBoundary": 2
+    },
+    "SH09": {
+      "rustTests": [
+        "world::pve::shield_tests::shield_legacy_snapshots_and_damage_do_not_gain_shield_fields",
+        "config::status::shield_tests::shield_legacy_19_20_21_normalized_json_remains_unchanged"
+      ],
+      "reports": [
+        "artifacts/sdk-5-4/baseline-verification.json",
+        "artifacts/sdk-5-4/verification.json",
+        "artifacts/sdk-5-4/delivery/independent-verification.json"
+      ]
+    },
+    "SH10": {
+      "rustTests": [],
+      "reports": [
+        "artifacts/sdk-5-4/delivery/source-verification.json",
+        "artifacts/sdk-5-4/delivery/independent-verification.json",
+        "artifacts/sdk-5-4/baseline-verification.json"
+      ]
+    }
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "batch": "SDK-5-11",
+  "scope": "strict ground point and single circle pulse; not persistent fields/traps or full M02",
+  "criteria": {
+    "GC01": {
+      "rustTests": [
+        "config::skill_wire::ground_tests::ground_skill_config_rejects_bounds_mixed_and_unknown_fields",
+        "config::skill_wire::ground_tests::ground_skill_config_required_fields_and_zero_time_boundaries",
+        "config::skill_wire::ground_tests::ground_skill_config_requires_capability_schema_and_pve",
+        "config::skill_wire::ground_tests::ground_skill_config_roundtrips_both_slots_and_support",
+        "config::skill_wire::ground_tests::ground_skill_wire_strict_point_and_extra_fields"
+      ]
+    },
+    "GC02": {
+      "rustTests": [
+        "world::pve::ground_skill_tests::ground_skill_accept_range_inclusive_self_point_and_vision",
+        "world::pve::ground_skill_tests::ground_skill_commit_revalidates_position_range_terrain_and_vision_atomically",
+        "world::pve::ground_skill_tests::ground_skill_mismatched_intents_old_versions_and_unknown_skill",
+        "world::pve::ground_skill_tests::ground_skill_movement_preserves_preparation_and_submission_rechecks_current_caster",
+        "world::pve::ground_skill_tests::ground_skill_strict_half_open_bounds_walkable_and_finite_without_clamping"
+      ]
+    },
+    "GC03": {
+      "rustTests": [
+        "world::pve::ground_skill_tests::ground_skill_current_positions_allow_exit_and_entry",
+        "world::pve::ground_skill_tests::ground_skill_empty_circle_resolves_once_without_spurious_damage",
+        "world::pve::ground_skill_tests::ground_skill_one_pulse_hits_multiple_enemies_once_and_binds_status",
+        "world::pve::ground_skill_tests::ground_skill_pending_and_warning_freeze_point_and_parameters",
+        "world::pve::ground_skill_tests::ground_skill_radius_edge_is_inclusive_and_order_stable",
+        "world::pve::ground_skill_tests::ground_skill_raw_attack_frozen_defense_and_shield_live",
+        "world::pve::ground_skill_tests::ground_skill_resolution_respects_projectile_occlusion",
+        "world::pve::ground_skill_tests::ground_skill_skips_dead_disabled_returning_and_dodging_enemies",
+        "world::pve::ground_skill_tests::ground_skill_zero_damage_contact_can_apply_status_through_full_shield",
+        "world::pve::ground_skill_tests::ground_skill_zero_warning_cannot_resolve_same_fixed_step"
+      ]
+    },
+    "GC04": {
+      "rustTests": [
+        "world::pve::ground_skill_tests::ground_skill_commit_resource_and_self_capacity_fail_without_partial_effects",
+        "world::pve::ground_skill_tests::ground_skill_committed_cancel_move_and_background_preserve_plan_and_cooldown",
+        "world::pve::ground_skill_tests::ground_skill_full_plan_capacity_does_not_reject_basic_attack",
+        "world::pve::ground_skill_tests::ground_skill_prepare_cancel_background_leave_never_spend",
+        "world::pve::ground_skill_tests::ground_skill_primary_secondary_cooldowns_alias_and_warning_views",
+        "world::pve::ground_skill_tests::ground_skill_shared_recovery_and_pending_cannot_be_bypassed",
+        "world::pve::ground_skill_tests::ground_skill_two_plan_capacity_rejects_third_before_self_and_payment"
+      ]
+    },
+    "GC05": {
+      "rustTests": [
+        "world::pve::ground_skill_tests::ground_skill_death_terminal_close_clear_committed_plan_without_refund",
+        "world::pve::ground_skill_tests::ground_skill_hundred_closes_release_ground_plans_and_frozen_assets",
+        "world::pve::ground_skill_tests::ground_skill_legal_output_peak_keeps_ground_views_and_frozen_asset_responsibility_bounded",
+        "world::pve::ground_skill_tests::ground_skill_public_finite_validation_reconnect_and_dedup_preserve_warning",
+        "world::pve::reset_tests::ground_skill_actual_reset_cancels_preparing_and_committed_plans_without_new_round_damage"
+      ]
+    },
+    "GC06": {
+      "rustTests": [],
+      "reports": [
+        "artifacts/sdk-5-11/verification.json"
+      ]
+    },
+    "GC07": {
+      "rustTests": [],
+      "reports": [
+        "artifacts/sdk-5-11/verification.json"
+      ]
+    },
+    "GC08": {
+      "rustTests": [
+        "config::skill_wire::ground_tests::ground_skill_old_19_to_28_normalized_shapes_keep_no_warning_fields",
+        "world::pve::ground_skill_tests::ground_skill_old_snapshots_pending_events_omit_ground_fields"
+      ],
+      "reports": [
+        "artifacts/sdk-5-11/verification.json",
+        "artifacts/sdk-5-11/baseline-verification.json"
+      ]
+    },
+    "GC09": {
+      "rustTests": [],
+      "reports": [
+        "artifacts/sdk-5-11/delivery/independent-verification.json",
+        "artifacts/sdk-5-11/delivery/source-verification.json"
+      ]
+    }
+  }
+}

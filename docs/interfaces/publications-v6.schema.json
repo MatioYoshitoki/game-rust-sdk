@@ -1,0 +1,4946 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:match-kernel:publications-v6:create",
+  "title": "CreateV6",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "protocol_version",
+    "key",
+    "request_id",
+    "config_id",
+    "config_hash",
+    "seed",
+    "participants"
+  ],
+  "$defs": {
+    "spectatorsConfig": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["capacity", "terminal_retention_ms"],
+      "properties": {
+        "capacity": {"type": "integer", "minimum": 1, "maximum": 8},
+        "terminal_retention_ms": {"type": "integer", "minimum": 200, "maximum": 3600000}
+      }
+    },
+    "spectateV6": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["key", "slot", "connection", "action"],
+      "properties": {
+        "key": {"$ref": "#/$defs/skillLoadoutMatchKey"},
+        "slot": {"type": "integer", "minimum": 1, "maximum": 8},
+        "connection": {"$ref": "#/$defs/connection"},
+        "action": {"oneOf": [{"type": "object", "additionalProperties": false, "required": ["kind", "authenticated_principal"], "properties": {"kind": {"const": "attach"}, "authenticated_principal": {"$ref": "#/$defs/id"}}}, {"type": "object", "additionalProperties": false, "required": ["kind"], "properties": {"kind": {"const": "detach"}}}, {"type": "object", "additionalProperties": false, "required": ["kind", "stream_epoch"], "properties": {"kind": {"const": "request_full"}, "stream_epoch": {"type": "integer", "minimum": 1, "maximum": 4294967295}}}, {"type": "object", "additionalProperties": false, "required": ["kind", "publication_id", "outcome"], "properties": {"kind": {"const": "transport"}, "publication_id": {"$ref": "#/$defs/id"}, "outcome": {"enum": ["enqueued", "sent", "failed", "cancelled"]}}}]}
+      }
+    },
+    "spectatorMember": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["entity", "position", "hp", "max_hp", "phase"],
+      "properties": {
+        "extraction_channel": {"$ref": "#/$defs/extractionChannel"},
+        "entity": {"$ref": "#/$defs/entityRef"},
+        "position": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2},
+        "hp": {"type": "integer", "minimum": 0, "maximum": 4294967295},
+        "max_hp": {"type": "integer", "minimum": 1, "maximum": 4294967295},
+        "phase": {"enum": ["active", "settling", "terminal"]},
+        "outcome": {"enum": ["win", "loss", "draw"]}
+      }
+    },
+    "spectatorMonster": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["entity", "template_id", "position", "hp", "max_hp", "radius"],
+      "properties": {
+        "entity": {"$ref": "#/$defs/entityRef"},
+        "template_id": {"$ref": "#/$defs/id"},
+        "position": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2},
+        "hp": {"type": "integer", "minimum": 0, "maximum": 4294967295},
+        "max_hp": {"type": "integer", "minimum": 1, "maximum": 4294967295},
+        "radius": {"type": "number", "minimum": 0},
+        "summon_owner": {"$ref": "#/$defs/entityRef"}
+      }
+    },
+    "spectatorProjectile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "source", "position", "radius"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "source": {"$ref": "#/$defs/entityRef"},
+        "position": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2},
+        "radius": {"type": "number", "minimum": 0}
+      }
+    },
+    "spectatorObject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "position", "expires_at_ms"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "position": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2},
+        "expires_at_ms": {"type": "integer", "minimum": 1, "maximum": 9007199254740991}
+      }
+    },
+    "spectatorArea": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "center", "radius"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "center": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2},
+        "radius": {"type": "number", "minimum": 0}
+      }
+    },
+    "contestedEquipment": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "position", "revision", "state"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1, "maxLength": 64},
+          "position": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2},
+          "revision": {"type": "integer", "minimum": 1, "maximum": 4294967295},
+          "state": {"enum": ["available", "held", "dropped", "secured", "lost"]},
+          "holder": {"$ref": "#/$defs/entityRef"}
+        },
+        "if": {"properties": {"state": {"const": "held"}}},
+        "then": {"required": ["holder"]},
+        "else": {"not": {"required": ["holder"]}}
+      }
+    },
+    "modeWave": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["index", "total", "opens_at_ms", "opened"],
+      "properties": {
+        "index": {"type": "integer", "minimum": 1, "maximum": 8},
+        "total": {"type": "integer", "minimum": 1, "maximum": 8},
+        "opens_at_ms": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+        "opened": {"type": "boolean"}
+      }
+    },
+    "modeProgress": {
+      "type": "object", "additionalProperties": false, "required": ["current", "required"],
+      "properties": {
+        "current": {"type": "integer", "minimum": 0, "maximum": 4294967295},
+        "required": {"type": "integer", "minimum": 1, "maximum": 4294967295}
+      }
+    },
+    "extractionPressure": {
+      "type": "object", "additionalProperties": false,
+      "required": ["grace_at_ms", "ends_at_ms", "phase"],
+      "properties": {
+        "grace_at_ms": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+        "ends_at_ms": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+        "phase": {"enum": ["exploring", "grace", "expired"]},
+        "warning": {
+          "type": "object", "additionalProperties": false, "required": ["id", "index"],
+          "properties": {
+            "id": {"$ref": "#/$defs/id", "maxLength": 64},
+            "index": {"type": "integer", "minimum": 1, "maximum": 8}
+          }
+        }
+      }
+    },
+    "extractionChannel": {
+      "type": "object", "additionalProperties": false,
+      "required": ["position", "started_at_ms", "ends_at_ms"],
+      "properties": {
+        "position": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2},
+        "started_at_ms": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+        "ends_at_ms": {"type": "integer", "minimum": 1, "maximum": 9007199254740991}
+      }
+    },
+    "extractionChannelChange": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "entity", "channel", "state"],
+      "properties": {
+        "kind": {"const": "extraction_channel_changed"},
+        "entity": {"$ref": "#/$defs/entityRef"},
+        "channel": {"$ref": "#/$defs/extractionChannel"},
+        "state": {"enum": ["started", "interrupted", "completed"]}
+      }
+    },
+    "encounterProgress": {
+      "type": "object", "additionalProperties": false,
+      "required": ["initial", "remaining", "stats_bps", "surge_started", "surge_ends_at_ms"],
+      "properties": {
+        "initial": {"type": "integer", "minimum": 1, "maximum": 4294967295},
+        "remaining": {"type": "integer", "minimum": 0, "maximum": 4294967295},
+        "stats_bps": {"type": "integer", "minimum": 1, "maximum": 100000},
+        "surge_started": {"type": "boolean"},
+        "surge_ends_at_ms": {"type": ["null", "integer"], "minimum": 1, "maximum": 9007199254740991}
+      }
+    },
+    "spectatorStage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "index", "objective", "opens_at_ms", "expires_at_ms"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "index": {"type": "integer", "minimum": 1, "maximum": 8},
+        "objective": {"enum": ["wait", "checkpoint", "clear_targets", "survive", "waves", "kill_quota", "contest"]},
+        "progress": {"$ref": "#/$defs/modeProgress"},
+        "wave": {"$ref": "#/$defs/modeWave"},
+        "opens_at_ms": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+        "expires_at_ms": {"type": "integer", "minimum": 1, "maximum": 9007199254740991}
+      },
+      "allOf": [
+        {"if": {"properties": {"objective": {"const": "waves"}}}, "then": {"required": ["wave"]}, "else": {"not": {"required": ["wave"]}}},
+        {"if": {"properties": {"objective": {"const": "kill_quota"}}}, "then": {"required": ["progress"]}, "else": {"not": {"required": ["progress"]}}}
+      ]
+    },
+    "spectatorFact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sequence", "logical_ms", "event"],
+      "properties": {
+        "sequence": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+        "logical_ms": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+        "event": {"oneOf": [{"$ref": "#/$defs/extractionChannelChange"}, {"type": "object", "additionalProperties": false, "required": ["kind", "source", "target", "amount", "hp"], "properties": {"kind": {"const": "damage"}, "source": {"$ref": "#/$defs/entityRef"}, "target": {"$ref": "#/$defs/entityRef"}, "amount": {"type": "integer", "minimum": 0, "maximum": 4294967295}, "hp": {"type": "integer", "minimum": 0, "maximum": 4294967295}}}, {"type": "object", "additionalProperties": false, "required": ["kind", "entity", "phase"], "properties": {"kind": {"const": "member_changed"}, "entity": {"$ref": "#/$defs/entityRef"}, "phase": {"enum": ["active", "settling", "terminal"]}}}, {"type": "object", "additionalProperties": false, "required": ["kind", "entity"], "properties": {"kind": {"const": "respawned"}, "entity": {"$ref": "#/$defs/entityRef"}}}]}
+      }
+    },
+    "spectatorSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["phase", "logical_ms", "active_at_ms", "events", "members", "monsters", "projectiles", "resources", "areas"],
+      "properties": {
+        "contested_equipment": {"$ref": "#/$defs/contestedEquipment"},
+        "extraction_pressure": {"$ref": "#/$defs/extractionPressure"},
+        "encounter_progress": {"$ref": "#/$defs/encounterProgress"},
+        "phase": {"enum": ["active", "closed"]},
+        "logical_ms": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+        "active_at_ms": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+        "events": {"type": "array", "items": {"$ref": "#/$defs/spectatorFact"}, "maxItems": 32},
+        "stage": {"$ref": "#/$defs/spectatorStage"},
+        "members": {"type": "array", "items": {"$ref": "#/$defs/spectatorMember"}, "minItems": 1, "maxItems": 8},
+        "monsters": {"type": "array", "items": {"$ref": "#/$defs/spectatorMonster"}},
+        "projectiles": {"type": "array", "items": {"$ref": "#/$defs/spectatorProjectile"}},
+        "resources": {"type": "array", "items": {"$ref": "#/$defs/spectatorObject"}},
+        "areas": {"type": "array", "items": {"$ref": "#/$defs/spectatorArea"}}
+      }
+    },
+    "spectatorDelta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["logical_ms"],
+      "properties": {
+        "contested_equipment": {"$ref": "#/$defs/contestedEquipment"},
+        "extraction_pressure": {"$ref": "#/$defs/extractionPressure"},
+        "encounter_progress": {"$ref": "#/$defs/encounterProgress"},
+        "logical_ms": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+        "events": {"type": "array", "items": {"$ref": "#/$defs/spectatorFact"}, "maxItems": 32},
+        "stage": {"$ref": "#/$defs/spectatorStage"},
+        "members": {"type": "object", "additionalProperties": false, "required": ["upsert", "removed", "order"], "properties": {"upsert": {"type": "array", "items": {"$ref": "#/$defs/spectatorMember"}}, "removed": {"type": "array", "items": {"$ref": "#/$defs/entityRef"}, "uniqueItems": true}, "order": {"type": "array", "items": {"$ref": "#/$defs/entityRef"}, "uniqueItems": true}}},
+        "monsters": {"type": "object", "additionalProperties": false, "required": ["upsert", "removed", "order"], "properties": {"upsert": {"type": "array", "items": {"$ref": "#/$defs/spectatorMonster"}}, "removed": {"type": "array", "items": {"$ref": "#/$defs/entityRef"}, "uniqueItems": true}, "order": {"type": "array", "items": {"$ref": "#/$defs/entityRef"}, "uniqueItems": true}}},
+        "projectiles": {"type": "object", "additionalProperties": false, "required": ["upsert", "removed", "order"], "properties": {"upsert": {"type": "array", "items": {"$ref": "#/$defs/spectatorProjectile"}}, "removed": {"type": "array", "items": {"$ref": "#/$defs/id"}, "uniqueItems": true}, "order": {"type": "array", "items": {"$ref": "#/$defs/id"}, "uniqueItems": true}}},
+        "resources": {"type": "object", "additionalProperties": false, "required": ["upsert", "removed", "order"], "properties": {"upsert": {"type": "array", "items": {"$ref": "#/$defs/spectatorObject"}}, "removed": {"type": "array", "items": {"$ref": "#/$defs/id"}, "uniqueItems": true}, "order": {"type": "array", "items": {"$ref": "#/$defs/id"}, "uniqueItems": true}}},
+        "areas": {"type": "object", "additionalProperties": false, "required": ["upsert", "removed", "order"], "properties": {"upsert": {"type": "array", "items": {"$ref": "#/$defs/spectatorArea"}}, "removed": {"type": "array", "items": {"$ref": "#/$defs/id"}, "uniqueItems": true}, "order": {"type": "array", "items": {"$ref": "#/$defs/id"}, "uniqueItems": true}}}
+      }
+    },
+    "spectatorEnvelopeV6": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["key", "publication_id", "slot", "connection", "stream_epoch", "revision", "payload"],
+      "properties": {
+        "key": {"$ref": "#/$defs/skillLoadoutMatchKey"},
+        "publication_id": {"$ref": "#/$defs/id"},
+        "slot": {"type": "integer", "minimum": 1, "maximum": 8},
+        "connection": {"$ref": "#/$defs/connection"},
+        "stream_epoch": {"type": "integer", "minimum": 1, "maximum": 4294967295},
+        "revision": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+        "payload": {"oneOf": [{"type": "object", "additionalProperties": false, "required": ["kind", "snapshot", "reason"], "properties": {"kind": {"const": "full"}, "snapshot": {"$ref": "#/$defs/spectatorSnapshot"}, "reason": {"enum": ["initial", "periodic", "expired", "failure", "timeout", "resync", "lifecycle", "terminal", "size"]}}}, {"type": "object", "additionalProperties": false, "required": ["kind", "base_publication_id", "base_revision", "delta"], "properties": {"kind": {"const": "delta"}, "base_publication_id": {"$ref": "#/$defs/id"}, "base_revision": {"type": "integer", "minimum": 1, "maximum": 9007199254740991}, "delta": {"$ref": "#/$defs/spectatorDelta"}}}]}
+      }
+    },
+    "exposureNodeInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "node_id", "expected_revision", "choice"],
+      "properties": {
+        "kind": {"const": "use_exposure_node"},
+        "node_id": {"$ref": "#/$defs/id", "maxLength": 64},
+        "expected_revision": {"type": "integer", "minimum": 1, "maximum": 4294967295},
+        "choice": {"enum": ["reduce", "boost"]}
+      }
+    },
+    "zoneExposureView": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["band_id", "stacks", "max_stacks", "nodes"],
+      "properties": {
+        "band_id": {"$ref": "#/$defs/id", "maxLength": 64},
+        "stacks": {"type": "integer", "minimum": 0, "maximum": 64},
+        "max_stacks": {"type": "integer", "minimum": 1, "maximum": 64},
+        "boost_ends_at_ms": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+        "nodes": {
+          "type": "array",
+          "maxItems": 16,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "position", "revision", "ready_at_ms"],
+            "properties": {
+              "id": {"$ref": "#/$defs/id", "maxLength": 64},
+              "position": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2},
+              "revision": {"type": "integer", "minimum": 1, "maximum": 4294967295},
+              "ready_at_ms": {"type": "integer", "minimum": 0, "maximum": 9007199254740991}
+            }
+          }
+        }
+      }
+    },
+    "claimWorldEquipmentInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "node_id", "expected_revision"],
+      "properties": {
+        "kind": {"const": "claim_world_equipment"},
+        "node_id": {"$ref": "#/$defs/id", "maxLength": 64},
+        "expected_revision": {"type": "integer", "minimum": 1, "maximum": 4294967295}
+      }
+    },
+    "modeCheckpointInput": {
+      "type": "object", "additionalProperties": false, "required": ["kind", "stage_id"],
+      "properties": {
+        "kind": {"const": "complete_mode_checkpoint"},
+        "stage_id": {"$ref": "#/$defs/id", "maxLength": 64}
+      }
+    },
+    "modeView": {
+      "type": "object", "additionalProperties": false,
+      "required": ["stage_id", "stage_index", "objective", "opens_at_ms", "expires_at_ms", "submitted", "respawns_left", "respawn_at_ms", "outcome"],
+      "properties": {
+        "stage_id": {"$ref": "#/$defs/id", "maxLength": 64},
+        "stage_index": {"type": "integer", "minimum": 1, "maximum": 8},
+        "objective": {"enum": ["wait", "checkpoint", "clear_targets", "survive", "waves", "kill_quota", "contest"]},
+        "progress": {"$ref": "#/$defs/modeProgress"},
+        "wave": {"$ref": "#/$defs/modeWave"},
+        "opens_at_ms": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+        "expires_at_ms": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+        "submitted": {"type": "boolean"},
+        "respawns_left": {"type": "integer", "minimum": 0, "maximum": 8},
+        "respawn_at_ms": {"type": ["null", "integer"], "minimum": 1, "maximum": 9007199254740991},
+        "forfeit_at_ms": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+        "outcome": {"enum": [null, "win", "loss", "draw", "death"]}
+      },
+      "allOf": [
+        {"if": {"properties": {"objective": {"const": "waves"}}}, "then": {"required": ["wave"]}, "else": {"not": {"required": ["wave"]}}},
+        {"if": {"properties": {"objective": {"const": "kill_quota"}}}, "then": {"required": ["progress"]}, "else": {"not": {"required": ["progress"]}}}
+      ]
+    },
+    "trainingCounter": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+    "trainingView": {
+      "type": "object", "additionalProperties": false, "required": ["respawn_at_ms"],
+      "properties": {
+        "respawn_at_ms": {"type": ["null", "integer"], "minimum": 1, "maximum": 9007199254740991},
+        "metrics": {
+          "type": "object", "additionalProperties": false,
+          "required": ["sampled_at_ms", "damage", "hits", "critical_hits", "highest_hit", "rolling_dps", "average_dps", "by_source"],
+          "properties": {
+            "sampled_at_ms": {"$ref": "#/$defs/trainingCounter"},
+            "damage": {"$ref": "#/$defs/trainingCounter"},
+            "hits": {"$ref": "#/$defs/trainingCounter"},
+            "critical_hits": {"$ref": "#/$defs/trainingCounter"},
+            "highest_hit": {"type": "integer", "minimum": 0, "maximum": 4294967295},
+            "rolling_dps": {"$ref": "#/$defs/trainingCounter"},
+            "average_dps": {"$ref": "#/$defs/trainingCounter"},
+            "by_source": {
+              "type": "object", "additionalProperties": false,
+              "required": ["basic", "skill", "periodic", "summon", "other"],
+              "properties": {
+                "basic": {"$ref": "#/$defs/trainingCounter"},
+                "skill": {"$ref": "#/$defs/trainingCounter"},
+                "periodic": {"$ref": "#/$defs/trainingCounter"},
+                "summon": {"$ref": "#/$defs/trainingCounter"},
+                "other": {"$ref": "#/$defs/trainingCounter"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "resetTrainingMetricsInput": {
+      "type": "object", "additionalProperties": false, "required": ["kind"],
+      "properties": {"kind": {"const": "reset_training_metrics"}}
+    },
+    "boonId": {"$ref": "#/$defs/id", "maxLength": 64},
+    "claimBoonInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "opportunity_id", "boon_id", "expected_revision", "expected_inventory_revision"],
+      "properties": {
+        "kind": {"const": "claim_boon"},
+        "opportunity_id": {"$ref": "#/$defs/boonId"},
+        "boon_id": {"$ref": "#/$defs/boonId"},
+        "expected_revision": {"type": "integer", "minimum": 1, "maximum": 4294967295},
+        "expected_inventory_revision": {"type": "integer", "minimum": 0, "maximum": 4294967295},
+        "replace_slot": {"type": "integer", "minimum": 1, "maximum": 3}
+      }
+    },
+    "boonOffer": {
+      "oneOf": [
+        {
+          "type": "object", "additionalProperties": false, "required": ["kind", "choices"],
+          "properties": {
+            "kind": {"const": "grant"},
+            "choices": {
+              "type": "array", "minItems": 1, "maxItems": 8, "uniqueItems": true,
+              "items": {"$ref": "#/$defs/boonId"}
+            }
+          }
+        },
+        {
+          "type": "object", "additionalProperties": false, "required": ["kind"],
+          "properties": {"kind": {"const": "upgrade"}}
+        }
+      ]
+    },
+    "boonView": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["capacity", "revision", "slots", "opportunities"],
+      "properties": {
+        "capacity": {"type": "integer", "minimum": 1, "maximum": 3},
+        "revision": {"type": "integer", "minimum": 1, "maximum": 4294967295},
+        "pending_claim": {
+          "type": "object", "additionalProperties": false,
+          "required": ["opportunity_id", "boon_id", "completes_at_ms"],
+          "properties": {
+            "opportunity_id": {"$ref": "#/$defs/boonId"},
+            "boon_id": {"$ref": "#/$defs/boonId"},
+            "completes_at_ms": {"type": "integer", "minimum": 1, "maximum": 9007199254740991}
+          }
+        },
+        "slots": {
+          "type": "array", "maxItems": 3,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["slot", "boon_id", "level", "max_level"],
+            "properties": {
+              "slot": {"type": "integer", "minimum": 1, "maximum": 3},
+              "boon_id": {"$ref": "#/$defs/boonId"},
+              "level": {"type": "integer", "minimum": 1, "maximum": 3},
+              "max_level": {"type": "integer", "minimum": 1, "maximum": 3}
+            }
+          }
+        },
+        "opportunities": {
+          "type": "array", "maxItems": 32,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["id", "position", "offer", "available"],
+            "properties": {
+              "id": {"$ref": "#/$defs/boonId"},
+              "position": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2},
+              "offer": {"$ref": "#/$defs/boonOffer"},
+              "available": {"type": "boolean"},
+              "shared_remaining": {"type": "integer", "minimum": 0, "maximum": 8}
+            },
+            "allOf": [{
+              "if": {"required": ["shared_remaining"], "properties": {"shared_remaining": {"const": 0}}},
+              "then": {"properties": {"available": {"const": false}}}
+            }]
+          }
+        }
+      }
+    },
+    "itemInstance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["instance_id", "item_id", "quality"],
+      "properties": {
+        "instance_id": {"$ref": "#/$defs/id"},
+        "item_id": {"$ref": "#/$defs/id"},
+        "quality": {"type": "integer", "minimum": 0, "maximum": 65535}
+      }
+    },
+    "itemInstances": {
+      "type": "array",
+      "maxItems": 128,
+      "items": {"$ref": "#/$defs/itemInstance"}
+    },
+    "relicsV6": {
+      "type": "array",
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "position", "deceased", "revision", "remaining_stacks", "highest_quality"],
+        "properties": {
+          "id": {"$ref": "#/$defs/id"},
+          "position": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2},
+          "deceased": {"$ref": "#/$defs/entityRef"},
+          "revision": {"type": "integer", "minimum": 1, "maximum": 4294967295},
+          "remaining_stacks": {"type": "integer", "minimum": 0, "maximum": 128},
+          "highest_quality": {"type": ["integer", "null"], "minimum": 0, "maximum": 65535}
+        },
+        "if": {"properties": {"remaining_stacks": {"const": 0}}},
+        "then": {"properties": {"highest_quality": {"type": "null"}}},
+        "else": {"properties": {"highest_quality": {"type": "integer"}}}
+      }
+    },
+    "recastAnchorInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "anchor_id", "action_id", "recast_index", "position"],
+      "properties": {
+        "kind": {"const": "recast_anchor"},
+        "anchor_id": {"$ref": "#/$defs/id"},
+        "action_id": {"$ref": "#/$defs/id"},
+        "recast_index": {"type": "integer", "minimum": 1, "maximum": 8},
+        "position": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2}
+      }
+    },
+    "anchorLifecycleRecastInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "anchor_id", "action_id", "recast_index"],
+      "properties": {
+        "kind": {"enum": ["return_anchor", "end_anchor"]},
+        "anchor_id": {"$ref": "#/$defs/id"},
+        "action_id": {"$ref": "#/$defs/id"},
+        "recast_index": {"type": "integer", "minimum": 1, "maximum": 8}
+      }
+    },
+    "anchorRecastEndedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "area_id", "action_id", "source", "recast_index"],
+      "properties": {
+        "kind": {"const": "anchor_recast_ended"},
+        "area_id": {"$ref": "#/$defs/id"},
+        "action_id": {"$ref": "#/$defs/id"},
+        "source": {"$ref": "#/$defs/entityRef", "properties": {"kind": {"const": "participant"}}},
+        "recast_index": {"type": "integer", "minimum": 1, "maximum": 8}
+      }
+    },
+    "anchorRelocatedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "area_id", "action_id", "source", "recast_index", "center"],
+      "properties": {
+        "kind": {"const": "anchor_relocated"},
+        "area_id": {"$ref": "#/$defs/id"},
+        "action_id": {"$ref": "#/$defs/id"},
+        "source": {"$ref": "#/$defs/entityRef", "properties": {"kind": {"const": "participant"}}},
+        "recast_index": {"type": "integer", "minimum": 1, "maximum": 8},
+        "center": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2}
+      }
+    },
+    "retainedAreaStatus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "instance_id",
+        "definition_id",
+        "source",
+        "target",
+        "applied_at_ms",
+        "expires_at_ms",
+        "modifier_bps",
+        "attribute",
+        "retained_source"
+      ],
+      "properties": {
+        "instance_id": {
+          "$ref": "#/$defs/id"
+        },
+        "definition_id": {
+          "$ref": "#/$defs/id"
+        },
+        "source": {
+          "$ref": "#/$defs/entityRef",
+          "properties": {
+            "kind": {
+              "const": "monster"
+            }
+          }
+        },
+        "target": {
+          "$ref": "#/$defs/entityRef",
+          "properties": {
+            "kind": {
+              "const": "participant"
+            }
+          }
+        },
+        "applied_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "expires_at_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "modifier_bps": {
+          "type": "integer",
+          "minimum": -10000,
+          "maximum": -1
+        },
+        "attribute": {
+          "const": "movement_slow"
+        },
+        "retained_source": {
+          "const": true
+        }
+      }
+    },
+    "weaponId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "equippedWeaponInstance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "instance_id",
+        "model_id"
+      ],
+      "properties": {
+        "instance_id": {
+          "$ref": "#/$defs/weaponId"
+        },
+        "model_id": {
+          "$ref": "#/$defs/weaponId"
+        },
+        "morph_id": {
+          "$ref": "#/$defs/weaponId"
+        }
+      }
+    },
+    "weaponEquipmentView": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "revision"
+      ],
+      "properties": {
+        "revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "weapon": {
+          "$ref": "#/$defs/equippedWeaponInstance"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "revision": {
+                "const": 0
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "weapon"
+            ]
+          }
+        }
+      ]
+    },
+    "setEquippedWeapon": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "participant_id",
+        "entity_generation",
+        "operation_id",
+        "expected_revision"
+      ],
+      "properties": {
+        "key": {
+          "$ref": "#/$defs/skillLoadoutMatchKey"
+        },
+        "participant_id": {
+          "$ref": "#/$defs/id"
+        },
+        "entity_generation": {
+          "const": 1
+        },
+        "operation_id": {
+          "$ref": "#/$defs/weaponId"
+        },
+        "expected_revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "weapon": {
+          "$ref": "#/$defs/equippedWeaponInstance"
+        }
+      }
+    },
+    "weaponEquipmentReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation_id",
+        "equipment"
+      ],
+      "properties": {
+        "operation_id": {
+          "$ref": "#/$defs/weaponId"
+        },
+        "equipment": {
+          "$ref": "#/$defs/weaponEquipmentView"
+        },
+        "basic_profile": {
+          "$ref": "#/$defs/weaponId"
+        }
+      }
+    },
+    "weaponEquipmentOperation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "request",
+        "receipt"
+      ],
+      "properties": {
+        "request": {
+          "$ref": "#/$defs/setEquippedWeapon"
+        },
+        "receipt": {
+          "$ref": "#/$defs/weaponEquipmentReceipt"
+        }
+      }
+    },
+    "areaEntered": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "area_id",
+        "source",
+        "target",
+        "at_ms"
+      ],
+      "properties": {
+        "kind": {
+          "const": "area_entered"
+        },
+        "area_id": {
+          "$ref": "#/$defs/id"
+        },
+        "source": {
+          "$ref": "#/$defs/entityRef",
+          "properties": {
+            "kind": {
+              "const": "monster"
+            }
+          }
+        },
+        "target": {
+          "$ref": "#/$defs/entityRef",
+          "properties": {
+            "kind": {
+              "const": "participant"
+            }
+          }
+        },
+        "at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      }
+    },
+    "forcedDisplacement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "area_id",
+        "source",
+        "target",
+        "from",
+        "to",
+        "slide_speed_multiplier"
+      ],
+      "properties": {
+        "kind": {
+          "const": "forced_displacement"
+        },
+        "area_id": {
+          "$ref": "#/$defs/id"
+        },
+        "source": {
+          "$ref": "#/$defs/entityRef",
+          "properties": {
+            "kind": {
+              "const": "monster"
+            }
+          }
+        },
+        "target": {
+          "$ref": "#/$defs/entityRef",
+          "properties": {
+            "kind": {
+              "const": "participant"
+            }
+          }
+        },
+        "from": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "type": "number"
+          }
+        },
+        "to": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "type": "number"
+          }
+        },
+        "slide_speed_multiplier": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 10
+        }
+      }
+    },
+    "areaPlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "source",
+        "skill_id",
+        "mechanism",
+        "center",
+        "radius",
+        "created_at_ms",
+        "activates_at_ms",
+        "expires_at_ms",
+        "interval_ms",
+        "next_tick_at_ms",
+        "completed_ticks",
+        "total_ticks",
+        "contact_policy"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "source": {
+          "$ref": "#/$defs/entityRef"
+        },
+        "skill_id": {
+          "$ref": "#/$defs/id"
+        },
+        "mechanism": {
+          "enum": [
+            "circle",
+            "field",
+            "line_field",
+            "basic_field",
+            "moving_enter",
+            "npc_ground_field",
+            "npc_ground_strike",
+            "member_ground_trap",
+            "member_cast_anchor"
+          ]
+        },
+        "center": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "radius": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 512
+        },
+        "created_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "activates_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "expires_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "interval_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 60000
+        },
+        "next_tick_at_ms": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "completed_ticks": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 128
+        },
+        "total_ticks": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 128
+        },
+        "contact_policy": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/areaContactPolicy"
+            },
+            {
+              "$ref": "#/$defs/npcGroundFieldContactPolicy"
+            }
+          ]
+        },
+        "line": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "start",
+            "end",
+            "width"
+          ],
+          "properties": {
+            "start": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 2,
+              "maxItems": 2
+            },
+            "end": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 2,
+              "maxItems": 2
+            },
+            "width": {
+              "type": "number",
+              "minimum": 0.2,
+              "maximum": 256
+            }
+          }
+        },
+        "basic_action_id": {
+          "$ref": "#/$defs/id"
+        },
+        "attached_anchor_id": {"$ref": "#/$defs/id"},
+        "anchor_recast": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["action_id", "expires_at_ms", "max_count", "used_count"],
+          "properties": {
+            "action_id": {"$ref": "#/$defs/id"},
+            "expires_at_ms": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+            "max_count": {"type": "integer", "minimum": 1, "maximum": 8},
+            "behaviors": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 3,
+              "uniqueItems": true,
+              "items": {"enum": ["relocate", "return_to_source", "end"]}
+            },
+            "used_count": {"type": "integer", "minimum": 0, "maximum": 8}
+          }
+        },
+        "movement": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "origin",
+            "direction",
+            "speed",
+            "distance",
+            "committed"
+          ],
+          "properties": {
+            "origin": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {
+                "type": "number"
+              }
+            },
+            "direction": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {
+                "type": "number"
+              }
+            },
+            "speed": {
+              "type": "number",
+              "minimum": 0.1,
+              "maximum": 10000
+            },
+            "distance": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 10000
+            },
+            "committed": {
+              "type": "boolean"
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {"required": ["attached_anchor_id"]},
+          "then": {"properties": {"mechanism": {"const": "field"}}}
+        },
+        {
+          "if": {
+            "properties": {
+              "mechanism": {
+                "const": "member_cast_anchor"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "source": {
+                "properties": {
+                  "kind": {
+                    "const": "participant"
+                  }
+                }
+              },
+              "radius": {
+                "const": 0
+              },
+              "interval_ms": {
+                "const": 0
+              },
+              "next_tick_at_ms": {
+                "type": "null"
+              },
+              "total_ticks": {
+                "const": 0
+              },
+              "completed_ticks": {
+                "const": 0
+              },
+              "contact_policy": {
+                "type": "null"
+              }
+            },
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "line"
+                  ]
+                },
+                {
+                  "required": [
+                    "basic_action_id"
+                  ]
+                },
+                {
+                  "required": [
+                    "movement"
+                  ]
+                }
+              ]
+            }
+          },
+          "else": {
+            "not": {"required": ["anchor_recast"]},
+            "properties": {
+              "radius": {
+                "minimum": 0.1
+              }
+            },
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "mechanism": {
+                      "const": "npc_ground_field"
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "source": {
+                      "properties": {
+                        "kind": {
+                          "const": "monster"
+                        }
+                      }
+                    },
+                    "interval_ms": {
+                      "minimum": 1
+                    },
+                    "next_tick_at_ms": {
+                      "type": "integer",
+                      "maximum": 9007199254740991
+                    },
+                    "total_ticks": {
+                      "minimum": 1
+                    },
+                    "contact_policy": {
+                      "$ref": "#/$defs/npcGroundFieldContactPolicy"
+                    }
+                  },
+                  "not": {
+                    "anyOf": [
+                      {
+                        "required": [
+                          "line"
+                        ]
+                      },
+                      {
+                        "required": [
+                          "basic_action_id"
+                        ]
+                      },
+                      {
+                        "required": [
+                          "movement"
+                        ]
+                      }
+                    ]
+                  }
+                },
+                "else": {
+                  "if": {
+                    "properties": {
+                      "mechanism": {
+                        "const": "npc_ground_strike"
+                      }
+                    }
+                  },
+                  "then": {
+                    "properties": {
+                      "source": {
+                        "properties": {
+                          "kind": {
+                            "const": "monster"
+                          }
+                        }
+                      },
+                      "interval_ms": {
+                        "const": 0
+                      },
+                      "next_tick_at_ms": {
+                        "type": "integer",
+                        "maximum": 9007199254740991
+                      },
+                      "total_ticks": {
+                        "const": 1
+                      },
+                      "completed_ticks": {
+                        "const": 0
+                      },
+                      "contact_policy": {
+                        "type": "null"
+                      }
+                    },
+                    "not": {
+                      "anyOf": [
+                        {
+                          "required": [
+                            "line"
+                          ]
+                        },
+                        {
+                          "required": [
+                            "basic_action_id"
+                          ]
+                        },
+                        {
+                          "required": [
+                            "movement"
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  "else": {
+                    "if": {
+                      "properties": {
+                        "mechanism": {
+                          "const": "member_ground_trap"
+                        }
+                      }
+                    },
+                    "then": {
+                      "properties": {
+                        "source": {
+                          "properties": {
+                            "kind": {
+                              "const": "participant"
+                            }
+                          }
+                        },
+                        "radius": {
+                          "maximum": 128
+                        },
+                        "interval_ms": {
+                          "const": 0
+                        },
+                        "next_tick_at_ms": {
+                          "type": "null"
+                        },
+                        "total_ticks": {
+                          "const": 0
+                        },
+                        "completed_ticks": {
+                          "const": 0
+                        },
+                        "contact_policy": {
+                          "$ref": "#/$defs/areaContactPolicy"
+                        }
+                      },
+                      "not": {
+                        "anyOf": [
+                          {
+                            "required": [
+                              "line"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "basic_action_id"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "movement"
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "else": {
+                      "allOf": [
+                        {
+                          "if": {
+                            "properties": {
+                              "mechanism": {
+                                "const": "moving_enter"
+                              }
+                            }
+                          },
+                          "then": {
+                            "required": [
+                              "movement"
+                            ],
+                            "properties": {
+                              "source": {
+                                "properties": {
+                                  "kind": {
+                                    "const": "monster"
+                                  }
+                                }
+                              },
+                              "contact_policy": {
+                                "$ref": "#/$defs/areaContactPolicy"
+                              },
+                              "interval_ms": {
+                                "const": 0
+                              },
+                              "next_tick_at_ms": {
+                                "type": "null"
+                              },
+                              "completed_ticks": {
+                                "const": 0
+                              },
+                              "total_ticks": {
+                                "const": 0
+                              }
+                            },
+                            "not": {
+                              "anyOf": [
+                                {
+                                  "required": [
+                                    "line"
+                                  ]
+                                },
+                                {
+                                  "required": [
+                                    "basic_action_id"
+                                  ]
+                                }
+                              ]
+                            }
+                          },
+                          "else": {
+                            "allOf": [
+                              {
+                                "if": {
+                                  "properties": {
+                                    "mechanism": {
+                                      "const": "basic_field"
+                                    }
+                                  }
+                                },
+                                "then": {
+                                  "required": [
+                                    "basic_action_id"
+                                  ],
+                                  "properties": {
+                                    "contact_policy": {
+                                      "type": "null"
+                                    },
+                                    "interval_ms": {
+                                      "type": "integer",
+                                      "minimum": 1,
+                                      "maximum": 60000
+                                    }
+                                  }
+                                },
+                                "else": {
+                                  "allOf": [
+                                    {
+                                      "if": {
+                                        "properties": {
+                                          "mechanism": {
+                                            "const": "circle"
+                                          }
+                                        }
+                                      },
+                                      "then": {
+                                        "properties": {
+                                          "interval_ms": {
+                                            "const": 0
+                                          },
+                                          "completed_ticks": {
+                                            "const": 0
+                                          },
+                                          "total_ticks": {
+                                            "const": 1
+                                          },
+                                          "contact_policy": {
+                                            "type": "null"
+                                          }
+                                        }
+                                      },
+                                      "else": {
+                                        "properties": {
+                                          "interval_ms": {
+                                            "type": "integer",
+                                            "minimum": 1,
+                                            "maximum": 60000
+                                          },
+                                          "contact_policy": {
+                                            "$ref": "#/$defs/areaContactPolicy"
+                                          }
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "not": {
+                                        "required": [
+                                          "basic_action_id"
+                                        ]
+                                      },
+                                      "properties": {
+                                        "radius": {
+                                          "maximum": 128
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              },
+                              {
+                                "if": {
+                                  "properties": {
+                                    "mechanism": {
+                                      "const": "line_field"
+                                    }
+                                  }
+                                },
+                                "then": {
+                                  "required": [
+                                    "line"
+                                  ]
+                                },
+                                "else": {
+                                  "not": {
+                                    "required": [
+                                      "line"
+                                    ]
+                                  }
+                                }
+                              },
+                              {
+                                "not": {
+                                  "required": [
+                                    "movement"
+                                  ]
+                                },
+                                "properties": {
+                                  "total_ticks": {
+                                    "minimum": 1
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "areaContactPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_targets_per_tick",
+        "max_total_hits",
+        "repeat_interval_ms",
+        "used_hits",
+        "remaining_hits",
+        "contacts"
+      ],
+      "properties": {
+        "max_targets_per_tick": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32
+        },
+        "max_total_hits": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "repeat_interval_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 60000
+        },
+        "used_hits": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127
+        },
+        "remaining_hits": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "contacts": {
+          "type": "array",
+          "maxItems": 128,
+          "items": {
+            "$ref": "#/$defs/areaContact"
+          }
+        }
+      }
+    },
+    "npcGroundFieldContactPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_targets_per_tick",
+        "max_total_hits",
+        "repeat_interval_ms",
+        "used_hits",
+        "remaining_hits",
+        "contacts"
+      ],
+      "properties": {
+        "max_targets_per_tick": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16
+        },
+        "max_total_hits": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 256
+        },
+        "repeat_interval_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 60000
+        },
+        "used_hits": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "remaining_hits": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 256
+        },
+        "contacts": {
+          "type": "array",
+          "maxItems": 16,
+          "items": {
+            "$ref": "#/$defs/areaContact"
+          }
+        }
+      }
+    },
+    "areaContact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target",
+        "last_hit_at_ms",
+        "next_eligible_at_ms"
+      ],
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/basicProjectileUnitTarget"
+        },
+        "last_hit_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "next_eligible_at_ms": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "basicBeamView": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "action_id",
+        "plan_id",
+        "source",
+        "direction",
+        "range",
+        "half_width",
+        "interval_ms",
+        "started_at_ms",
+        "next_tick_at_ms",
+        "ticks",
+        "released"
+      ],
+      "properties": {
+        "action_id": {
+          "$ref": "#/$defs/id"
+        },
+        "plan_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "source": {
+          "$ref": "#/$defs/entityRef"
+        },
+        "direction": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "type": "number"
+          }
+        },
+        "range": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 10000
+        },
+        "half_width": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 128
+        },
+        "interval_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 60000
+        },
+        "started_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "next_tick_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "ticks": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "released": {
+          "type": "boolean"
+        }
+      }
+    },
+    "basicImpactView": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "plan_id",
+        "source",
+        "kind",
+        "origin",
+        "released_at_ms",
+        "impact_at_ms"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "plan_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "source": {
+          "$ref": "#/$defs/entityRef"
+        },
+        "kind": {
+          "enum": [
+            "fixed_delay",
+            "ground_field"
+          ]
+        },
+        "origin": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "target": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "generation"
+          ],
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/id"
+            },
+            "generation": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            }
+          }
+        },
+        "released_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "impact_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "position": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "kind": {
+              "const": "fixed_delay"
+            }
+          },
+          "required": [
+            "target"
+          ],
+          "not": {
+            "required": [
+              "position"
+            ]
+          }
+        },
+        {
+          "properties": {
+            "kind": {
+              "const": "ground_field"
+            }
+          },
+          "required": [
+            "position"
+          ],
+          "not": {
+            "required": [
+              "target"
+            ]
+          }
+        }
+      ]
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "connection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "generation"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "participant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "participant_id",
+        "authenticated_principal",
+        "connection"
+      ],
+      "not": { "required": ["weapon", "basic_profile"] },
+      "properties": {
+        "weapon": { "$ref": "#/$defs/equippedWeaponInstance" },
+        "basic_profile": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "participant_id": {
+          "$ref": "#/$defs/id"
+        },
+        "authenticated_principal": {
+          "$ref": "#/$defs/id"
+        },
+        "connection": {
+          "$ref": "#/$defs/connection"
+        },
+        "skills": {
+          "$ref": "#/$defs/skillLoadout"
+        },
+        "combat_build": {
+          "$ref": "#/$defs/character_build"
+        }
+      }
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "entityRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "id",
+        "generation"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "participant",
+            "monster"
+          ]
+        },
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "participantRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entity",
+        "owner_id"
+      ],
+      "properties": {
+        "entity": {
+          "$ref": "#/$defs/entityRef"
+        },
+        "owner_id": {
+          "$ref": "#/$defs/id"
+        }
+      }
+    },
+    "legacyCheckpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "sha256"
+      ],
+      "properties": {
+        "state": {
+          "type": "object",
+          "description": "Original schema-1 IoState, strictly decoded and validated by protocol.rs/recovery.rs; carried unchanged."
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "description": "Opaque legacy member responsibility. The original Rust schema is authoritative; hosts must preserve every field."
+    },
+    "memberCheckpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "participant_id",
+        "checkpoint"
+      ],
+      "properties": {
+        "participant_id": {
+          "$ref": "#/$defs/id"
+        },
+        "checkpoint": {
+          "$ref": "#/$defs/legacyCheckpoint"
+        }
+      }
+    },
+    "ioStateV4": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "identity_sha256",
+        "logical_ms",
+        "output_sequence",
+        "recovery_generation",
+        "members"
+      ],
+      "properties": {
+        "weapon_operations": { "type": "array", "maxItems": 128, "items": { "$ref": "#/$defs/weaponEquipmentOperation" } },
+        "schema_version": {
+          "const": 1
+        },
+        "identity_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "logical_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "output_sequence": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "recovery_generation": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "members": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/memberCheckpoint"
+          }
+        },
+        "skill_control": {
+          "$ref": "#/$defs/skillControlCheckpoint"
+        }
+      }
+    },
+    "checkpointV4": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "sha256"
+      ],
+      "properties": {
+        "state": {
+          "$ref": "#/$defs/ioStateV4"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "recoveryV4": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "generation",
+        "checkpoint"
+      ],
+      "properties": {
+        "generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "checkpoint": {
+          "$ref": "#/$defs/checkpointV4"
+        }
+      }
+    },
+    "stateV6": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "phase",
+        "active_at_ms",
+        "extraction_point",
+        "extraction_open"
+      ],
+      "properties": {
+        "contested_equipment": {"$ref": "#/$defs/contestedEquipment"},
+        "extraction_pressure": {"$ref": "#/$defs/extractionPressure"},
+        "encounter_progress": {"$ref": "#/$defs/encounterProgress"},
+        "phase": {
+          "enum": [
+            "preparing",
+            "deploying",
+            "active",
+            "draining",
+            "closed",
+            "faulted"
+          ]
+        },
+        "active_at_ms": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "extraction_point": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "extraction_open": {
+          "type": "boolean"
+        }
+      }
+    },
+    "publicMemberV4": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entity",
+        "position",
+        "hp",
+        "max_hp",
+        "phase",
+        "protected"
+      ],
+      "properties": {
+        "extraction_channel": {"$ref": "#/$defs/extractionChannel"},
+        "entity": {
+          "$ref": "#/$defs/entityRef"
+        },
+        "position": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "hp": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "max_hp": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "phase": {
+          "enum": [
+            "deploying",
+            "active",
+            "settling",
+            "terminal"
+          ]
+        },
+        "protected": {
+          "type": "boolean"
+        },
+        "basic_seals": {
+          "type": "array",
+          "maxItems": 8,
+          "items": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {
+              "type": "number"
+            }
+          }
+        }
+      }
+    },
+    "privateMemberV4": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "participant",
+        "position",
+        "hp",
+        "max_hp",
+        "spirit",
+        "max_spirit",
+        "effective_atk",
+        "effective_def",
+        "inventory_revision",
+        "phase",
+        "protected",
+        "foreground",
+        "ready",
+        "statuses",
+        "inventory",
+        "player_skills",
+        "pending_action",
+        "basic_ready_at_ms",
+        "recovery_until_ms",
+        "extraction_finishes_ms"
+      ],
+      "properties": {
+        "boons": {"$ref": "#/$defs/boonView"},
+        "mode": {"$ref": "#/$defs/modeView"},
+        "training": {"$ref": "#/$defs/trainingView"},
+        "zone_exposure": {"$ref": "#/$defs/zoneExposureView"},
+        "checkpoint_progress": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 4,
+          "items": {
+            "$ref": "#/$defs/checkpointProgress"
+          }
+        },
+        "equipment": {
+          "$ref": "#/$defs/weaponEquipmentView"
+        },
+        "basic_profile": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "world_weapon_profile": {"type": "string", "minLength": 1, "maxLength": 64},
+        "basic_wave_phase": {
+          "enum": [
+            "primary",
+            "alternate"
+          ]
+        },
+        "basic_projectile_progress": {
+          "$ref": "#/$defs/basicProjectileProgress"
+        },
+        "participant": {
+          "$ref": "#/$defs/participantRef"
+        },
+        "position": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "hp": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "max_hp": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "spirit": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "max_spirit": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "effective_atk": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "effective_def": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "inventory_revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "phase": {
+          "enum": [
+            "deploying",
+            "active",
+            "settling",
+            "terminal"
+          ]
+        },
+        "protected": {
+          "type": "boolean"
+        },
+        "foreground": {
+          "type": "boolean"
+        },
+        "ready": {
+          "type": "boolean"
+        },
+        "statuses": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "if": {
+              "required": [
+                "retained_source"
+              ]
+            },
+            "then": {
+              "$ref": "#/$defs/retainedAreaStatus"
+            }
+          }
+        },
+        "inventory": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "instances": {"$ref": "#/$defs/itemInstances"},
+        "player_skills": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "item_cooldowns": {
+          "type": "array",
+          "maxItems": 16,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "item_id",
+              "ready_at_ms"
+            ],
+            "properties": {
+              "item_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              "ready_at_ms": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              }
+            }
+          }
+        },
+        "pending_action": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/rv_pending_view"
+            }
+          ]
+        },
+        "basic_ready_at_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "recovery_until_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "extraction_finishes_ms": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "active_channel": {
+          "$ref": "#/$defs/activeChannel"
+        },
+        "followup": {
+          "$ref": "#/$defs/followup"
+        },
+        "recovery_cancel": {
+          "$ref": "#/$defs/recoveryCancel"
+        },
+        "basic_followup": {
+          "$ref": "#/$defs/basicFollowup"
+        },
+        "basic_pursuit": {
+          "$ref": "#/$defs/basicPursuit"
+        },
+        "projectile_recast": {
+          "$ref": "#/$defs/projectileRecast"
+        },
+        "skill_loadout_revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "skill_powers": {
+          "type": "object",
+          "maxProperties": 8,
+          "propertyNames": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 4294967295
+          }
+        },
+        "shield_total": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "basic_charge": {
+          "$ref": "#/$defs/basicChargeView"
+        },
+        "basic_charge_ready_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "$comment": "Nested statuses/items/actions use existing Rust StatusView, ItemAmount, PlayerSkillView and PlayerActionView contracts."
+    },
+    "monsterV4": {
+      "type": "object",
+      "additionalProperties": false,
+      "not": {"required": ["boss_phase", "summon"]},
+      "required": [
+        "entity",
+        "template_id",
+        "position",
+        "hp",
+        "max_hp",
+        "radius",
+        "returning",
+        "target"
+      ],
+      "properties": {
+        "training_owner_id": {"$ref": "#/$defs/id"},
+        "boss_phase": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["phase_id", "phase_name", "phase_index", "phase_count", "epoch", "attack_interval_ms", "cast_chance"],
+          "properties": {
+            "phase_id": {"$ref": "#/$defs/id"},
+            "phase_name": {"$ref": "#/$defs/id"},
+            "phase_index": {"type": "integer", "minimum": 1, "maximum": 8},
+            "phase_count": {"type": "integer", "minimum": 1, "maximum": 8},
+            "epoch": {"type": "integer", "minimum": 1, "maximum": 4294967295},
+            "attack_interval_ms": {"type": "integer", "minimum": 1, "maximum": 3600000},
+            "cast_chance": {"type": "number", "minimum": 0, "maximum": 1}
+          },
+          "$comment": "Runtime decoders enforce phase_index <= phase_count, epoch == entity.generation, and monotonic phases per entity generation."
+        },
+        "summon": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["owner", "expires_at_ms"],
+          "properties": {
+            "owner": {
+              "allOf": [
+                {"$ref": "#/$defs/entityRef"},
+                {"properties": {"kind": {"const": "participant"}}}
+              ]
+            },
+            "expires_at_ms": {"type": "integer", "minimum": 1, "maximum": 9007199254740991}
+          }
+        },
+        "entity": {
+          "$ref": "#/$defs/entityRef"
+        },
+        "template_id": {
+          "$ref": "#/$defs/id"
+        },
+        "position": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "hp": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "max_hp": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "radius": {
+          "type": "number",
+          "minimum": 0
+        },
+        "returning": {
+          "type": "boolean"
+        },
+        "target": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/entityRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "statuses": {
+          "type": "array",
+          "maxItems": 32,
+          "items": {
+            "type": "object",
+            "not": {
+              "required": [
+                "retained_source"
+              ]
+            }
+          }
+        },
+        "shield_total": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "resourceV4": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "position",
+        "quantity",
+        "item_id",
+        "owner",
+        "expires_at_ms"
+      ],
+      "if": {"required": ["instance"]},
+      "then": {"properties": {"quantity": {"const": 1}, "item_id": {"$ref": "#/$defs/id"}}},
+      "properties": {
+        "instance": {"$ref": "#/$defs/itemInstance"},
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "position": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "quantity": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "item_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "owner": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/entityRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expires_at_ms": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "basicProjectileUnitTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "generation"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "basicProjectileSegment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "action_id",
+        "plan_id",
+        "index",
+        "launched_at_ms",
+        "aim_point"
+      ],
+      "properties": {
+        "action_id": {
+          "$ref": "#/$defs/id"
+        },
+        "plan_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "index": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8
+        },
+        "launched_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "aim_point": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "type": "number"
+          }
+        },
+        "role": {
+          "enum": [
+            "seal_outbound",
+            "seal_recall",
+            "ricochet",
+            "return_to_owner",
+            "charged_flight"
+          ]
+        },
+        "tier": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "role"
+            ],
+            "properties": {
+              "role": {
+                "const": "charged_flight"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "tier"
+            ],
+            "properties": {
+              "index": {
+                "const": 0
+              }
+            }
+          },
+          "else": {
+            "not": {
+              "required": [
+                "tier"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "basicProjectileProgress": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "stored",
+        "maximum",
+        "attack_speed_bonus_bps"
+      ],
+      "properties": {
+        "stored": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8
+        },
+        "maximum": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 8
+        },
+        "attack_speed_bonus_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        }
+      }
+    },
+    "projectileV4": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "source",
+        "position",
+        "radius"
+      ],
+      "properties": {
+        "basic_segment": {
+          "$ref": "#/$defs/basicProjectileSegment"
+        },
+        "unit_target": {
+          "$ref": "#/$defs/basicProjectileUnitTarget"
+        },
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "source": {
+          "$ref": "#/$defs/entityRef"
+        },
+        "position": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "radius": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "membersDelta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "upsert",
+        "removed",
+        "order"
+      ],
+      "properties": {
+        "upsert": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/publicMemberV4"
+          }
+        },
+        "removed": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/entityRef"
+          }
+        },
+        "order": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/entityRef"
+          }
+        }
+      }
+    },
+    "monstersDelta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "upsert",
+        "removed",
+        "order"
+      ],
+      "properties": {
+        "upsert": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/monsterV4"
+          }
+        },
+        "removed": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/entityRef"
+          }
+        },
+        "order": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/entityRef"
+          }
+        }
+      }
+    },
+    "resourcesDelta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "upsert",
+        "removed",
+        "order"
+      ],
+      "properties": {
+        "upsert": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/resourceV4"
+          }
+        },
+        "removed": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "order": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        }
+      }
+    },
+    "projectilesDelta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "upsert",
+        "removed",
+        "order"
+      ],
+      "properties": {
+        "upsert": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/projectileV4"
+          }
+        },
+        "removed": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "order": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        }
+      }
+    },
+    "checkpointZone": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schedule_id",
+        "window_index",
+        "center",
+        "radius",
+        "opens_at_ms",
+        "expires_at_ms"
+      ],
+      "properties": {
+        "avoid": {"const": true},
+        "schedule_id": {
+          "$ref": "#/$defs/id"
+        },
+        "window_index": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32
+        },
+        "center": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "type": "number"
+          }
+        },
+        "radius": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 512
+        },
+        "opens_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "expires_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      }
+    },
+    "checkpointCounterTarget": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "generation"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "generation": {"type": "integer", "minimum": 1, "maximum": 4294967295}
+      }
+    },
+    "counterCheckpointInput": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "schedule_id", "window_index", "target"],
+      "properties": {
+        "kind": {"const": "counter_checkpoint"},
+        "schedule_id": {"$ref": "#/$defs/id"},
+        "window_index": {"type": "integer", "minimum": 1, "maximum": 32},
+        "target": {"$ref": "#/$defs/checkpointCounterTarget"}
+      }
+    },
+    "checkpointProgress": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schedule_id",
+        "collected",
+        "required",
+        "total_windows",
+        "last_window_index"
+      ],
+      "properties": {
+        "schedule_id": {
+          "$ref": "#/$defs/id"
+        },
+        "collected": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 32
+        },
+        "required": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32
+        },
+        "total_windows": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32
+        },
+        "last_window_index": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 32
+        },
+        "counter": {
+          "type": "object", "additionalProperties": false,
+          "required": ["window_index", "target", "opens_at_ms", "expires_at_ms"],
+          "properties": {
+            "on_contact": {"const": true},
+            "window_index": {"type": "integer", "minimum": 1, "maximum": 32},
+            "target": {"$ref": "#/$defs/checkpointCounterTarget"},
+            "opens_at_ms": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+            "expires_at_ms": {"type": "integer", "minimum": 1, "maximum": 9007199254740991}
+          }
+        }
+      }
+    },
+    "containersV6": {
+      "type": "array",
+      "maxItems": 16,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "generation", "position", "state"],
+        "properties": {
+          "id": {"$ref": "#/$defs/id"},
+          "generation": {"type": "integer", "minimum": 1, "maximum": 4294967295},
+          "position": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number"}},
+          "state": {"enum": ["ready", "reserved", "cooldown"]}
+        }
+      }
+    },
+    "snapshotV4": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "phase",
+        "active_at_ms",
+        "extraction_point",
+        "extraction_open",
+        "logical_ms",
+        "self",
+        "members",
+        "monsters",
+        "resources",
+        "projectiles"
+      ],
+      "properties": {
+        "contested_equipment": {"$ref": "#/$defs/contestedEquipment"},
+        "extraction_pressure": {"$ref": "#/$defs/extractionPressure"},
+        "encounter_progress": {"$ref": "#/$defs/encounterProgress"},
+        "member_conflict": {"const": true},
+        "containers": {"$ref": "#/$defs/containersV6"},
+        "relics": {"$ref": "#/$defs/relicsV6"},
+        "active_blockers": {
+          "type": "array",
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/id"}
+        },
+        "checkpoint_zones": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 4,
+          "items": {
+            "$ref": "#/$defs/checkpointZone"
+          }
+        },
+        "basic_beams": {
+          "type": "array",
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/basicBeamView"
+          }
+        },
+        "basic_impacts": {
+          "type": "array",
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/basicImpactView"
+          }
+        },
+        "basic_waves": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/basicWaveView"
+          },
+          "minItems": 0,
+          "maxItems": 8
+        },
+        "phase": {
+          "enum": [
+            "preparing",
+            "deploying",
+            "active",
+            "draining",
+            "closed",
+            "faulted"
+          ]
+        },
+        "active_at_ms": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "extraction_point": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "extraction_open": {
+          "type": "boolean"
+        },
+        "logical_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "self": {
+          "$ref": "#/$defs/privateMemberV4"
+        },
+        "members": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/publicMemberV4"
+          }
+        },
+        "monsters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/monsterV4"
+          }
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/resourceV4"
+          }
+        },
+        "projectiles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/projectileV4"
+          }
+        },
+        "areas": {
+          "type": "array",
+          "maxItems": 20,
+          "items": {
+            "$ref": "#/$defs/areaPlan"
+          }
+        }
+      }
+    },
+    "deltaV6": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "logical_ms"
+      ],
+      "properties": {
+        "containers": {"$ref": "#/$defs/containersV6"},
+        "relics": {"$ref": "#/$defs/relicsV6"},
+        "active_blockers": {
+          "type": "array",
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/id"}
+        },
+        "checkpoint_zones": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 4,
+          "items": {
+            "$ref": "#/$defs/checkpointZone"
+          }
+        },
+        "basic_beams": {
+          "type": "array",
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/basicBeamView"
+          }
+        },
+        "basic_impacts": {
+          "type": "array",
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/basicImpactView"
+          }
+        },
+        "basic_waves": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/basicWaveView"
+          },
+          "minItems": 0,
+          "maxItems": 8
+        },
+        "logical_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "state": {
+          "$ref": "#/$defs/stateV6"
+        },
+        "own": {
+          "$ref": "#/$defs/privateMemberV4"
+        },
+        "members": {
+          "$ref": "#/$defs/membersDelta"
+        },
+        "monsters": {
+          "$ref": "#/$defs/monstersDelta"
+        },
+        "resources": {
+          "$ref": "#/$defs/resourcesDelta"
+        },
+        "projectiles": {
+          "$ref": "#/$defs/projectilesDelta"
+        },
+        "areas": {
+          "type": "array",
+          "maxItems": 20,
+          "items": {
+            "$ref": "#/$defs/areaPlan"
+          }
+        }
+      }
+    },
+    "payloadV6": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "snapshot",
+            "reason"
+          ],
+          "properties": {
+            "kind": {
+              "const": "full"
+            },
+            "snapshot": {
+              "$ref": "#/$defs/snapshotV4"
+            },
+            "reason": {
+              "enum": [
+                "initial",
+                "periodic",
+                "expired",
+                "failure",
+                "timeout",
+                "resync",
+                "lifecycle",
+                "terminal",
+                "size"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "base_publication_id",
+            "base_revision",
+            "delta"
+          ],
+          "properties": {
+            "kind": {
+              "const": "delta"
+            },
+            "base_publication_id": {
+              "$ref": "#/$defs/id"
+            },
+            "base_revision": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "delta": {
+              "$ref": "#/$defs/deltaV6"
+            }
+          }
+        }
+      ]
+    },
+    "publicationEnvelopeV6": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "publication_id",
+        "recipient_id",
+        "connection",
+        "stream_epoch",
+        "revision",
+        "payload"
+      ],
+      "properties": {
+        "key": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "incarnation"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "incarnation": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            }
+          }
+        },
+        "publication_id": {
+          "$ref": "#/$defs/id"
+        },
+        "recipient_id": {
+          "$ref": "#/$defs/id"
+        },
+        "connection": {
+          "$ref": "#/$defs/connection"
+        },
+        "stream_epoch": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "payload": {
+          "$ref": "#/$defs/payloadV6"
+        }
+      }
+    },
+    "requestFull": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "stream_epoch"
+      ],
+      "properties": {
+        "kind": {
+          "const": "request_full"
+        },
+        "stream_epoch": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "replicationConfig": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ack_timeout_ms",
+        "baseline_ttl_ms",
+        "full_interval_ms",
+        "terminal_grace_ms"
+      ],
+      "properties": {
+        "ack_timeout_ms": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 60000
+        },
+        "baseline_ttl_ms": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 60000
+        },
+        "full_interval_ms": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 60000
+        },
+        "terminal_grace_ms": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 60000
+        }
+      },
+      "$comment": "Rust validates relative bounds TTL>=ack, period<=TTL and grace>=2*ack."
+    },
+    "basicPursuit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "action_id",
+        "target",
+        "started_at_ms",
+        "expires_at_ms"
+      ],
+      "properties": {
+        "action_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "target": {
+          "$ref": "#/$defs/basicFollowup/properties/target"
+        },
+        "started_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "expires_at_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      }
+    },
+    "basicFollowup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "action_id",
+        "target",
+        "promotes_at_ms",
+        "expires_at_ms"
+      ],
+      "properties": {
+        "action_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "target": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "generation"
+          ],
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/id"
+            },
+            "generation": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            }
+          }
+        },
+        "promotes_at_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "expires_at_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      }
+    },
+    "recoveryCancel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "skill_id",
+        "cancel_at_ms"
+      ],
+      "properties": {
+        "skill_id": {
+          "$ref": "#/$defs/id"
+        },
+        "cancel_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      }
+    },
+    "followup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_skill_id",
+        "promotes_at_ms",
+        "queued"
+      ],
+      "properties": {
+        "source_skill_id": {
+          "$ref": "#/$defs/id"
+        },
+        "promotes_at_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "queued": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "required": [
+            "action_id",
+            "skill_id",
+            "direction",
+            "expires_at_ms"
+          ],
+          "properties": {
+            "action_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "skill_id": {
+              "$ref": "#/$defs/id"
+            },
+            "direction": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {
+                "type": "number"
+              }
+            },
+            "expires_at_ms": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        }
+      }
+    },
+    "projectileRecast": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "action_id",
+        "skill_id",
+        "projectile_id",
+        "expires_at_ms",
+        "next_index"
+      ],
+      "properties": {
+        "action_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "skill_id": {
+          "$ref": "#/$defs/id"
+        },
+        "projectile_id": {
+          "$ref": "#/$defs/id"
+        },
+        "expires_at_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "next_index": {
+          "const": 1
+        }
+      }
+    },
+    "activeChannel": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "action_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "skill_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "direction": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "started_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "ends_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "next_pulse_at_ms": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pulses": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 128
+        },
+        "total_pulses": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "recovery": {
+          "const": true
+        },
+        "target": {
+          "$ref": "#/$defs/entityRef"
+        }
+      },
+      "required": [
+        "action_id",
+        "skill_id",
+        "direction",
+        "started_at_ms",
+        "ends_at_ms",
+        "next_pulse_at_ms",
+        "pulses"
+      ],
+      "dependentRequired": {
+        "recovery": [
+          "total_pulses"
+        ],
+        "target": [
+          "total_pulses"
+        ]
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "recovery"
+            ]
+          },
+          "then": {
+            "properties": {
+              "direction": {
+                "const": [
+                  0,
+                  0
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "skillLoadoutId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "skillLoadoutMatchKey": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "incarnation"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/skillLoadoutId"
+        },
+        "incarnation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "skillLoadout": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "owned_skill_ids",
+        "equipped_skill_ids"
+      ],
+      "properties": {
+        "owned_skill_ids": {
+          "type": "array",
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/skillLoadoutId"
+          }
+        },
+        "equipped_skill_ids": {
+          "type": "array",
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/skillLoadoutId"
+          }
+        }
+      }
+    },
+    "setSkillLoadout": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "participant_id",
+        "entity_generation",
+        "operation_id",
+        "expected_revision",
+        "loadout"
+      ],
+      "properties": {
+        "key": {
+          "$ref": "#/$defs/skillLoadoutMatchKey"
+        },
+        "participant_id": {
+          "$ref": "#/$defs/skillLoadoutId"
+        },
+        "entity_generation": {
+          "const": 1
+        },
+        "operation_id": {
+          "$ref": "#/$defs/skillLoadoutId"
+        },
+        "expected_revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "loadout": {
+          "$ref": "#/$defs/skillLoadout"
+        }
+      }
+    },
+    "skillLoadoutReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation_id",
+        "revision",
+        "equipped_skill_ids"
+      ],
+      "properties": {
+        "operation_id": {
+          "$ref": "#/$defs/skillLoadoutId"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "equipped_skill_ids": {
+          "type": "array",
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/skillLoadoutId"
+          }
+        }
+      }
+    },
+    "skillLoadoutState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "loadout",
+        "revision",
+        "declared"
+      ],
+      "properties": {
+        "loadout": {
+          "$ref": "#/$defs/skillLoadout"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "declared": {
+          "type": "boolean"
+        }
+      }
+    },
+    "skillLoadoutOperation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "request",
+        "receipt"
+      ],
+      "properties": {
+        "request": {
+          "$ref": "#/$defs/setSkillLoadout"
+        },
+        "receipt": {
+          "$ref": "#/$defs/skillLoadoutReceipt"
+        }
+      }
+    },
+    "skillControlCheckpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "members",
+        "operations"
+      ],
+      "properties": {
+        "members": {
+          "type": "object",
+          "minProperties": 1,
+          "maxProperties": 8,
+          "propertyNames": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/skillLoadoutState"
+          }
+        },
+        "operations": {
+          "type": "array",
+          "maxItems": 128,
+          "items": {
+            "$ref": "#/$defs/skillLoadoutOperation"
+          }
+        }
+      }
+    },
+    "skillLoadoutChanged": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "revision",
+        "equipped_skill_ids"
+      ],
+      "properties": {
+        "kind": {
+          "const": "skill_loadout_changed"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "equipped_skill_ids": {
+          "type": "array",
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/skillLoadoutId"
+          }
+        }
+      }
+    },
+    "ownLoadoutProjection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "skill_loadout_revision",
+        "player_skills"
+      ],
+      "properties": {
+        "skill_loadout_revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "player_skills": {
+          "type": "array",
+          "maxItems": 8,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "skill_id",
+              "ready_at_ms"
+            ],
+            "properties": {
+              "skill_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              "ready_at_ms": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              }
+            }
+          }
+        }
+      }
+    },
+    "skillLibraryProjection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "skill_library"
+      ],
+      "properties": {
+        "skill_library": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 63,
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "mechanism"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              "mechanism": {
+                "enum": [
+                  "projectile",
+                  "unit_projectile",
+                  "ground_circle",
+                  "ground_field",
+                  "line_field",
+                  "piercing_projectile",
+                  "self_status",
+                  "ally_heal",
+                  "ally_shield"
+                ]
+              }
+            },
+            "$comment": "Mechanism parameters are validated by the SDK skill loader; this fragment validates the library container and identity."
+          }
+        }
+      }
+    },
+    "skillLoadoutCommand": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "request"
+      ],
+      "properties": {
+        "type": {
+          "const": "set_skill_loadout"
+        },
+        "request": {
+          "$ref": "#/$defs/setSkillLoadout"
+        }
+      }
+    },
+    "rv_phase_movement": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "free"
+            }
+          },
+          "required": [
+            "kind"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "locked"
+            }
+          },
+          "required": [
+            "kind"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "slow"
+            },
+            "speed_bps": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9999
+            }
+          },
+          "required": [
+            "kind",
+            "speed_bps"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "interrupt_on_new_move"
+            },
+            "min_turn_degrees": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 180
+            },
+            "min_destination_distance": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 10000
+            }
+          },
+          "required": [
+            "kind",
+            "min_turn_degrees",
+            "min_destination_distance"
+          ]
+        }
+      ]
+    },
+    "rv_cast_movement": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "preparation": {
+          "$ref": "#/$defs/rv_phase_movement"
+        },
+        "recovery": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/rv_phase_movement"
+            },
+            {
+              "not": {
+                "properties": {
+                  "kind": {
+                    "const": "interrupt_on_new_move"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "active": {
+          "$ref": "#/$defs/rv_phase_movement"
+        }
+      },
+      "required": [
+        "preparation",
+        "recovery"
+      ]
+    },
+    "rv_cast_limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mobile_fixed_windup_max_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600000
+        }
+      },
+      "required": [
+        "mobile_fixed_windup_max_ms"
+      ]
+    },
+    "rv_resource_limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "max_hp": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000000000
+        },
+        "max_spirit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000000000
+        },
+        "max_spirit_cost": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8000000
+        }
+      },
+      "required": [
+        "max_hp",
+        "max_spirit",
+        "max_spirit_cost"
+      ]
+    },
+    "rv_recovery_cancel": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "after_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600000
+        },
+        "by_move": {
+          "type": "boolean"
+        },
+        "by_explicit_action": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "after_ms"
+      ]
+    },
+    "rv_charge_aim": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "min_interval_ms": {
+          "type": "integer",
+          "minimum": 50,
+          "maximum": 5000
+        },
+        "max_turn_deg_per_sec": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 720
+        }
+      },
+      "required": [
+        "min_interval_ms",
+        "max_turn_deg_per_sec"
+      ]
+    },
+    "rv_charge": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "min_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5000
+        },
+        "max_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5000
+        },
+        "min_damage_bps": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000
+        },
+        "aim_update": {
+          "$ref": "#/$defs/rv_charge_aim"
+        },
+        "early_release": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "queue_until_min"
+            }
+          },
+          "required": [
+            "kind"
+          ]
+        },
+        "release_windup_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5000
+        }
+      },
+      "required": [
+        "min_ms",
+        "max_ms",
+        "min_damage_bps"
+      ]
+    },
+    "rv_hp_formula": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "fixed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "source_attack_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "target_max_hp_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        }
+      },
+      "required": [
+        "fixed",
+        "source_attack_bps",
+        "target_max_hp_bps"
+      ],
+      "anyOf": [
+        {
+          "properties": {
+            "fixed": {
+              "minimum": 1
+            }
+          }
+        },
+        {
+          "properties": {
+            "source_attack_bps": {
+              "minimum": 1
+            }
+          }
+        },
+        {
+          "properties": {
+            "target_max_hp_bps": {
+              "minimum": 1
+            }
+          }
+        }
+      ]
+    },
+    "rv_spirit_formula": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "fixed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "source_attack_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "target_max_spirit_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        }
+      },
+      "required": [
+        "fixed",
+        "source_attack_bps",
+        "target_max_spirit_bps"
+      ],
+      "anyOf": [
+        {
+          "properties": {
+            "fixed": {
+              "minimum": 1
+            }
+          }
+        },
+        {
+          "properties": {
+            "source_attack_bps": {
+              "minimum": 1
+            }
+          }
+        },
+        {
+          "properties": {
+            "target_max_spirit_bps": {
+              "minimum": 1
+            }
+          }
+        }
+      ]
+    },
+    "rv_channel_recovery": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "hp": {
+          "$ref": "#/$defs/rv_hp_formula"
+        },
+        "spirit": {
+          "$ref": "#/$defs/rv_spirit_formula"
+        },
+        "remainder_policy": {
+          "enum": [
+            "earliest",
+            "final"
+          ]
+        }
+      },
+      "required": [],
+      "minProperties": 1,
+      "anyOf": [
+        {
+          "required": [
+            "hp"
+          ]
+        },
+        {
+          "required": [
+            "spirit"
+          ]
+        }
+      ]
+    },
+    "rv_channel": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 30000
+        },
+        "interval_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 30000
+        },
+        "spirit_per_pulse": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8000000
+        },
+        "pulse_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "recovery": {
+          "$ref": "#/$defs/rv_channel_recovery"
+        }
+      },
+      "required": [
+        "duration_ms",
+        "interval_ms",
+        "spirit_per_pulse"
+      ],
+      "dependentRequired": {
+        "recovery": [
+          "pulse_count"
+        ]
+      }
+    },
+    "rv_aim_view": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "direction": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "updated_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "direction",
+        "updated_at_ms"
+      ]
+    },
+    "rv_charge_view": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "action_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "started_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "min_release_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "auto_commit_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "released_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "release_windup_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5000
+        },
+        "aim": {
+          "$ref": "#/$defs/rv_aim_view"
+        }
+      },
+      "required": [
+        "action_id",
+        "started_at_ms",
+        "min_release_at_ms",
+        "auto_commit_at_ms"
+      ]
+    },
+    "rv_channel_view": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "action_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "skill_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "direction": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "started_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "ends_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "next_pulse_at_ms": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pulses": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 128
+        },
+        "total_pulses": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "recovery": {
+          "const": true
+        }
+      },
+      "required": [
+        "action_id",
+        "skill_id",
+        "direction",
+        "started_at_ms",
+        "ends_at_ms",
+        "next_pulse_at_ms",
+        "pulses"
+      ],
+      "dependentRequired": {
+        "recovery": [
+          "total_pulses"
+        ]
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "recovery"
+            ]
+          },
+          "then": {
+            "properties": {
+              "direction": {
+                "const": [
+                  0,
+                  0
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "rv_recovery_event": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "channel_recovery_pulse"
+        },
+        "action_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "pulse": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "spirit_cost": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8000000
+        },
+        "raw_hp": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "raw_spirit": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "hp_restored": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "spirit_restored": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "scheduled_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "executed_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "kind",
+        "action_id",
+        "pulse",
+        "spirit_cost",
+        "raw_hp",
+        "raw_spirit",
+        "hp_restored",
+        "spirit_restored",
+        "scheduled_at_ms",
+        "executed_at_ms"
+      ]
+    },
+    "rv_resource_commit": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "reserve_at": {
+          "enum": [
+            "accept",
+            "none"
+          ]
+        },
+        "consume_at": {
+          "const": "commit"
+        },
+        "cooldown_starts_at": {
+          "const": "commit"
+        },
+        "refund_before_commit": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "full"
+            }
+          },
+          "required": [
+            "kind"
+          ]
+        }
+      },
+      "required": [
+        "reserve_at",
+        "consume_at",
+        "cooldown_starts_at",
+        "refund_before_commit"
+      ]
+    },
+    "rv_resource_reservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "spirit": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "hp": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "minimum_hp_after_cost": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        }
+      },
+      "required": [
+        "spirit",
+        "hp",
+        "minimum_hp_after_cost"
+      ]
+    },
+    "rv_reservation_unit": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        }
+      },
+      "required": [
+        "id",
+        "generation"
+      ]
+    },
+    "rv_pending_view": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "skill_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "commits_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "action_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "resource_reservation": {
+          "$ref": "#/$defs/rv_resource_reservation"
+        },
+        "charge": {
+          "$ref": "#/$defs/rv_charge_view"
+        },
+        "ground_position": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "unit_target": {
+          "$ref": "#/$defs/rv_reservation_unit"
+        },
+        "ally_target": {
+          "$ref": "#/$defs/rv_reservation_unit"
+        }
+      },
+      "required": [
+        "skill_id",
+        "commits_at_ms"
+      ],
+      "dependentRequired": {
+        "resource_reservation": [
+          "action_id"
+        ]
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "resource_reservation"
+            ]
+          },
+          "then": {
+            "properties": {
+              "skill_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              }
+            }
+          }
+        }
+      ]
+    },
+    "character_build": {
+      "type": "object",
+      "properties": {
+        "power_points": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "skill_power_points": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "element_resistance_points": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "powers": {
+          "type": "object",
+          "maxProperties": 64,
+          "propertyNames": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/growth"
+          }
+        }
+      },
+      "required": [
+        "power_points",
+        "skill_power_points",
+        "element_resistance_points",
+        "powers"
+      ],
+      "additionalProperties": false
+    },
+    "growth": {
+      "type": "object",
+      "properties": {
+        "model_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "rank": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 15
+        },
+        "quality": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127
+        },
+        "level": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127
+        },
+        "mastery": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127
+        }
+      },
+      "required": [
+        "model_id",
+        "rank",
+        "quality",
+        "level",
+        "mastery"
+      ],
+      "additionalProperties": false
+    },
+    "basicWaveView": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "plan_id",
+        "source",
+        "origin",
+        "geometry",
+        "range",
+        "speed",
+        "released_at_ms",
+        "pending"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "plan_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "source": {
+          "$ref": "#/$defs/entityRef"
+        },
+        "origin": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "geometry": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "direction",
+                "cone_degrees"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "directional"
+                },
+                "direction": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                },
+                "cone_degrees": {
+                  "type": "number",
+                  "minimum": 0.1,
+                  "maximum": 180
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "radial"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "from"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "landing"
+                },
+                "from": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                }
+              }
+            }
+          ]
+        },
+        "range": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 10000
+        },
+        "speed": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 10000
+        },
+        "released_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "pending": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "target",
+              "at_ms"
+            ],
+            "properties": {
+              "target": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "id",
+                  "generation"
+                ],
+                "properties": {
+                  "id": {
+                    "$ref": "#/$defs/id"
+                  },
+                  "generation": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 4294967295
+                  }
+                }
+              },
+              "at_ms": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              }
+            }
+          },
+          "minItems": 1,
+          "maxItems": 16
+        }
+      }
+    },
+    "basicChargeView": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "session_id",
+        "kind",
+        "started_at_ms",
+        "max_charge_at_ms",
+        "tier"
+      ],
+      "properties": {
+        "session_id": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "enum": [
+            "staged_wave",
+            "guard",
+            "dash",
+            "flight"
+          ]
+        },
+        "started_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "max_charge_at_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "tier": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3
+        }
+      }
+    }
+  },
+  "properties": {
+    "protocol_version": {
+      "const": 6
+    },
+    "key": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "incarnation"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "incarnation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "request_id": {
+      "$ref": "#/$defs/id"
+    },
+    "config_id": {
+      "$ref": "#/$defs/id"
+    },
+    "config_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "seed": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4294967295
+    },
+    "participants": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "items": {
+        "$ref": "#/$defs/participant"
+      }
+    },
+    "publication_mode": {
+      "enum": [
+        "batched",
+        "interactive"
+      ]
+    },
+    "recovery": {
+      "$ref": "#/$defs/recoveryV4"
+    }
+  }
+}

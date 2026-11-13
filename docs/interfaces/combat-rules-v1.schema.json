@@ -1,0 +1,6796 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:match-kernel:combat-rules-v1:record-fragments",
+  "title": "Mechanism105 combat status, guard and record fragments",
+  "$comment": "Typed fragments, not a replacement for complete configuration/snapshot validation. Cross references, live identity, sums and atomic lifecycle semantics are enforced by Rust and the shared Node/H5 decoder.",
+  "$defs": {
+    "boonDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["levels"],
+      "properties": {
+        "levels": {
+          "type": "array", "minItems": 1, "maxItems": 3,
+          "items": {"type": "array", "maxItems": 8, "items": {
+            "type": "object", "additionalProperties": false, "required": ["attribute", "modifier_bps"],
+            "properties": {
+              "attribute": {"enum": ["atk", "def", "spd", "attack_speed", "max_hp", "max_spirit", "skill_power_bonus", "healing_received", "recovery_strength", "damage_reduction"]},
+              "modifier_bps": {"type": "integer", "minimum": 1, "maximum": 10000}
+            }
+          }}
+        },
+        "spirit_cost_bps": {"type": "array", "maxItems": 3, "items": {"type": "integer", "minimum": 1, "maximum": 9999}},
+        "shield": {
+          "type": "object", "additionalProperties": false, "required": ["capacity_bps", "rebuild_ms"],
+          "properties": {
+            "capacity_bps": {"type": "array", "minItems": 1, "maxItems": 3, "items": {"type": "integer", "minimum": 1, "maximum": 10000}},
+            "rebuild_ms": {"type": "integer", "minimum": 1, "maximum": 3600000}
+          }
+        }
+      }
+    },
+    "memberSummons": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["max_active_per_member", "skills"],
+      "properties": {
+        "max_active_per_member": {"type": "integer", "minimum": 1, "maximum": 4},
+        "skills": {
+          "type": "object",
+          "minProperties": 1,
+          "maxProperties": 8,
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["template_id", "count", "duration_ms"],
+            "properties": {
+              "template_id": {"type": "string", "minLength": 1, "maxLength": 128},
+              "count": {"type": "integer", "minimum": 1, "maximum": 4},
+              "duration_ms": {"type": "integer", "minimum": 1, "maximum": 60000},
+              "inherit_attributes_bps": {"type": "integer", "minimum": 1000, "maximum": 10000},
+              "owner_while_alive": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["damage_bonus_bps", "damage_reduction_bps"],
+                "properties": {
+                  "damage_bonus_bps": {"type": "integer", "minimum": 0, "maximum": 10000},
+                  "damage_reduction_bps": {"type": "integer", "minimum": 0, "maximum": 10000}
+                },
+                "anyOf": [
+                  {"properties": {"damage_bonus_bps": {"minimum": 1}}},
+                  {"properties": {"damage_reduction_bps": {"minimum": 1}}}
+                ]
+              },
+              "skill_copy": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["skill_ids", "shared_interval_ms", "damage_bps", "max_circle_targets"],
+                "properties": {
+                  "skill_ids": {"type": "array", "minItems": 1, "maxItems": 8, "uniqueItems": true,
+                    "items": {"type": "string", "minLength": 1, "maxLength": 128}},
+                  "shared_interval_ms": {"type": "integer", "minimum": 1, "maximum": 60000},
+                  "damage_bps": {"type": "integer", "minimum": 1, "maximum": 10000},
+                  "max_circle_targets": {"type": "integer", "minimum": 1, "maximum": 8}
+                }
+              },
+              "death_burst": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["radius", "max_targets", "damage_bps"],
+                "properties": {
+                  "radius": {"type": "number", "minimum": 0.1, "maximum": 128},
+                  "max_targets": {"type": "integer", "minimum": 1, "maximum": 8},
+                  "damage_bps": {"type": "integer", "minimum": 1, "maximum": 100000}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "allySelfTargetSkills": {
+      "type": "array",
+      "maxItems": 64,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1, "maxLength": 128}
+    },
+    "allyRecoveryFormula": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fixed", "source_attack_bps", "target_max_hp_bps"],
+      "properties": {
+        "fixed": {"type": "integer", "minimum": 0, "maximum": 1000000},
+        "source_attack_bps": {"type": "integer", "minimum": 0, "maximum": 100000},
+        "target_max_hp_bps": {"type": "integer", "minimum": 0, "maximum": 10000}
+      }
+    },
+    "allyRecoveryByMastery": {
+      "type": "object",
+      "maxProperties": 64,
+      "additionalProperties": {
+        "type": "array",
+        "minItems": 1,
+        "maxItems": 16,
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["minimum_mastery", "heal"],
+          "properties": {
+            "minimum_mastery": {"type": "integer", "minimum": 0, "maximum": 127},
+            "heal": {"$ref": "#/$defs/allyRecoveryFormula"},
+            "mark": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["status_id", "owner", "stacks"],
+              "properties": {
+                "status_id": {"type": "string", "minLength": 1, "maxLength": 128},
+                "owner": {"enum": ["caster", "primary_target"]},
+                "stacks": {"type": "integer", "minimum": 1, "maximum": 128},
+                "at_cap_heal": {"$ref": "#/$defs/allyRecoveryFormula"}
+              }
+            },
+            "hot": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["status_id", "duration_ms", "tick_bps"],
+              "properties": {
+                "status_id": {"type": "string", "minLength": 1, "maxLength": 128},
+                "duration_ms": {"type": "integer", "minimum": 1, "maximum": 60000},
+                "tick_bps": {"type": "integer", "minimum": 1, "maximum": 10000}
+              }
+            },
+            "splash": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["radius", "heal_bps", "hot_bps"],
+              "properties": {
+                "radius": {"type": "number", "minimum": 0.1, "maximum": 512},
+                "heal_bps": {"type": "integer", "minimum": 1, "maximum": 10000},
+                "hot_bps": {"type": "integer", "minimum": 0, "maximum": 10000}
+              }
+            },
+            "overheal_shield": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["status_id", "conversion_bps"],
+              "properties": {
+                "status_id": {"type": "string", "minLength": 1, "maxLength": 128},
+                "conversion_bps": {"type": "integer", "minimum": 1, "maximum": 10000}
+              }
+            }
+          }
+        }
+      }
+    },
+    "skillCooldownsByMastery": {
+      "type": "object",
+      "maxProperties": 64,
+      "additionalProperties": {
+        "type": "array",
+        "minItems": 1,
+        "maxItems": 16,
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["minimum_mastery", "reduction_bps"],
+          "properties": {
+            "minimum_mastery": {"type": "integer", "minimum": 0, "maximum": 127},
+            "reduction_bps": {"type": "integer", "minimum": 1, "maximum": 10000}
+          }
+        }
+      }
+    },
+    "statusDeathGuards": {
+      "type": "object",
+      "maxProperties": 16,
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["cooldown_group", "cooldown_ms", "guard"],
+        "properties": {
+          "cooldown_group": {"type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[A-Za-z0-9_.-]+$"},
+          "cooldown_ms": {"type": "integer", "minimum": 1, "maximum": 600000},
+          "guard": {"$ref": "#/$defs/death_guard"}
+        }
+      }
+    },
+    "shieldFamily": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "pattern": "^[A-Za-z0-9_.-]+$"
+    },
+    "statusRetaliations": {
+      "type": "object",
+      "maxProperties": 16,
+      "propertyNames": {"type": "string", "minLength": 1, "maxLength": 64},
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["chance_bps", "source_cooldown_ms", "max_sources", "reply_status_id"],
+        "properties": {
+          "chance_bps": {"type": "integer", "minimum": 0, "maximum": 10000},
+          "source_cooldown_ms": {"type": "integer", "minimum": 1, "maximum": 60000},
+          "max_sources": {"type": "integer", "minimum": 1, "maximum": 32},
+          "reply_status_id": {"type": "string", "minLength": 1, "maxLength": 64},
+          "dispel_beneficial": {"type": "integer", "minimum": 0, "maximum": 16},
+          "on_expired_status_id": {"type": "string", "minLength": 1, "maxLength": 64}
+        }
+      }
+    },
+    "statusDamageTakenBps": {
+      "type": "object",
+      "maxProperties": 16,
+      "propertyNames": {"type": "string", "minLength": 1, "maxLength": 64},
+      "additionalProperties": {"type": "integer", "minimum": 1, "maximum": 10000}
+    },
+    "unitHitStatusesByMastery": {
+      "type": "object",
+      "maxProperties": 64,
+      "propertyNames": {"type": "string", "minLength": 1, "maxLength": 64},
+      "additionalProperties": {
+        "type": "array",
+        "minItems": 1,
+        "maxItems": 16,
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["minimum_mastery", "statuses"],
+          "properties": {
+            "minimum_mastery": {"type": "integer", "minimum": 0, "maximum": 127},
+            "statuses": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 2,
+              "uniqueItems": true,
+              "items": {"type": "string", "minLength": 1, "maxLength": 64}
+            }
+          }
+        }
+      }
+    },
+    "npcGroundStrikes": {
+      "type": "object",
+      "maxProperties": 16,
+      "propertyNames": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 64
+      },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "radius",
+          "target_max_hp_bps",
+          "hit_status_chance_bps"
+        ],
+        "properties": {
+          "radius": {
+            "type": "number",
+            "minimum": 0.1,
+            "maximum": 512
+          },
+          "target_max_hp_bps": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10000
+          },
+          "hit_status_chance_bps": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000
+          }
+        }
+      }
+    },
+    "memberCastAnchors": {
+      "type": "object",
+      "maxProperties": 16,
+      "propertyNames": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 64
+      },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "duration_ms",
+          "max_use_distance",
+          "consumer_skill_ids"
+        ],
+        "properties": {
+          "duration_ms": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 60000
+          },
+          "max_use_distance": {
+            "type": "number",
+            "minimum": 0.1,
+            "maximum": 10000
+          },
+          "recast": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["window_ms", "max_count", "spirit_cost"],
+            "properties": {
+              "window_ms": {"type": "integer", "minimum": 1, "maximum": 30000},
+              "max_count": {"type": "integer", "minimum": 1, "maximum": 8},
+              "behaviors": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 3,
+                "uniqueItems": true,
+                "items": {"enum": ["relocate", "return_to_source", "end"]}
+              },
+              "spirit_cost": {"type": "integer", "minimum": 0, "maximum": 8000000}
+            }
+          },
+          "following_field_skill_ids": {
+            "type": "array",
+            "maxItems": 8,
+            "uniqueItems": true,
+            "items": {"type": "string", "minLength": 1, "maxLength": 64}
+          },
+          "consumer_skill_ids": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 8,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            }
+          }
+        }
+      }
+    },
+    "memberGroundTraps": {
+      "type": "object",
+      "maxProperties": 16,
+      "propertyNames": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "duration_ms",
+          "contact_policy"
+        ],
+        "properties": {
+          "duration_ms": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 60000
+          },
+          "contact_policy": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "max_targets_per_tick",
+              "max_total_hits",
+              "repeat_interval_ms"
+            ],
+            "properties": {
+              "max_targets_per_tick": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 32
+              },
+              "max_total_hits": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 128
+              },
+              "repeat_interval_ms": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 60000
+              }
+            }
+          }
+        }
+      }
+    },
+    "npcGroundFields": {
+      "type": "object",
+      "maxProperties": 16,
+      "propertyNames": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 64
+      },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "radius",
+          "duration_ms",
+          "interval_ms",
+          "end_on_source_invalid",
+          "target_max_hp_bps",
+          "max_targets_per_tick",
+          "max_total_hits"
+        ],
+        "properties": {
+          "radius": {
+            "type": "number",
+            "minimum": 0.1,
+            "maximum": 512
+          },
+          "duration_ms": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 60000
+          },
+          "interval_ms": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 60000
+          },
+          "end_on_source_invalid": {
+            "type": "boolean"
+          },
+          "target_max_hp_bps": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10000
+          },
+          "max_targets_per_tick": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 16
+          },
+          "max_total_hits": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 256
+          }
+        }
+      }
+    },
+    "npcEnterAreas": {
+      "type": "object",
+      "maxProperties": 16,
+      "propertyNames": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 64
+      },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "speed",
+          "max_distance",
+          "radius",
+          "duration_ms",
+          "end_on_source_invalid",
+          "contact_policy",
+          "target_max_hp_bps",
+          "knockback"
+        ],
+        "properties": {
+          "speed": {
+            "type": "number",
+            "minimum": 0.1,
+            "maximum": 10000
+          },
+          "max_distance": {
+            "type": "number",
+            "minimum": 0.1,
+            "maximum": 10000
+          },
+          "radius": {
+            "type": "number",
+            "minimum": 0.1,
+            "maximum": 128
+          },
+          "duration_ms": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 60000
+          },
+          "end_on_source_invalid": {
+            "type": "boolean"
+          },
+          "contact_policy": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "max_targets_per_tick",
+              "max_total_hits",
+              "repeat_interval_ms"
+            ],
+            "properties": {
+              "max_targets_per_tick": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 8
+              },
+              "max_total_hits": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 128
+              },
+              "repeat_interval_ms": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 60000
+              }
+            }
+          },
+          "target_max_hp_bps": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10000
+          },
+          "knockback": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "distance",
+              "slide_speed_multiplier"
+            ],
+            "properties": {
+              "distance": {
+                "type": "number",
+                "minimum": 0.1,
+                "maximum": 1000
+              },
+              "slide_speed_multiplier": {
+                "type": "number",
+                "minimum": 0.1,
+                "maximum": 10
+              }
+            }
+          },
+          "retained_hit_statuses": {
+            "type": "array",
+            "maxItems": 2,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            }
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "end_on_source_invalid": {
+                  "const": true
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "retained_hit_statuses": {
+                  "maxItems": 0
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "entity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "id",
+        "generation"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "participant",
+            "monster"
+          ]
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "shield_record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "basis",
+        "recorded",
+        "cap"
+      ],
+      "properties": {
+        "basis": {
+          "enum": [
+            "incoming",
+            "own_absorbed"
+          ]
+        },
+        "recorded": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "cap": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        }
+      },
+      "$comment": "recorded <= cap is checked by the Rust and shared Node/H5 decoders."
+    },
+    "shield_balance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "granted",
+        "remaining"
+      ],
+      "properties": {
+        "granted": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "remaining": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "record": {
+          "$ref": "#/$defs/shield_record"
+        }
+      },
+      "$comment": "remaining <= granted; current maxHP does not bound previously granted balances."
+    },
+    "shield_counter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ratio_bps",
+        "damage_kind",
+        "ignore_armor",
+        "radius",
+        "max_targets"
+      ],
+      "properties": {
+        "ratio_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "damage_kind": {
+          "enum": [
+            "physical",
+            "elemental",
+            "true_damage"
+          ]
+        },
+        "element": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "ignore_armor": {
+          "type": "boolean"
+        },
+        "radius": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 2000
+        },
+        "max_targets": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32
+        },
+        "on_hit_target_statuses": {
+          "type": "array",
+          "maxItems": 2,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "damage_kind": {
+                "const": "elemental"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "element"
+            ]
+          },
+          "else": {
+            "not": {
+              "required": [
+                "element"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "shield_rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "basis",
+        "cap_fixed",
+        "cap_power_bps",
+        "damage_reduction_bps",
+        "refresh",
+        "on_depleted",
+        "on_expired",
+        "on_consumed"
+      ],
+      "properties": {
+        "basis": {
+          "enum": [
+            "incoming",
+            "own_absorbed"
+          ]
+        },
+        "cap_fixed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "cap_power_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "damage_reduction_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "refresh": {
+          "enum": [
+            "reset",
+            "preserve"
+          ]
+        },
+        "on_depleted": {
+          "type": "boolean"
+        },
+        "on_expired": {
+          "type": "boolean"
+        },
+        "on_consumed": {
+          "type": "boolean"
+        },
+        "counter": {
+          "$ref": "#/$defs/shield_counter"
+        },
+        "counter_on": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 3,
+          "uniqueItems": true,
+          "items": {"enum": ["depleted", "expired", "consumed"]}
+        },
+        "after_end_target_statuses": {
+          "type": "array",
+          "maxItems": 2,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        }
+      },
+      "dependentRequired": {"counter_on": ["counter"]}
+    },
+    "status_requirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "subject",
+        "definition_id",
+        "at_least",
+        "consume"
+      ],
+      "properties": {
+        "subject": {
+          "enum": [
+            "owner",
+            "other"
+          ]
+        },
+        "definition_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "at_least": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "consume": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 128
+        }
+      },
+      "$comment": "Only instances created by the trigger owner qualify; consume <= at_least <= the referenced definition stack bound."
+    },
+    "trigger_conditions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [],
+      "properties": {
+        "minimum_amount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "owner_hp_at_most_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "other_hp_at_most_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "status": {
+          "$ref": "#/$defs/status_requirement"
+        }
+      }
+    },
+    "status_consumed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "instance_id",
+        "definition_id",
+        "source",
+        "target",
+        "consumed_stacks",
+        "remaining_stacks"
+      ],
+      "properties": {
+        "kind": {
+          "const": "status_consumed"
+        },
+        "instance_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "definition_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "source": {
+          "$ref": "#/$defs/entity"
+        },
+        "target": {
+          "$ref": "#/$defs/entity"
+        },
+        "consumed_stacks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "remaining_stacks": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 128
+        }
+      }
+    },
+    "shield_record_ended": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "instance_id",
+        "definition_id",
+        "source",
+        "target",
+        "reason",
+        "recorded",
+        "raw_counter",
+        "targets_hit"
+      ],
+      "properties": {
+        "kind": {
+          "const": "shield_record_ended"
+        },
+        "instance_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "definition_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "source": {
+          "$ref": "#/$defs/entity"
+        },
+        "target": {
+          "$ref": "#/$defs/entity"
+        },
+        "reason": {
+          "enum": [
+            "expired",
+            "depleted",
+            "consumed",
+            "cleansed",
+            "target_invalid",
+            "source_invalid",
+            "reset",
+            "closed"
+          ]
+        },
+        "recorded": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "raw_counter": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "targets_hit": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 32
+        },
+        "suppressed": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        }
+      }
+    },
+    "status_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "disposition",
+        "dispellable",
+        "transferable",
+        "blocks"
+      ],
+      "properties": {
+        "disposition": {
+          "enum": [
+            "beneficial",
+            "harmful"
+          ]
+        },
+        "dispellable": {
+          "type": "boolean"
+        },
+        "transferable": {
+          "type": "boolean"
+        },
+        "blocks": {
+          "type": "array",
+          "maxItems": 2,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "beneficial",
+              "harmful"
+            ]
+          }
+        }
+      }
+    },
+    "death_guard": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "retain_hp",
+        "heal_max_hp_bps",
+        "self_statuses"
+      ],
+      "properties": {
+        "retain_hp": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000000
+        },
+        "heal_max_hp_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "self_statuses": {
+          "type": "array",
+          "maxItems": 2,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          }
+        }
+      }
+    },
+    "dispel_statuses": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "subject",
+        "disposition",
+        "max_count"
+      ],
+      "properties": {
+        "kind": {
+          "const": "dispel_statuses"
+        },
+        "subject": {
+          "enum": [
+            "owner",
+            "other"
+          ]
+        },
+        "disposition": {
+          "enum": [
+            "beneficial",
+            "harmful"
+          ]
+        },
+        "max_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16
+        }
+      }
+    },
+    "transfer_statuses": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "from",
+        "disposition",
+        "max_count"
+      ],
+      "properties": {
+        "kind": {
+          "const": "transfer_statuses"
+        },
+        "from": {
+          "enum": [
+            "owner",
+            "other"
+          ]
+        },
+        "disposition": {
+          "enum": [
+            "beneficial",
+            "harmful"
+          ]
+        },
+        "max_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16
+        }
+      }
+    },
+    "death_guard_activated": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "source",
+        "target",
+        "prevented_hp_loss",
+        "hp"
+      ],
+      "properties": {
+        "kind": {
+          "const": "death_guard_activated"
+        },
+        "source": {
+          "$ref": "#/$defs/entity"
+        },
+        "target": {
+          "$ref": "#/$defs/entity"
+        },
+        "prevented_hp_loss": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "hp": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "status_transferred": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "previous_target",
+        "status"
+      ],
+      "properties": {
+        "kind": {
+          "const": "status_transferred"
+        },
+        "previous_target": {
+          "$ref": "#/$defs/entity"
+        },
+        "status": {
+          "type": "object",
+          "required": [
+            "instance_id",
+            "definition_id",
+            "source",
+            "target",
+            "applied_at_ms",
+            "expires_at_ms",
+            "modifier_bps"
+          ],
+          "properties": {
+            "instance_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "definition_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "source": {
+              "$ref": "#/$defs/entity"
+            },
+            "target": {
+              "$ref": "#/$defs/entity"
+            },
+            "applied_at_ms": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "expires_at_ms": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "modifier_bps": {
+              "type": "integer",
+              "minimum": -10000,
+              "maximum": 100000
+            },
+            "attribute": {
+              "enum": [
+                "max_hp",
+                "max_spirit",
+                "spd",
+                "attack_speed",
+                "element_resistance",
+                "atk",
+                "def",
+                "healing_received",
+                "damage_reduction",
+                "recovery_strength",
+                "cooldown_reduction",
+                "armor_penetration",
+                "critical_chance",
+                "critical_damage_bonus",
+                "dodge_penalty",
+                "dodge_chance",
+                "accuracy",
+                "skill_power_bonus",
+                "control_duration_reduction",
+                "harmful_duration_reduction",
+                "movement_slow",
+                "movement_haste",
+                "silence",
+                "root",
+                "stun",
+                "control_immunity",
+                "damage_immunity",
+                "first_control_immunity",
+                "spirit_recovery_lock",
+                "basic_interval_delay",
+                "life_steal"
+              ]
+            },
+            "modifiers": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 8,
+              "items": {
+                "$ref": "#/$defs/compound_numeric_modifier"
+              }
+            },
+            "stacks": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 32
+            },
+            "max_stacks": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 32
+            },
+            "shield": {
+              "$ref": "#/$defs/shield_balance"
+            },
+            "periodic": {
+              "$ref": "#/$defs/periodic_transfer_view"
+            },
+            "flags": {
+              "$ref": "#/$defs/status_flags"
+            },
+            "window": {
+              "$ref": "#/$defs/window_record"
+            },
+            "cleanse": {
+              "$ref": "#/$defs/status_cleanse_view"
+            }
+          },
+          "additionalProperties": false,
+          "allOf": [
+            {
+              "if": {
+                "required": [
+                  "periodic"
+                ]
+              },
+              "then": {
+                "$ref": "#/$defs/periodic_composed_status"
+              },
+              "else": {
+                "allOf": [
+                  {
+                    "if": {
+                      "required": [
+                        "shield"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "modifier_bps": {
+                          "const": 0
+                        }
+                      },
+                      "not": {
+                        "anyOf": [
+                          {
+                            "required": [
+                              "attribute"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "stacks"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "max_stacks"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "required": [
+                        "periodic"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "modifier_bps": {
+                          "const": 0
+                        }
+                      },
+                      "not": {
+                        "anyOf": [
+                          {
+                            "required": [
+                              "shield"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "attribute"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "stacks"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "max_stacks"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "modifiers"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "required": [
+                        "flags"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "modifier_bps": {
+                          "const": 0
+                        }
+                      },
+                      "not": {
+                        "anyOf": [
+                          {
+                            "required": [
+                              "attribute"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "shield"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "periodic"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "window"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "stacks"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "max_stacks"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "required": [
+                        "attribute"
+                      ],
+                      "properties": {
+                        "attribute": {
+                          "enum": [
+                            "silence",
+                            "root",
+                            "stun",
+                            "control_immunity",
+                            "damage_immunity",
+                            "first_control_immunity"
+                          ]
+                        }
+                      }
+                    },
+                    "then": {
+                      "properties": {
+                        "modifier_bps": {
+                          "const": 0
+                        }
+                      },
+                      "not": {
+                        "anyOf": [
+                          {
+                            "required": [
+                              "modifiers"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "flags"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "shield"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "periodic"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "window"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "stacks"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "max_stacks"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "required": [
+                        "attribute"
+                      ],
+                      "properties": {
+                        "attribute": {
+                          "const": "spirit_recovery_lock"
+                        }
+                      }
+                    },
+                    "then": {
+                      "properties": {
+                        "modifier_bps": {
+                          "const": -10000
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "required": [
+                        "window"
+                      ]
+                    },
+                    "then": {
+                      "not": {
+                        "anyOf": [
+                          {
+                            "required": [
+                              "stacks"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "max_stacks"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "shield"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "flags"
+                            ]
+                          }
+                        ]
+                      },
+                      "properties": {
+                        "periodic": {
+                          "properties": {
+                            "kind": {
+                              "const": "max_hp_heal"
+                            }
+                          }
+                        },
+                        "attribute": {
+                          "not": {
+                            "enum": [
+                              "silence",
+                              "root",
+                              "stun",
+                              "control_immunity",
+                              "damage_immunity",
+                              "first_control_immunity",
+                              "spirit_recovery_lock"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "required": [
+                        "cleanse"
+                      ]
+                    },
+                    "then": {
+                      "not": {
+                        "anyOf": [
+                          {
+                            "required": [
+                              "stacks"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "max_stacks"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "shield"
+                            ]
+                          }
+                        ]
+                      },
+                      "properties": {
+                        "periodic": {
+                          "properties": {
+                            "kind": {
+                              "const": "max_hp_heal"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "required": [
+                        "cleanse"
+                      ],
+                      "properties": {
+                        "cleanse": {
+                          "properties": {
+                            "on_tick": {
+                              "const": true
+                            }
+                          },
+                          "required": [
+                            "on_tick"
+                          ]
+                        }
+                      }
+                    },
+                    "then": {
+                      "required": [
+                        "periodic"
+                      ],
+                      "properties": {
+                        "periodic": {
+                          "properties": {
+                            "kind": {
+                              "const": "max_hp_heal"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "required": [
+                        "attribute"
+                      ],
+                      "properties": {
+                        "attribute": {
+                          "const": "basic_interval_delay"
+                        }
+                      }
+                    },
+                    "then": {
+                      "properties": {
+                        "modifier_bps": {
+                          "minimum": 1,
+                          "maximum": 100000
+                        }
+                      },
+                      "not": {
+                        "anyOf": [
+                          {
+                            "required": [
+                              "modifiers"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "flags"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "periodic"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "shield"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "stacks"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "max_stacks"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "required": [
+                        "modifiers"
+                      ],
+                      "properties": {
+                        "modifiers": {
+                          "contains": {
+                            "required": [
+                              "attribute"
+                            ],
+                            "properties": {
+                              "attribute": {
+                                "const": "movement_slow"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "then": {
+                      "not": {
+                        "anyOf": [
+                          {
+                            "required": [
+                              "stacks"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "max_stacks"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "required": [
+                        "attribute"
+                      ],
+                      "properties": {
+                        "attribute": {
+                          "const": "movement_slow"
+                        }
+                      }
+                    },
+                    "then": {
+                      "properties": {
+                        "modifier_bps": {
+                          "minimum": -9999,
+                          "maximum": -1
+                        }
+                      },
+                      "not": {
+                        "anyOf": [
+                          {
+                            "required": [
+                              "modifiers"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "flags"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "periodic"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "shield"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    "heal_from_damage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "bps"
+      ],
+      "properties": {
+        "kind": {
+          "const": "heal_from_damage"
+        },
+        "bps": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000
+        }
+      }
+    },
+    "restore_spirit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "amount"
+      ],
+      "properties": {
+        "kind": {
+          "const": "restore_spirit"
+        },
+        "amount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "max_spirit_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        }
+      },
+      "anyOf": [
+        {
+          "properties": {
+            "amount": {
+              "minimum": 1
+            }
+          }
+        },
+        {
+          "required": [
+            "max_spirit_bps"
+          ],
+          "properties": {
+            "max_spirit_bps": {
+              "minimum": 1
+            }
+          }
+        }
+      ]
+    },
+    "apply_self_status": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "status_id"
+      ],
+      "properties": {
+        "kind": {
+          "const": "apply_self_status"
+        },
+        "status_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        }
+      }
+    },
+    "reflect_damage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "bps",
+        "damage_kind"
+      ],
+      "properties": {
+        "kind": {
+          "const": "reflect_damage"
+        },
+        "bps": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000
+        },
+        "damage_kind": {
+          "enum": [
+            "physical",
+            "elemental",
+            "true_damage"
+          ]
+        },
+        "element": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        }
+      }
+    },
+    "trigger_rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "profiles",
+        "when",
+        "include_periodic",
+        "every",
+        "cooldown_ms",
+        "priority",
+        "effect"
+      ],
+      "properties": {
+        "requires_boon": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id"],
+          "properties": {
+            "id": {"type": "string", "minLength": 1, "maxLength": 64},
+            "npc_only": {"type": "boolean"},
+            "higher_level_effects": {
+              "type": "array",
+              "maxItems": 2,
+              "items": {"$ref": "#/$defs/boon_trigger_effect"}
+            }
+          }
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "profiles": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          }
+        },
+        "when": {
+          "enum": [
+            "damage_dealt",
+            "damage_taken",
+            "shield_absorbed",
+            "kill",
+            "skill_committed",
+            "ally_skill_committed",
+            "direct_hit",
+            "contact_status_consumed",
+            "finisher_kill",
+            "basic_hit",
+            "status_stacks_reached",
+            "unit_skill_committed",
+            "skill_cost_committed"
+          ]
+        },
+        "counting": {
+          "enum": [
+            "contact",
+            "action",
+            "action_total"
+          ]
+        },
+        "counter_scope": {
+          "enum": [
+            "owner",
+            "target"
+          ]
+        },
+        "include_periodic": {
+          "type": "boolean"
+        },
+        "every": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000000
+        },
+        "cooldown_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600000
+        },
+        "priority": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "chance_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "conditions": {
+          "$ref": "#/$defs/trigger_conditions"
+        },
+        "effect": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/heal_from_damage"
+            },
+            {
+              "$ref": "#/$defs/restore_spirit"
+            },
+            {
+              "$ref": "#/$defs/apply_self_status"
+            },
+            {
+              "$ref": "#/$defs/reflect_damage"
+            },
+            {
+              "$ref": "#/$defs/dispel_statuses"
+            },
+            {
+              "$ref": "#/$defs/transfer_statuses"
+            },
+            {
+              "$ref": "#/$defs/apply_other_status"
+            },
+            {
+              "$ref": "#/$defs/chain_damage_effect"
+            },
+            {
+              "$ref": "#/$defs/reduce_skill_cooldowns"
+            },
+            {
+              "$ref": "#/$defs/finish_other"
+            },
+            {
+              "$ref": "#/$defs/sq_add_stacks"
+            },
+            {
+              "$ref": "#/$defs/cb_bundle"
+            },
+            {
+              "$ref": "#/$defs/cb_refresh"
+            },
+            {
+              "$ref": "#/$defs/paid_spirit_effect"
+            }
+          ]
+        },
+        "contact_consumption": {
+          "$ref": "#/$defs/contact_consumption"
+        },
+        "finisher": {
+          "$ref": "#/$defs/finisher_selector"
+        },
+        "action_filter": {
+          "$ref": "#/$defs/sg_filter"
+        },
+        "owner_skill": {
+          "$ref": "#/$defs/sg_requirement"
+        },
+        "maximum_per_action": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8
+        },
+        "stack_change": {
+          "$ref": "#/$defs/sq_stack_selector"
+        }
+      },
+      "allOf": [
+        {
+          "if": {"required": ["requires_boon"]},
+          "then": {
+            "properties": {
+              "when": {"enum": ["direct_hit", "basic_hit", "damage_dealt", "damage_taken", "shield_absorbed", "kill"]},
+              "include_periodic": {"const": false},
+              "counting": {"enum": ["contact", "action"]},
+              "effect": {"$ref": "#/$defs/boon_trigger_effect"}
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "counting"
+            ],
+            "properties": {
+              "counting": {
+                "enum": [
+                  "action",
+                  "action_total"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "include_periodic": {
+                "const": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "counting"
+            ],
+            "properties": {
+              "counting": {
+                "const": "action_total"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "when": {
+                "enum": [
+                  "damage_dealt",
+                  "damage_taken",
+                  "shield_absorbed"
+                ]
+              },
+              "effect": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/heal_from_damage"
+                  },
+                  {
+                    "$ref": "#/$defs/restore_spirit"
+                  },
+                  {
+                    "$ref": "#/$defs/apply_self_status"
+                  },
+                  {
+                    "allOf": [
+                      {
+                        "$ref": "#/$defs/sq_add_stacks"
+                      },
+                      {
+                        "properties": {
+                          "subject": {
+                            "const": "owner"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "conditions": {
+                "not": {
+                  "required": [
+                    "other_hp_at_most_bps"
+                  ]
+                },
+                "properties": {
+                  "status": {
+                    "properties": {
+                      "subject": {
+                        "const": "owner"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "effect": {
+                      "properties": {
+                        "kind": {
+                          "const": "add_status_stacks"
+                        }
+                      }
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "when": {
+                      "const": "damage_dealt"
+                    },
+                    "counter_scope": {
+                      "const": "owner"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "when": {
+                "const": "ally_skill_committed"
+              }
+            },
+            "required": [
+              "when"
+            ]
+          },
+          "then": {
+            "properties": {
+              "include_periodic": {
+                "const": false
+              },
+              "counting": {
+                "enum": [
+                  "contact",
+                  "action"
+                ]
+              },
+              "effect": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/restore_spirit"
+                  },
+                  {
+                    "$ref": "#/$defs/apply_self_status"
+                  },
+                  {
+                    "$ref": "#/$defs/dispel_statuses"
+                  },
+                  {
+                    "$ref": "#/$defs/transfer_statuses"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "when"
+            ],
+            "properties": {
+              "when": {
+                "const": "direct_hit"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "include_periodic": {
+                "const": false
+              },
+              "counting": {
+                "enum": [
+                  "contact",
+                  "action"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "effect"
+            ],
+            "properties": {
+              "effect": {
+                "required": [
+                  "kind"
+                ],
+                "properties": {
+                  "kind": {
+                    "const": "apply_other_status"
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "when": {
+                "enum": [
+                  "direct_hit",
+                  "damage_dealt",
+                  "damage_taken",
+                  "shield_absorbed",
+                  "unit_skill_committed"
+                ]
+              },
+              "counting": {
+                "enum": [
+                  "contact",
+                  "action"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "effect"
+            ],
+            "properties": {
+              "effect": {
+                "required": [
+                  "kind"
+                ],
+                "properties": {
+                  "kind": {
+                    "const": "chain_damage"
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "when": {
+                "enum": [
+                  "direct_hit",
+                  "damage_dealt",
+                  "damage_taken",
+                  "shield_absorbed",
+                  "kill",
+                  "contact_status_consumed",
+                  "finisher_kill"
+                ]
+              },
+              "counting": {
+                "enum": [
+                  "contact",
+                  "action"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "when"
+            ],
+            "properties": {
+              "when": {
+                "const": "contact_status_consumed"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "contact_consumption"
+            ],
+            "properties": {
+              "include_periodic": {
+                "const": false
+              },
+              "counting": {
+                "enum": [
+                  "contact",
+                  "action"
+                ]
+              }
+            }
+          },
+          "else": {
+            "not": {
+              "required": [
+                "contact_consumption"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "effect"
+            ],
+            "properties": {
+              "effect": {
+                "required": [
+                  "kind"
+                ],
+                "properties": {
+                  "kind": {
+                    "const": "finish_other"
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "when": {
+                "enum": [
+                  "direct_hit",
+                  "contact_status_consumed",
+                  "damage_dealt",
+                  "damage_taken",
+                  "shield_absorbed"
+                ]
+              },
+              "include_periodic": {
+                "const": false
+              },
+              "counting": {
+                "enum": [
+                  "contact",
+                  "action"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "when"
+            ],
+            "properties": {
+              "when": {
+                "const": "finisher_kill"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "finisher"
+            ],
+            "properties": {
+              "include_periodic": {
+                "const": false
+              },
+              "counting": {
+                "enum": [
+                  "contact",
+                  "action"
+                ]
+              },
+              "counter_scope": {
+                "const": "owner"
+              },
+              "conditions": {
+                "not": {
+                  "required": [
+                    "other_hp_at_most_bps"
+                  ]
+                },
+                "properties": {
+                  "status": {
+                    "properties": {
+                      "subject": {
+                        "const": "owner"
+                      }
+                    }
+                  }
+                }
+              },
+              "effect": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/heal_from_damage"
+                  },
+                  {
+                    "$ref": "#/$defs/restore_spirit"
+                  },
+                  {
+                    "$ref": "#/$defs/apply_self_status"
+                  },
+                  {
+                    "$ref": "#/$defs/reduce_skill_cooldowns"
+                  },
+                  {
+                    "$ref": "#/$defs/chain_damage_effect"
+                  }
+                ]
+              }
+            }
+          },
+          "else": {
+            "not": {
+              "required": [
+                "finisher"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "effect"
+            ],
+            "properties": {
+              "effect": {
+                "required": [
+                  "kind",
+                  "rule"
+                ],
+                "properties": {
+                  "kind": {
+                    "const": "finish_other"
+                  },
+                  "rule": {
+                    "required": [
+                      "consumed_status_bonus"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "when": {
+                "const": "direct_hit"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "maximum_per_action"
+            ],
+            "properties": {
+              "maximum_per_action": {
+                "minimum": 2
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "counting"
+            ],
+            "properties": {
+              "counting": {
+                "const": "action"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "when"
+            ],
+            "properties": {
+              "when": {
+                "const": "status_stacks_reached"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "stack_change"
+            ],
+            "properties": {
+              "counting": {
+                "const": "contact"
+              },
+              "include_periodic": {
+                "const": false
+              },
+              "effect": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/restore_spirit"
+                  },
+                  {
+                    "$ref": "#/$defs/apply_self_status"
+                  },
+                  {
+                    "$ref": "#/$defs/dispel_statuses"
+                  }
+                ]
+              }
+            }
+          },
+          "else": {
+            "not": {
+              "required": [
+                "stack_change"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "when": {
+                "const": "unit_skill_committed"
+              }
+            },
+            "required": [
+              "when"
+            ]
+          },
+          "then": {
+            "properties": {
+              "include_periodic": {
+                "const": false
+              },
+              "counting": {
+                "enum": [
+                  "contact",
+                  "action"
+                ]
+              },
+              "effect": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/cb_bundle"
+                  },
+                  {
+                    "$ref": "#/$defs/cb_refresh"
+                  },
+                  {
+                    "$ref": "#/$defs/apply_self_status"
+                  },
+                  {
+                    "$ref": "#/$defs/apply_other_status"
+                  },
+                  {
+                    "$ref": "#/$defs/restore_spirit"
+                  },
+                  {
+                    "$ref": "#/$defs/dispel_statuses"
+                  },
+                  {
+                    "$ref": "#/$defs/transfer_statuses"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "effect": {
+                "properties": {
+                  "kind": {
+                    "const": "apply_status_bundle"
+                  }
+                },
+                "required": [
+                  "kind"
+                ]
+              }
+            },
+            "required": [
+              "effect"
+            ]
+          },
+          "then": {
+            "properties": {
+              "when": {
+                "enum": [
+                  "unit_skill_committed",
+                  "direct_hit",
+                  "basic_hit",
+                  "damage_dealt",
+                  "damage_taken",
+                  "shield_absorbed"
+                ]
+              },
+              "include_periodic": {
+                "const": false
+              },
+              "counting": {
+                "enum": [
+                  "contact",
+                  "action"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "effect": {
+                "properties": {
+                  "kind": {
+                    "const": "refresh_status_duration"
+                  }
+                },
+                "required": [
+                  "kind"
+                ]
+              }
+            },
+            "required": [
+              "effect"
+            ]
+          },
+          "then": {
+            "properties": {
+              "when": {
+                "not": {
+                  "enum": [
+                    "status_stacks_reached",
+                    "finisher_kill"
+                  ]
+                }
+              },
+              "counting": {
+                "enum": [
+                  "contact",
+                  "action"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "when"
+            ],
+            "properties": {
+              "when": {
+                "const": "skill_cost_committed"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "include_periodic": {
+                "const": false
+              },
+              "counting": {
+                "enum": [
+                  "contact",
+                  "action"
+                ]
+              },
+              "counter_scope": {
+                "const": "owner"
+              },
+              "effect": {
+                "$ref": "#/$defs/paid_spirit_effect"
+              },
+              "conditions": {
+                "not": {
+                  "required": [
+                    "other_hp_at_most_bps"
+                  ]
+                },
+                "properties": {
+                  "status": {
+                    "properties": {
+                      "subject": {
+                        "const": "owner"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "effect"
+            ],
+            "properties": {
+              "effect": {
+                "properties": {
+                  "kind": {
+                    "const": "restore_paid_spirit"
+                  }
+                },
+                "required": [
+                  "kind"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "when": {
+                "const": "skill_cost_committed"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "aggregation_budgets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_trigger_targets_per_rule",
+        "max_pending_action_totals"
+      ],
+      "properties": {
+        "max_trigger_targets_per_rule": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "max_pending_action_totals": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1024
+        }
+      }
+    },
+    "combat_action_total": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "action_id",
+        "action_source",
+        "trigger_id",
+        "source",
+        "other",
+        "total_amount",
+        "contacts",
+        "fired"
+      ],
+      "properties": {
+        "kind": {
+          "const": "combat_action_total"
+        },
+        "action_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "action_source": {
+          "$ref": "#/$defs/entity"
+        },
+        "trigger_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "source": {
+          "$ref": "#/$defs/entity"
+        },
+        "other": {
+          "$ref": "#/$defs/entity"
+        },
+        "total_amount": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "contacts": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "fired": {
+          "type": "boolean"
+        }
+      }
+    },
+    "window_recovery": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fixed",
+        "recorded_bps",
+        "max_resource_bps",
+        "cap_max_resource_bps"
+      ],
+      "properties": {
+        "fixed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "recorded_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "max_resource_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "cap_max_resource_bps": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000
+        }
+      },
+      "anyOf": [
+        {
+          "properties": {
+            "fixed": {
+              "minimum": 1
+            }
+          }
+        },
+        {
+          "properties": {
+            "recorded_bps": {
+              "minimum": 1
+            }
+          }
+        },
+        {
+          "properties": {
+            "max_resource_bps": {
+              "minimum": 1
+            }
+          }
+        }
+      ]
+    },
+    "status_window_rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "basis",
+        "include_periodic",
+        "record_cap",
+        "refresh",
+        "maximum_sampling",
+        "on_expired",
+        "on_consumed"
+      ],
+      "properties": {
+        "basis": {
+          "enum": [
+            "none",
+            "damage_dealt",
+            "damage_taken",
+            "shield_absorbed"
+          ]
+        },
+        "include_periodic": {
+          "type": "boolean"
+        },
+        "record_cap": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "refresh": {
+          "enum": [
+            "reset",
+            "preserve"
+          ]
+        },
+        "maximum_sampling": {
+          "enum": [
+            "snapshot",
+            "live"
+          ]
+        },
+        "on_expired": {
+          "type": "boolean"
+        },
+        "on_consumed": {
+          "type": "boolean"
+        },
+        "hp": {
+          "$ref": "#/$defs/window_recovery"
+        },
+        "spirit": {
+          "$ref": "#/$defs/window_recovery"
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "hp"
+          ]
+        },
+        {
+          "required": [
+            "spirit"
+          ]
+        }
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "basis": {
+                "const": "none"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "record_cap": {
+                "const": 0
+              },
+              "include_periodic": {
+                "const": false
+              },
+              "hp": {
+                "properties": {
+                  "recorded_bps": {
+                    "const": 0
+                  }
+                }
+              },
+              "spirit": {
+                "properties": {
+                  "recorded_bps": {
+                    "const": 0
+                  }
+                }
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "record_cap": {
+                "minimum": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "window_record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "basis",
+        "recorded",
+        "cap",
+        "contacts",
+        "maximum_sampling",
+        "max_hp_at_apply",
+        "max_spirit_at_apply"
+      ],
+      "properties": {
+        "basis": {
+          "enum": [
+            "none",
+            "damage_dealt",
+            "damage_taken",
+            "shield_absorbed"
+          ]
+        },
+        "recorded": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "cap": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "contacts": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "maximum_sampling": {
+          "enum": [
+            "snapshot",
+            "live"
+          ]
+        },
+        "max_hp_at_apply": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "max_spirit_at_apply": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "basis": {
+                "const": "none"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "recorded": {
+                "const": 0
+              },
+              "cap": {
+                "const": 0
+              },
+              "contacts": {
+                "const": 0
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "cap": {
+                "minimum": 1
+              }
+            }
+          }
+        }
+      ],
+      "$comment": "recorded <= cap and contact/record consistency are enforced by the shared Node/H5 decoder."
+    },
+    "window_record_ended": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "instance_id",
+        "definition_id",
+        "source",
+        "target",
+        "reason",
+        "recorded",
+        "contacts",
+        "raw_hp",
+        "hp_restored",
+        "raw_spirit",
+        "spirit_restored"
+      ],
+      "properties": {
+        "kind": {
+          "const": "window_record_ended"
+        },
+        "instance_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "definition_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "source": {
+          "$ref": "#/$defs/entity"
+        },
+        "target": {
+          "$ref": "#/$defs/entity"
+        },
+        "reason": {
+          "enum": [
+            "expired",
+            "consumed",
+            "cleansed",
+            "target_invalid",
+            "source_invalid",
+            "reset",
+            "closed"
+          ]
+        },
+        "recorded": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "contacts": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "raw_hp": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "hp_restored": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "raw_spirit": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "spirit_restored": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "suppressed": {
+          "enum": [
+            "INVALID_TARGET",
+            "INVALID_STATE",
+            "CAPACITY"
+          ]
+        }
+      }
+    },
+    "window_budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_window_releases_per_step"
+      ],
+      "properties": {
+        "max_window_releases_per_step": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        }
+      }
+    },
+    "status_flags": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "oneOf": [
+        {
+          "items": {
+            "enum": [
+              "silence",
+              "root",
+              "stun"
+            ]
+          }
+        },
+        {
+          "items": {
+            "enum": [
+              "control_immunity",
+              "damage_immunity",
+              "first_control_immunity"
+            ]
+          }
+        }
+      ]
+    },
+    "compound_numeric_modifier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "attribute",
+        "modifier_bps"
+      ],
+      "properties": {
+        "attribute": {
+          "enum": [
+            "max_hp",
+            "max_spirit",
+            "spd",
+            "attack_speed",
+            "element_resistance",
+            "atk",
+            "def",
+            "healing_received",
+            "damage_reduction",
+            "recovery_strength",
+            "cooldown_reduction",
+            "armor_penetration",
+            "critical_chance",
+            "critical_damage_bonus",
+            "dodge_penalty",
+            "dodge_chance",
+            "accuracy",
+            "skill_power_bonus",
+            "control_duration_reduction",
+            "harmful_duration_reduction",
+            "basic_interval_delay",
+            "movement_slow",
+            "movement_haste",
+            "life_steal"
+          ]
+        },
+        "modifier_bps": {
+          "type": "integer",
+          "minimum": -10000,
+          "maximum": 100000
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "attribute": {
+                "not": {
+                  "enum": [
+                    "max_hp",
+                    "max_spirit",
+                    "spd",
+                    "attack_speed",
+                    "element_resistance",
+                    "atk",
+                    "def",
+                    "healing_received",
+                    "recovery_strength",
+                    "movement_slow",
+                    "life_steal"
+                  ]
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "modifier_bps": {
+                "minimum": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "attribute": {
+                "const": "movement_slow"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "modifier_bps": {
+                "minimum": -9999,
+                "maximum": -1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "attribute": {
+                "const": "movement_haste"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "modifier_bps": {
+                "minimum": 1,
+                "maximum": 10000
+              }
+            }
+          }
+        }
+      ]
+    },
+    "compound_flag_definition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "mechanism",
+        "duration_ms",
+        "duplicate_policy",
+        "source_scoped",
+        "flags"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "mechanism": {
+          "const": "timed_compound_modifier"
+        },
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3600000
+        },
+        "duplicate_policy": {
+          "const": "refresh"
+        },
+        "source_scoped": {
+          "const": true
+        },
+        "flags": {
+          "$ref": "#/$defs/status_flags"
+        },
+        "modifiers": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/compound_numeric_modifier"
+          }
+        },
+        "modifier_bps": {
+          "const": 0
+        },
+        "harmful": {
+          "type": "boolean"
+        }
+      }
+    },
+    "compound_flag_status": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "instance_id",
+        "definition_id",
+        "source",
+        "target",
+        "applied_at_ms",
+        "expires_at_ms",
+        "modifier_bps",
+        "flags"
+      ],
+      "properties": {
+        "instance_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "definition_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "source": {
+          "$ref": "#/$defs/entity"
+        },
+        "target": {
+          "$ref": "#/$defs/entity"
+        },
+        "applied_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "expires_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "modifier_bps": {
+          "const": 0
+        },
+        "flags": {
+          "$ref": "#/$defs/status_flags"
+        },
+        "modifiers": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/compound_numeric_modifier"
+          }
+        },
+        "cleanse": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/status_cleanse_view"
+            },
+            {
+              "properties": {
+                "on_tick": {
+                  "const": false
+                },
+                "on_expired": {
+                  "const": true
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "cleanse_action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "disposition",
+        "max_count",
+        "scope"
+      ],
+      "properties": {
+        "disposition": {
+          "enum": [
+            "beneficial",
+            "harmful"
+          ]
+        },
+        "max_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16
+        },
+        "scope": {
+          "enum": [
+            "all",
+            "since_application"
+          ]
+        }
+      }
+    },
+    "status_cleanse_rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [],
+      "properties": {
+        "on_tick": {
+          "$ref": "#/$defs/cleanse_action"
+        },
+        "on_expired": {
+          "$ref": "#/$defs/cleanse_action"
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "on_tick"
+          ]
+        },
+        {
+          "required": [
+            "on_expired"
+          ]
+        }
+      ]
+    },
+    "status_cleanse_view": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "on_tick",
+        "on_expired"
+      ],
+      "properties": {
+        "on_tick": {
+          "type": "boolean"
+        },
+        "on_expired": {
+          "type": "boolean"
+        }
+      },
+      "anyOf": [
+        {
+          "properties": {
+            "on_tick": {
+              "const": true
+            }
+          }
+        },
+        {
+          "properties": {
+            "on_expired": {
+              "const": true
+            }
+          }
+        }
+      ]
+    },
+    "cleanse_budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_cleanse_operations_per_step"
+      ],
+      "properties": {
+        "max_cleanse_operations_per_step": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        }
+      }
+    },
+    "status_cleanse_resolved": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "instance_id",
+        "definition_id",
+        "source",
+        "target",
+        "phase",
+        "scheduled_at_ms",
+        "executed_at_ms",
+        "removed_count"
+      ],
+      "properties": {
+        "kind": {
+          "const": "status_cleanse_resolved"
+        },
+        "instance_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "definition_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "source": {
+          "$ref": "#/$defs/entity"
+        },
+        "target": {
+          "$ref": "#/$defs/entity"
+        },
+        "phase": {
+          "enum": [
+            "tick",
+            "expired"
+          ]
+        },
+        "tick_index": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "scheduled_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "executed_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "removed_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 16
+        },
+        "suppressed": {
+          "enum": [
+            "INVALID_TARGET",
+            "INVALID_STATE",
+            "CAPACITY"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "phase": {
+                "const": "tick"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "tick_index"
+            ]
+          },
+          "else": {
+            "not": {
+              "required": [
+                "tick_index"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "spirit_formula": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fixed",
+        "source_attack_bps",
+        "target_max_spirit_bps"
+      ],
+      "properties": {
+        "fixed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "source_attack_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "target_max_spirit_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        }
+      },
+      "anyOf": [
+        {
+          "properties": {
+            "fixed": {
+              "minimum": 1
+            }
+          }
+        },
+        {
+          "properties": {
+            "source_attack_bps": {
+              "minimum": 1
+            }
+          }
+        },
+        {
+          "properties": {
+            "target_max_spirit_bps": {
+              "minimum": 1
+            }
+          }
+        }
+      ]
+    },
+    "spirit_conversion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "bps",
+        "when"
+      ],
+      "properties": {
+        "bps": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000
+        },
+        "when": {
+          "enum": [
+            "full_before_tick",
+            "any_excess"
+          ]
+        }
+      }
+    },
+    "periodic_recovery_rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [],
+      "properties": {
+        "spirit": {
+          "$ref": "#/$defs/spirit_formula"
+        },
+        "overheal_spirit": {
+          "$ref": "#/$defs/spirit_conversion"
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "spirit"
+          ]
+        },
+        {
+          "required": [
+            "overheal_spirit"
+          ]
+        }
+      ]
+    },
+    "periodic_spirit_view": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "interval_ms",
+        "next_tick_at_ms",
+        "ticks_done",
+        "total_ticks",
+        "raw_heal",
+        "raw_spirit"
+      ],
+      "properties": {
+        "kind": {
+          "const": "max_hp_heal"
+        },
+        "interval_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "next_tick_at_ms": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          ]
+        },
+        "ticks_done": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 128
+        },
+        "total_ticks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "raw_heal": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "raw_spirit": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "power_sampling": {
+          "enum": [
+            "source_snapshot",
+            "target_snapshot",
+            "source_live",
+            "target_live"
+          ]
+        }
+      }
+    },
+    "periodic_spirit_tick": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "instance_id",
+        "definition_id",
+        "source",
+        "target",
+        "tick_index",
+        "scheduled_at_ms",
+        "executed_at_ms",
+        "raw_spirit",
+        "base_restored",
+        "hp_excess",
+        "conversion_bps",
+        "conversion_eligible",
+        "converted_spirit",
+        "spent_heal",
+        "remaining_excess",
+        "outcome"
+      ],
+      "properties": {
+        "kind": {
+          "const": "periodic_spirit_tick"
+        },
+        "instance_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "definition_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "source": {
+          "$ref": "#/$defs/entity"
+        },
+        "target": {
+          "$ref": "#/$defs/entity"
+        },
+        "tick_index": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "scheduled_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "executed_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "raw_spirit": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "base_restored": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "hp_excess": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "conversion_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "conversion_eligible": {
+          "type": "boolean"
+        },
+        "converted_spirit": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "spent_heal": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "remaining_excess": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "outcome": {
+          "enum": [
+            "applied",
+            "protected",
+            "returning"
+          ]
+        },
+        "stacks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32
+        }
+      },
+      "$comment": "hp_excess = spent_heal + remaining_excess; ceil/floor and current resource gaps are checked by Rust and public consumers."
+    },
+    "periodic_transfer_view": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "interval_ms",
+        "next_tick_at_ms",
+        "ticks_done",
+        "total_ticks"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "physical_damage",
+            "elemental_damage",
+            "true_damage",
+            "max_hp_heal"
+          ]
+        },
+        "interval_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "next_tick_at_ms": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "ticks_done": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 128
+        },
+        "total_ticks": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 128
+        },
+        "raw_damage": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "raw_heal": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "raw_spirit": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "power_sampling": {
+          "enum": [
+            "source_snapshot",
+            "target_snapshot",
+            "source_live",
+            "target_live"
+          ]
+        },
+        "per_stack": {
+          "const": true
+        },
+        "tick_on_expiry": {
+          "const": true
+        },
+        "first_tick_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "max_hp_heal"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "raw_heal"
+        ],
+        "not": {
+          "required": [
+            "raw_damage"
+          ]
+        }
+      },
+      "else": {
+        "required": [
+          "raw_damage"
+        ],
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "raw_heal"
+              ]
+            },
+            {
+              "required": [
+                "raw_spirit"
+              ]
+            }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {"required": ["tick_on_expiry"]},
+          "then": {
+            "properties": {"kind": {"const": "max_hp_heal"}},
+            "not": {"anyOf": [
+              {"required": ["per_stack"]},
+              {"required": ["power_sampling"]},
+              {"required": ["raw_spirit"]}
+            ]}
+          }
+        }
+      ],
+      "dependentRequired": {
+        "per_stack": [
+          "first_tick_at_ms"
+        ],
+        "first_tick_at_ms": [
+          "per_stack"
+        ]
+      }
+    },
+    "periodic_heal_tick": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "instance_id",
+        "definition_id",
+        "source",
+        "target",
+        "tick_index",
+        "scheduled_at_ms",
+        "executed_at_ms",
+        "raw_heal",
+        "hp_restored",
+        "outcome"
+      ],
+      "properties": {
+        "kind": {
+          "const": "periodic_heal_tick"
+        },
+        "instance_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "definition_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "$ref": "#/$defs/entity"
+        },
+        "target": {
+          "$ref": "#/$defs/entity"
+        },
+        "tick_index": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "scheduled_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "executed_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "raw_heal": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "hp_restored": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "outcome": {
+          "enum": [
+            "applied",
+            "protected",
+            "returning"
+          ]
+        },
+        "stacks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32
+        }
+      }
+    },
+    "control_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "max_duration_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3600000
+        },
+        "replacements": {
+          "type": "object",
+          "maxProperties": 16,
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          }
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "max_duration_ms"
+          ]
+        },
+        {
+          "required": [
+            "replacements"
+          ],
+          "properties": {
+            "replacements": {
+              "minProperties": 1
+            }
+          }
+        }
+      ]
+    },
+    "apply_other_status": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "status_id"
+      ],
+      "properties": {
+        "kind": {
+          "const": "apply_other_status"
+        },
+        "status_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        }
+      }
+    },
+    "movement_slow_stack_definition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "mechanism",
+        "attribute",
+        "modifier_bps",
+        "duration_ms",
+        "duplicate_policy",
+        "max_stacks",
+        "source_scoped"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "mechanism": {
+          "const": "timed_attribute_modifier"
+        },
+        "attribute": {
+          "const": "movement_slow"
+        },
+        "modifier_bps": {
+          "type": "integer",
+          "minimum": -9999,
+          "maximum": -1
+        },
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3600000
+        },
+        "duplicate_policy": {
+          "const": "stack"
+        },
+        "max_stacks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32
+        },
+        "source_scoped": {
+          "const": true
+        }
+      }
+    },
+    "contact_status": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "subject",
+        "definition_id",
+        "at_least",
+        "consume_max",
+        "damage_bonus_bps_per_stack",
+        "armor_penetration_bps_per_stack"
+      ],
+      "properties": {
+        "subject": {
+          "enum": [
+            "owner",
+            "other"
+          ]
+        },
+        "definition_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "at_least": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "consume_max": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "damage_bonus_bps_per_stack": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "armor_penetration_bps_per_stack": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "sampling": {
+          "enum": [
+            "contact",
+            "action"
+          ]
+        }
+      },
+      "anyOf": [
+        {
+          "properties": {
+            "damage_bonus_bps_per_stack": {
+              "minimum": 1
+            }
+          }
+        },
+        {
+          "properties": {
+            "armor_penetration_bps_per_stack": {
+              "minimum": 1
+            }
+          }
+        },
+        {
+          "required": [
+            "sampling"
+          ],
+          "properties": {
+            "sampling": {
+              "const": "action"
+            }
+          }
+        }
+      ],
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "sampling"
+            ],
+            "properties": {
+              "sampling": {
+                "const": "action"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "subject": {
+                "const": "owner"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "attack_contact_fields": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "life_steal_timing": {
+          "enum": [
+            "contact",
+            "action_end"
+          ]
+        },
+        "contact_status": {
+          "$ref": "#/$defs/contact_status"
+        },
+        "armor_penetration_cap_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "contact_status"
+            ],
+            "properties": {
+              "contact_status": {
+                "required": [
+                  "armor_penetration_bps_per_stack"
+                ],
+                "properties": {
+                  "armor_penetration_bps_per_stack": {
+                    "minimum": 1
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "armor_penetration_cap_bps"
+            ]
+          }
+        }
+      ]
+    },
+    "chain_formula": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fixed",
+        "source_attack_bps",
+        "fact_amount_bps"
+      ],
+      "properties": {
+        "fixed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "source_attack_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "fact_amount_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        }
+      },
+      "anyOf": [
+        {
+          "properties": {
+            "fixed": {
+              "minimum": 1
+            }
+          }
+        },
+        {
+          "properties": {
+            "source_attack_bps": {
+              "minimum": 1
+            }
+          }
+        },
+        {
+          "properties": {
+            "fact_amount_bps": {
+              "minimum": 1
+            }
+          }
+        }
+      ]
+    },
+    "chain_damage_rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "formula",
+        "max_hops",
+        "radius",
+        "retention_bps",
+        "final_multiplier_bps",
+        "damage_kind",
+        "ignore_armor",
+        "armor_penetration_cap_bps"
+      ],
+      "properties": {
+        "formula": {
+          "$ref": "#/$defs/chain_formula"
+        },
+        "max_hops": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8
+        },
+        "radius": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 2000
+        },
+        "retention_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "final_multiplier_bps": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000
+        },
+        "damage_kind": {
+          "enum": [
+            "physical",
+            "elemental",
+            "true_damage"
+          ]
+        },
+        "element": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "ignore_armor": {
+          "type": "boolean"
+        },
+        "armor_penetration_cap_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "on_hit_target_statuses": {
+          "type": "array",
+          "maxItems": 2,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          }
+        },
+        "direction": {
+          "enum": [
+            "all",
+            "forward"
+          ]
+        },
+        "source_skill_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "damage_kind": {
+                "const": "elemental"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "element"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "damage_kind": {
+                "const": "true_damage"
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "required": [
+                "element"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "chain_damage_effect": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "rule"
+      ],
+      "properties": {
+        "kind": {
+          "const": "chain_damage"
+        },
+        "rule": {
+          "$ref": "#/$defs/chain_damage_rule"
+        }
+      }
+    },
+    "chain_budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_chain_hits_per_step"
+      ],
+      "properties": {
+        "max_chain_hits_per_step": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        }
+      }
+    },
+    "chain_hop": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "from",
+        "target",
+        "raw_damage",
+        "applied"
+      ],
+      "properties": {
+        "from": {
+          "$ref": "#/$defs/entity"
+        },
+        "target": {
+          "$ref": "#/$defs/entity"
+        },
+        "raw_damage": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "applied": {
+          "type": "boolean"
+        }
+      }
+    },
+    "chain_damage_resolved": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "trigger_id",
+        "source",
+        "origin",
+        "initial_raw",
+        "hops",
+        "reason"
+      ],
+      "properties": {
+        "kind": {
+          "const": "chain_damage_resolved"
+        },
+        "trigger_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "source": {
+          "$ref": "#/$defs/entity"
+        },
+        "origin": {
+          "$ref": "#/$defs/entity"
+        },
+        "initial_raw": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "hops": {
+          "type": "array",
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/chain_hop"
+          }
+        },
+        "reason": {
+          "enum": [
+            "complete",
+            "no_target",
+            "zero_budget",
+            "source_invalid",
+            "capacity"
+          ]
+        }
+      }
+    },
+    "contact_consumption": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "definition_id",
+        "at_least"
+      ],
+      "properties": {
+        "definition_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "at_least": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        }
+      }
+    },
+    "reduce_skill_cooldowns": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "skill_ids",
+        "remaining_bps",
+        "fixed_ms"
+      ],
+      "properties": {
+        "kind": {
+          "const": "reduce_skill_cooldowns"
+        },
+        "skill_ids": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          }
+        },
+        "remaining_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "fixed_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600000
+        }
+      },
+      "anyOf": [
+        {
+          "properties": {
+            "remaining_bps": {
+              "minimum": 1
+            }
+          }
+        },
+        {
+          "properties": {
+            "fixed_ms": {
+              "minimum": 1
+            }
+          }
+        }
+      ]
+    },
+    "skill_cooldown_change": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "skill_id",
+        "previous_ready_at_ms",
+        "ready_at_ms",
+        "reduced_ms"
+      ],
+      "properties": {
+        "skill_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "previous_ready_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "ready_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "reduced_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      }
+    },
+    "skill_cooldowns_reduced": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "at_ms",
+        "trigger_id",
+        "source",
+        "changes"
+      ],
+      "properties": {
+        "kind": {
+          "const": "skill_cooldowns_reduced"
+        },
+        "at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "trigger_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "source": {
+          "$ref": "#/$defs/entity"
+        },
+        "changes": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/skill_cooldown_change"
+          }
+        }
+      }
+    },
+    "contact_reaction_rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "when",
+        "attacker",
+        "fixed",
+        "source_power_bps",
+        "damage_kind",
+        "ignore_armor",
+        "armor_penetration_cap_bps"
+      ],
+      "properties": {
+        "when": {
+          "enum": [
+            "direct_contact",
+            "hp_damage"
+          ]
+        },
+        "attacker": {
+          "enum": [
+            "source_only",
+            "any_hostile"
+          ]
+        },
+        "fixed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "source_power_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "damage_kind": {
+          "enum": [
+            "physical",
+            "elemental",
+            "true_damage"
+          ]
+        },
+        "element": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "ignore_armor": {
+          "type": "boolean"
+        },
+        "armor_penetration_cap_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "source_requirement": {
+          "$ref": "#/$defs/sg_requirement"
+        }
+      },
+      "anyOf": [
+        {
+          "properties": {
+            "fixed": {
+              "minimum": 1
+            }
+          }
+        },
+        {
+          "properties": {
+            "source_power_bps": {
+              "minimum": 1
+            }
+          }
+        }
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "damage_kind": {
+                "const": "elemental"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "element"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "damage_kind": {
+                "const": "true_damage"
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "required": [
+                "element"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "contact_reaction_budgets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_contact_reactions_per_hit",
+        "max_contact_reactions_per_step"
+      ],
+      "properties": {
+        "max_contact_reactions_per_hit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4
+        },
+        "max_contact_reactions_per_step": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        }
+      }
+    },
+    "contact_reaction_resolved": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "instance_id",
+        "definition_id",
+        "source",
+        "target",
+        "provoker",
+        "raw_damage",
+        "hp_damage",
+        "absorbed"
+      ],
+      "properties": {
+        "kind": {
+          "const": "contact_reaction_resolved"
+        },
+        "instance_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "definition_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "source": {
+          "$ref": "#/$defs/entity"
+        },
+        "target": {
+          "$ref": "#/$defs/entity"
+        },
+        "provoker": {
+          "$ref": "#/$defs/entity"
+        },
+        "raw_damage": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "hp_damage": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "absorbed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "finish_execute": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode"
+      ],
+      "properties": {
+        "mode": {
+          "const": "execute"
+        }
+      }
+    },
+    "finish_power_damage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "fixed",
+        "power_bps",
+        "cap_power_bps"
+      ],
+      "properties": {
+        "mode": {
+          "const": "power_damage"
+        },
+        "fixed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "power_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "cap_power_bps": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000
+        }
+      },
+      "anyOf": [
+        {
+          "properties": {
+            "fixed": {
+              "minimum": 1
+            }
+          }
+        },
+        {
+          "properties": {
+            "power_bps": {
+              "minimum": 1
+            }
+          }
+        }
+      ]
+    },
+    "finish_policy": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/finish_execute"
+        },
+        {
+          "$ref": "#/$defs/finish_power_damage"
+        }
+      ]
+    },
+    "finish_rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "hp_threshold_bps",
+        "comparison",
+        "default"
+      ],
+      "properties": {
+        "hp_threshold_bps": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000
+        },
+        "comparison": {
+          "enum": [
+            "below",
+            "at_most"
+          ]
+        },
+        "default": {
+          "$ref": "#/$defs/finish_policy"
+        },
+        "profile_overrides": {
+          "type": "object",
+          "maxProperties": 64,
+          "propertyNames": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/finish_policy"
+          }
+        },
+        "consumed_status_bonus": {
+          "$ref": "#/$defs/finish_consumption_bonus"
+        },
+        "source_skill_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        }
+      }
+    },
+    "finish_other": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "rule"
+      ],
+      "properties": {
+        "kind": {
+          "const": "finish_other"
+        },
+        "rule": {
+          "$ref": "#/$defs/finish_rule"
+        }
+      }
+    },
+    "finisher_resolved": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "trigger_id",
+        "source",
+        "target",
+        "mode",
+        "raw_damage",
+        "hp_damage",
+        "absorbed",
+        "lethal"
+      ],
+      "properties": {
+        "kind": {
+          "const": "finisher_resolved"
+        },
+        "trigger_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "source": {
+          "$ref": "#/$defs/entity"
+        },
+        "target": {
+          "$ref": "#/$defs/entity"
+        },
+        "mode": {
+          "enum": [
+            "execute",
+            "power_damage"
+          ]
+        },
+        "raw_damage": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "hp_damage": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "absorbed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "lethal": {
+          "type": "boolean"
+        }
+      }
+    },
+    "finisher_selector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "trigger_id",
+        "mode"
+      ],
+      "properties": {
+        "trigger_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "mode": {
+          "enum": [
+            "execute",
+            "power_damage",
+            "any"
+          ]
+        },
+        "enhanced": {
+          "type": "boolean"
+        }
+      }
+    },
+    "contact_action_budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_contact_action_snapshots"
+      ],
+      "properties": {
+        "max_contact_action_snapshots": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1024
+        }
+      }
+    },
+    "finish_consumption_bonus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "definition_id",
+        "hp_threshold_bps_per_stack"
+      ],
+      "properties": {
+        "definition_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "hp_threshold_bps_per_stack": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000
+        }
+      }
+    },
+    "periodic_stack_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tick_policy"
+      ],
+      "properties": {
+        "tick_policy": {
+          "enum": [
+            "preserve",
+            "restart"
+          ]
+        },
+        "healing_reduction_cap_bps": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000
+        },
+        "stacks_per_application": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32
+        }
+      }
+    },
+    "periodic_composed_definition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "mechanism",
+        "duration_ms",
+        "tick_interval_ms",
+        "duplicate_policy",
+        "source_scoped"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "mechanism": {
+          "enum": [
+            "periodic_damage",
+            "periodic_heal"
+          ]
+        },
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3600000
+        },
+        "tick_interval_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3600000
+        },
+        "duplicate_policy": {
+          "enum": [
+            "refresh",
+            "ignore",
+            "stack"
+          ]
+        },
+        "source_scoped": {
+          "type": "boolean"
+        },
+        "damage_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "heal_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "modifiers": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/compound_numeric_modifier"
+          }
+        },
+        "flags": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 3,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "control_immunity",
+              "damage_immunity",
+              "first_control_immunity"
+            ]
+          }
+        },
+        "periodic_stack": {
+          "$ref": "#/$defs/periodic_stack_policy"
+        },
+        "max_stacks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32
+        },
+        "harmful": {
+          "type": "boolean"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "mechanism": {
+                "const": "periodic_heal"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "heal_bps"
+            ],
+            "not": {
+              "required": [
+                "damage_bps"
+              ]
+            }
+          },
+          "else": {
+            "required": [
+              "damage_bps"
+            ],
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "heal_bps"
+                  ]
+                },
+                {
+                  "required": [
+                    "flags"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "periodic_stack"
+            ]
+          },
+          "then": {
+            "required": [
+              "max_stacks"
+            ],
+            "properties": {
+              "duplicate_policy": {
+                "const": "stack"
+              },
+              "source_scoped": {
+                "const": true
+              }
+            },
+            "not": {
+              "required": [
+                "flags"
+              ]
+            }
+          },
+          "else": {
+            "properties": {
+              "duplicate_policy": {
+                "enum": [
+                  "refresh",
+                  "ignore"
+                ]
+              }
+            },
+            "not": {
+              "required": [
+                "max_stacks"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "flags"
+            ]
+          },
+          "then": {
+            "properties": {
+              "source_scoped": {
+                "const": true
+              }
+            }
+          }
+        }
+      ]
+    },
+    "periodic_composed_status": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "instance_id",
+        "definition_id",
+        "source",
+        "target",
+        "applied_at_ms",
+        "expires_at_ms",
+        "modifier_bps",
+        "periodic"
+      ],
+      "properties": {
+        "instance_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "definition_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "source": {
+          "$ref": "#/$defs/entity"
+        },
+        "target": {
+          "$ref": "#/$defs/entity"
+        },
+        "applied_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "expires_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "modifier_bps": {
+          "const": 0
+        },
+        "modifiers": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/compound_numeric_modifier"
+          }
+        },
+        "periodic": {
+          "$ref": "#/$defs/periodic_transfer_view"
+        },
+        "stacks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32
+        },
+        "max_stacks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32
+        },
+        "flags": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 3,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "control_immunity",
+              "damage_immunity",
+              "first_control_immunity"
+            ]
+          }
+        },
+        "cleanse": {
+          "$ref": "#/$defs/status_cleanse_view"
+        },
+        "window": {
+          "$ref": "#/$defs/window_record"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "periodic": {
+                "required": [
+                  "per_stack"
+                ]
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "stacks",
+              "max_stacks"
+            ],
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "flags"
+                  ]
+                },
+                {
+                  "required": [
+                    "window"
+                  ]
+                },
+                {
+                  "required": [
+                    "cleanse"
+                  ]
+                }
+              ]
+            }
+          },
+          "else": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "stacks"
+                  ]
+                },
+                {
+                  "required": [
+                    "max_stacks"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "periodic": {
+                "properties": {
+                  "kind": {
+                    "not": {
+                      "const": "max_hp_heal"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "flags"
+                  ]
+                },
+                {
+                  "required": [
+                    "cleanse"
+                  ]
+                },
+                {
+                  "required": [
+                    "window"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "periodic_damage_tick": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "instance_id",
+        "definition_id",
+        "source",
+        "target",
+        "tick_index",
+        "scheduled_at_ms",
+        "executed_at_ms",
+        "outcome",
+        "raw_damage",
+        "absorbed",
+        "hp_damage"
+      ],
+      "properties": {
+        "kind": {
+          "const": "periodic_tick"
+        },
+        "instance_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "definition_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "$ref": "#/$defs/entity"
+        },
+        "target": {
+          "$ref": "#/$defs/entity"
+        },
+        "tick_index": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "scheduled_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "executed_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "outcome": {
+          "enum": [
+            "applied",
+            "protected",
+            "returning"
+          ]
+        },
+        "stacks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32
+        },
+        "raw_damage": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "absorbed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "hp_damage": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "sg_filter": {
+      "type": "object",
+      "properties": {
+        "basic": {
+          "type": "boolean"
+        },
+        "skills": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "const": "any"
+                }
+              },
+              "required": [
+                "mode"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "const": "only"
+                },
+                "ids": {
+                  "type": "array",
+                  "minItems": 0,
+                  "maxItems": 64,
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64
+                  }
+                }
+              },
+              "required": [
+                "mode",
+                "ids"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "const": "except"
+                },
+                "ids": {
+                  "type": "array",
+                  "minItems": 0,
+                  "maxItems": 64,
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64
+                  }
+                }
+              },
+              "required": [
+                "mode",
+                "ids"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        }
+      },
+      "required": [
+        "basic",
+        "skills"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "basic": {
+                "const": false
+              },
+              "skills": {
+                "properties": {
+                  "mode": {
+                    "const": "only"
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "skills": {
+                "properties": {
+                  "ids": {
+                    "minItems": 1
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "sg_requirement": {
+      "type": "object",
+      "properties": {
+        "skill_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "equipped_any_of": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          }
+        },
+        "minimum_mastery": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127
+        },
+        "maximum_mastery": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127
+        }
+      },
+      "required": [
+        "skill_id"
+      ],
+      "additionalProperties": false
+    },
+    "sq_counter_definition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "mechanism",
+        "duration_ms",
+        "duplicate_policy",
+        "source_scoped",
+        "stack_counter"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "mechanism": {
+          "const": "timed_compound_modifier"
+        },
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3600000
+        },
+        "duplicate_policy": {
+          "enum": [
+            "refresh",
+            "ignore"
+          ]
+        },
+        "source_scoped": {
+          "const": true
+        },
+        "modifier_bps": {
+          "const": 0
+        },
+        "base_modifiers": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/compound_numeric_modifier"
+          }
+        },
+        "modifiers": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/compound_numeric_modifier"
+          }
+        },
+        "harmful": {
+          "type": "boolean"
+        },
+        "stack_counter": {
+          "$ref": "#/$defs/sq_counter_config"
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "base_modifiers"
+          ]
+        },
+        {
+          "required": [
+            "modifiers"
+          ]
+        }
+      ]
+    },
+    "sq_fixed_definition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "mechanism",
+        "duration_ms",
+        "duplicate_policy",
+        "source_scoped",
+        "base_modifiers"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "mechanism": {
+          "const": "timed_compound_modifier"
+        },
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3600000
+        },
+        "duplicate_policy": {
+          "enum": [
+            "refresh",
+            "ignore",
+            "stack"
+          ]
+        },
+        "source_scoped": {
+          "type": "boolean"
+        },
+        "modifier_bps": {
+          "const": 0
+        },
+        "base_modifiers": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/compound_numeric_modifier"
+          }
+        },
+        "modifiers": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/compound_numeric_modifier"
+          }
+        },
+        "harmful": {
+          "type": "boolean"
+        },
+        "max_stacks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "flags": {
+          "$ref": "#/$defs/status_flags"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "duplicate_policy": {
+                "const": "stack"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "max_stacks"
+            ]
+          },
+          "else": {
+            "not": {
+              "required": [
+                "max_stacks"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "sq_counter_status": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "instance_id",
+        "definition_id",
+        "source",
+        "target",
+        "applied_at_ms",
+        "expires_at_ms",
+        "modifier_bps",
+        "stack_counter",
+        "stacks",
+        "max_stacks"
+      ],
+      "properties": {
+        "instance_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "definition_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "source": {
+          "$ref": "#/$defs/entity"
+        },
+        "target": {
+          "$ref": "#/$defs/entity"
+        },
+        "applied_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "expires_at_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "modifier_bps": {
+          "const": 0
+        },
+        "base_modifiers": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/compound_numeric_modifier"
+          }
+        },
+        "modifiers": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/compound_numeric_modifier"
+          }
+        },
+        "window": {
+          "$ref": "#/$defs/window_record"
+        },
+        "stack_counter": {
+          "const": true
+        },
+        "stacks": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 128
+        },
+        "max_stacks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "cleanse": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/status_cleanse_view"
+            },
+            {
+              "properties": {
+                "on_tick": {
+                  "const": false
+                },
+                "on_expired": {
+                  "const": true
+                }
+              }
+            }
+          ]
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "base_modifiers"
+          ]
+        },
+        {
+          "required": [
+            "modifiers"
+          ]
+        }
+      ]
+    },
+    "sq_fixed_status": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "instance_id",
+        "definition_id",
+        "source",
+        "target",
+        "applied_at_ms",
+        "expires_at_ms",
+        "modifier_bps",
+        "base_modifiers"
+      ],
+      "properties": {
+        "instance_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "definition_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "source": {
+          "$ref": "#/$defs/entity"
+        },
+        "target": {
+          "$ref": "#/$defs/entity"
+        },
+        "applied_at_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "expires_at_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "modifier_bps": {
+          "const": 0
+        },
+        "base_modifiers": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/compound_numeric_modifier"
+          }
+        },
+        "modifiers": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/compound_numeric_modifier"
+          }
+        },
+        "window": {
+          "$ref": "#/$defs/window_record"
+        },
+        "stacks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "max_stacks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "flags": {
+          "$ref": "#/$defs/status_flags"
+        }
+      },
+      "dependentRequired": {
+        "stacks": [
+          "max_stacks"
+        ],
+        "max_stacks": [
+          "stacks"
+        ]
+      }
+    },
+    "sq_add_stacks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "subject",
+        "status_id",
+        "amount"
+      ],
+      "properties": {
+        "kind": {
+          "const": "add_status_stacks"
+        },
+        "subject": {
+          "enum": [
+            "owner",
+            "other"
+          ]
+        },
+        "status_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "amount": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "refresh_duration": {
+          "type": "boolean"
+        }
+      }
+    },
+    "sq_stack_selector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "definition_id",
+        "at_least"
+      ],
+      "properties": {
+        "definition_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "at_least": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        }
+      }
+    },
+    "sq_counter_config": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "initial",
+        "maximum"
+      ],
+      "properties": {
+        "initial": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 128
+        },
+        "maximum": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "zero_policy": {
+          "enum": [
+            "keep",
+            "remove"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "zero_policy"
+            ],
+            "properties": {
+              "zero_policy": {
+                "const": "remove"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "initial": {
+                "minimum": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "cb_bundle": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "apply_status_bundle"
+        },
+        "owner_statuses": {
+          "type": "array",
+          "maxItems": 2,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          }
+        },
+        "other_statuses": {
+          "type": "array",
+          "maxItems": 2,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          }
+        }
+      },
+      "required": [
+        "kind",
+        "owner_statuses",
+        "other_statuses"
+      ],
+      "anyOf": [
+        {
+          "properties": {
+            "owner_statuses": {
+              "minItems": 1
+            }
+          }
+        },
+        {
+          "properties": {
+            "other_statuses": {
+              "minItems": 1
+            }
+          }
+        }
+      ]
+    },
+    "cb_refresh": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "refresh_status_duration"
+        },
+        "subject": {
+          "enum": [
+            "owner",
+            "other"
+          ]
+        },
+        "status_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3600000
+        }
+      },
+      "required": [
+        "kind",
+        "subject",
+        "status_id"
+      ]
+    },
+    "paid_spirit_effect": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "bps"
+      ],
+      "properties": {
+        "kind": {
+          "const": "restore_paid_spirit"
+        },
+        "bps": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000
+        }
+      }
+    },
+    "boon_trigger_effect": {
+      "oneOf": [
+        {"$ref": "#/$defs/heal_from_damage"},
+        {"$ref": "#/$defs/restore_spirit"},
+        {"$ref": "#/$defs/apply_self_status"},
+        {"$ref": "#/$defs/apply_other_status"}
+      ]
+    },
+    "interception_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "interception_skill_selection": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "mode"
+          ],
+          "properties": {
+            "mode": {
+              "const": "any"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "mode",
+            "ids"
+          ],
+          "properties": {
+            "mode": {
+              "const": "only"
+            },
+            "ids": {
+              "type": "array",
+              "maxItems": 64,
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "minItems": 1
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "mode",
+            "ids"
+          ],
+          "properties": {
+            "mode": {
+              "const": "except"
+            },
+            "ids": {
+              "type": "array",
+              "maxItems": 64,
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              }
+            }
+          }
+        }
+      ]
+    },
+    "interception_action_filter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "basic",
+        "skills"
+      ],
+      "properties": {
+        "basic": {
+          "const": false
+        },
+        "skills": {
+          "$ref": "#/$defs/interception_skill_selection"
+        }
+      }
+    },
+    "interception_effect": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "status_id"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "interrupt",
+            "allow_and_apply"
+          ]
+        },
+        "status_id": {
+          "$ref": "#/$defs/interception_id"
+        }
+      }
+    },
+    "interception_rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "action_filter",
+        "default"
+      ],
+      "properties": {
+        "action_filter": {
+          "$ref": "#/$defs/interception_action_filter"
+        },
+        "default": {
+          "$ref": "#/$defs/interception_effect"
+        },
+        "profile_overrides": {
+          "type": "object",
+          "maxProperties": 16,
+          "propertyNames": {
+            "$ref": "#/$defs/interception_id"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/interception_effect"
+          }
+        }
+      }
+    },
+    "interception_config": {
+      "type": "object",
+      "maxProperties": 16,
+      "propertyNames": {
+        "$ref": "#/$defs/interception_id"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/interception_rule"
+      }
+    },
+    "interception_resolved": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "source",
+        "target",
+        "skill_id",
+        "mark_instance_id",
+        "mark_definition_id",
+        "outcome"
+      ],
+      "properties": {
+        "kind": {
+          "const": "cast_interception_resolved"
+        },
+        "source": {
+          "$ref": "#/$defs/entity"
+        },
+        "target": {
+          "$ref": "#/$defs/entity"
+        },
+        "skill_id": {
+          "$ref": "#/$defs/interception_id"
+        },
+        "action_id": {
+          "$ref": "#/$defs/interception_id"
+        },
+        "mark_instance_id": {
+          "$ref": "#/$defs/interception_id"
+        },
+        "mark_definition_id": {
+          "$ref": "#/$defs/interception_id"
+        },
+        "followup_status_id": {
+          "$ref": "#/$defs/interception_id"
+        },
+        "outcome": {
+          "enum": [
+            "interrupted",
+            "immune_allowed",
+            "allowed_with_followup"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "const": "immune_allowed"
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "required": [
+                "followup_status_id"
+              ]
+            }
+          },
+          "else": {
+            "required": [
+              "followup_status_id"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "target": {
+                "properties": {
+                  "kind": {
+                    "const": "participant"
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "action_id"
+            ]
+          },
+          "else": {
+            "not": {
+              "required": [
+                "action_id"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/shield_record"
+    },
+    {
+      "$ref": "#/$defs/shield_balance"
+    },
+    {
+      "$ref": "#/$defs/shield_counter"
+    },
+    {
+      "$ref": "#/$defs/shield_rule"
+    },
+    {
+      "$ref": "#/$defs/status_requirement"
+    },
+    {
+      "$ref": "#/$defs/trigger_conditions"
+    },
+    {
+      "$ref": "#/$defs/status_consumed"
+    },
+    {
+      "$ref": "#/$defs/shield_record_ended"
+    },
+    {
+      "$ref": "#/$defs/status_policy"
+    },
+    {
+      "$ref": "#/$defs/death_guard"
+    },
+    {
+      "$ref": "#/$defs/dispel_statuses"
+    },
+    {
+      "$ref": "#/$defs/transfer_statuses"
+    },
+    {
+      "$ref": "#/$defs/death_guard_activated"
+    },
+    {
+      "$ref": "#/$defs/status_transferred"
+    },
+    {
+      "$ref": "#/$defs/trigger_rule"
+    },
+    {
+      "$ref": "#/$defs/aggregation_budgets"
+    },
+    {
+      "$ref": "#/$defs/combat_action_total"
+    },
+    {
+      "$ref": "#/$defs/window_recovery"
+    },
+    {
+      "$ref": "#/$defs/status_window_rule"
+    },
+    {
+      "$ref": "#/$defs/window_record"
+    },
+    {
+      "$ref": "#/$defs/window_record_ended"
+    },
+    {
+      "$ref": "#/$defs/window_budget"
+    },
+    {
+      "$ref": "#/$defs/status_flags"
+    },
+    {
+      "$ref": "#/$defs/compound_flag_definition"
+    },
+    {
+      "$ref": "#/$defs/compound_flag_status"
+    },
+    {
+      "$ref": "#/$defs/cleanse_action"
+    },
+    {
+      "$ref": "#/$defs/status_cleanse_rule"
+    },
+    {
+      "$ref": "#/$defs/status_cleanse_view"
+    },
+    {
+      "$ref": "#/$defs/cleanse_budget"
+    },
+    {
+      "$ref": "#/$defs/status_cleanse_resolved"
+    },
+    {
+      "$ref": "#/$defs/spirit_formula"
+    },
+    {
+      "$ref": "#/$defs/spirit_conversion"
+    },
+    {
+      "$ref": "#/$defs/periodic_recovery_rule"
+    },
+    {
+      "$ref": "#/$defs/periodic_spirit_view"
+    },
+    {
+      "$ref": "#/$defs/periodic_spirit_tick"
+    },
+    {
+      "$ref": "#/$defs/periodic_heal_tick"
+    },
+    {
+      "$ref": "#/$defs/control_policy"
+    },
+    {
+      "$ref": "#/$defs/apply_other_status"
+    },
+    {
+      "$ref": "#/$defs/movement_slow_stack_definition"
+    },
+    {
+      "$ref": "#/$defs/contact_status"
+    },
+    {
+      "$ref": "#/$defs/attack_contact_fields"
+    },
+    {
+      "$ref": "#/$defs/chain_formula"
+    },
+    {
+      "$ref": "#/$defs/chain_damage_rule"
+    },
+    {
+      "$ref": "#/$defs/chain_damage_effect"
+    },
+    {
+      "$ref": "#/$defs/chain_budget"
+    },
+    {
+      "$ref": "#/$defs/chain_damage_resolved"
+    },
+    {
+      "$ref": "#/$defs/contact_consumption"
+    },
+    {
+      "$ref": "#/$defs/reduce_skill_cooldowns"
+    },
+    {
+      "$ref": "#/$defs/skill_cooldowns_reduced"
+    },
+    {
+      "$ref": "#/$defs/contact_reaction_rule"
+    },
+    {
+      "$ref": "#/$defs/contact_reaction_budgets"
+    },
+    {
+      "$ref": "#/$defs/contact_reaction_resolved"
+    },
+    {
+      "$ref": "#/$defs/finish_policy"
+    },
+    {
+      "$ref": "#/$defs/finish_rule"
+    },
+    {
+      "$ref": "#/$defs/finish_other"
+    },
+    {
+      "$ref": "#/$defs/finisher_resolved"
+    },
+    {
+      "$ref": "#/$defs/contact_action_budget"
+    },
+    {
+      "$ref": "#/$defs/periodic_composed_definition"
+    },
+    {
+      "$ref": "#/$defs/periodic_composed_status"
+    },
+    {
+      "$ref": "#/$defs/periodic_damage_tick"
+    },
+    {
+      "$ref": "#/$defs/sq_counter_definition"
+    },
+    {
+      "$ref": "#/$defs/sq_fixed_definition"
+    },
+    {
+      "$ref": "#/$defs/sq_counter_status"
+    },
+    {
+      "$ref": "#/$defs/sq_fixed_status"
+    },
+    {
+      "$ref": "#/$defs/sq_add_stacks"
+    },
+    {
+      "$ref": "#/$defs/cb_bundle"
+    },
+    {
+      "$ref": "#/$defs/cb_refresh"
+    },
+    {
+      "$ref": "#/$defs/interception_rule"
+    },
+    {
+      "$ref": "#/$defs/interception_resolved"
+    }
+  ]
+}

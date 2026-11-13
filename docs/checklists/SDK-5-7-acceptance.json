@@ -1,0 +1,105 @@
+{
+  "batch": "SDK-5-7",
+  "scope": "finite live received-healing modifiers for HOT/self/support; not full M04",
+  "criteria": {
+    "HM01": {
+      "rustTests": [
+        "config::status::healing_received_tests::received_bounds_and_existing_self_hit_bindings_are_configurable",
+        "config::status::healing_received_tests::received_invalid_versions_fields_strategies_and_limits_reject",
+        "config::status::healing_received_tests::received_legacy_definitions_19_to_24_keep_their_shape",
+        "config::status::healing_received_tests::received_support_and_normalized_configuration_are_explicit"
+      ]
+    },
+    "HM02": {
+      "rustTests": [
+        "world::pve::healing_received_tests::received_capacity_failure_does_not_refresh_or_charge",
+        "world::pve::healing_received_tests::received_multiple_definitions_add_before_one_floor",
+        "world::pve::healing_received_tests::received_negative_sum_floors_at_zero_without_damage_minimum",
+        "world::pve::healing_received_tests::received_positive_sum_has_no_attack_or_defense_gameplay_cap",
+        "world::pve::healing_received_tests::received_reading_does_not_modify_facts_attack_defense_or_shield",
+        "world::pve::healing_received_tests::received_refresh_and_ignore_keep_their_identity_contract",
+        "world::pve::healing_received_tests::received_source_scoping_and_latest_owner_cleanup_are_preserved"
+      ]
+    },
+    "HM03": {
+      "rustTests": [
+        "world::pve::healing_received_tests::received_dead_or_invalid_source_never_heals_or_emits_success",
+        "world::pve::healing_received_tests::received_exact_weakening_amplification_and_aggregation",
+        "world::pve::healing_received_tests::received_no_rng_contact_or_extraction_interrupt",
+        "world::pve::healing_received_tests::received_tiny_zero_and_full_heals_use_one_floor_and_clip",
+        "world::pve::healing_received_tests::received_wide_math_keeps_adjusted_amount_before_hp_clamp"
+      ]
+    },
+    "HM04": {
+      "rustTests": [
+        "world::pve::healing_received_tests::received_dot_death_and_absolute_terminal_never_allow_late_healing",
+        "world::pve::healing_received_tests::received_hot_reads_live_modifier_and_expiry_before_same_due_tick",
+        "world::pve::healing_received_tests::received_modifier_application_does_not_restart_hot_clock",
+        "world::pve::healing_received_tests::received_precommit_cancel_never_grants_modifier",
+        "world::pve::healing_received_tests::received_real_commit_and_target_hit_bindings_work"
+      ]
+    },
+    "HM05": {
+      "rustTests": [
+        "world::pve::healing_received_tests::received_healing_does_not_rewind_boss_or_gain_aggro",
+        "world::pve::healing_received_tests::received_natural_regen_is_outside_the_healing_multiplier",
+        "world::pve::healing_received_tests::received_orb_restores_hp_and_spirit_without_this_multiplier",
+        "world::pve::healing_received_tests::received_real_self_channel_partitions_before_scaling_once",
+        "world::pve::healing_received_tests::received_self_channel_expiry_changes_future_shares_only",
+        "world::pve::healing_received_tests::received_support_partitions_before_scaling_once_and_preserves_cost",
+        "world::pve::healing_received_tests::received_support_uses_target_not_caster_and_live_expiry"
+      ]
+    },
+    "HM06": {
+      "rustTests": [
+        "world::pve::healing_received_tests::received_background_expires_modifier_without_replaying_hot",
+        "world::pve::healing_received_tests::received_encounter_reset_invalidates_old_round_modifier",
+        "world::pve::healing_received_tests::received_hundred_closes_release_modifier_and_hot",
+        "world::pve::healing_received_tests::received_legal_output_burst_releases_world_and_frozen_settlement",
+        "world::pve::healing_received_tests::received_public_retries_and_reconnect_do_not_double_apply",
+        "world::pve::healing_received_tests::received_target_generation_and_source_death_clean_up"
+      ],
+      "nodeCases": [
+        "a-extraction"
+      ]
+    },
+    "HM07": {
+      "nodeCases": [
+        "a-extraction",
+        "a-death",
+        "b-extraction",
+        "b-death"
+      ],
+      "touchCases": [
+        "extraction",
+        "death"
+      ]
+    },
+    "HM08": {
+      "crashBoundaries": [
+        "active",
+        "after_intent_persist",
+        "after_storage_commit"
+      ],
+      "recoveriesPerBoundary": 2
+    },
+    "HM09": {
+      "rustTests": [
+        "config::status::healing_received_tests::received_legacy_definitions_19_to_24_keep_their_shape",
+        "world::pve::healing_received_tests::received_old_views_and_events_remain_unchanged"
+      ],
+      "reports": [
+        "artifacts/sdk-5-7/baseline-verification.json",
+        "artifacts/sdk-5-7/verification.json",
+        "artifacts/sdk-5-7/delivery/independent-verification.json"
+      ]
+    },
+    "HM10": {
+      "reports": [
+        "artifacts/sdk-5-7/delivery/source-verification.json",
+        "artifacts/sdk-5-7/delivery/independent-verification.json",
+        "artifacts/sdk-5-7/baseline-verification.json"
+      ]
+    }
+  }
+}

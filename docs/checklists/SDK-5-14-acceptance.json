@@ -1,0 +1,92 @@
+{
+  "batch": "SDK-5-14",
+  "scope": "directional straight piercing; not full M05",
+  "criteria": {
+    "PP01": {
+      "rustTests": [
+        "config::skill_wire::piercing_tests::piercing_config_bindings_and_duplicate_ids_remain_strict",
+        "config::skill_wire::piercing_tests::piercing_config_both_slots_normalize_and_capabilities",
+        "config::skill_wire::piercing_tests::piercing_config_inclusive_minima_and_maxima",
+        "config::skill_wire::piercing_tests::piercing_config_strict_bounds_types_required_and_no_dormant_fields",
+        "config::skill_wire::piercing_tests::piercing_config_version_schema_pve_gates"
+      ]
+    },
+    "PP02": {
+      "rustTests": [
+        "world::pve::piercing_tests::piercing_capacity_failure_is_atomic_and_self_skill_unaffected",
+        "world::pve::piercing_tests::piercing_parameters_direction_frozen_origin_is_commit_position",
+        "world::pve::piercing_tests::piercing_resource_and_self_group_capacity_fail_atomically",
+        "world::pve::piercing_tests::piercing_two_flights_have_independent_histories_and_shared_recovery",
+        "world::pve::piercing_tests::piercing_zero_windup_commits_next_step_and_does_not_move_creation_step"
+      ],
+      "reports": [
+        "artifacts/sdk-5-14/capacity-verification.json"
+      ]
+    },
+    "PP03": {
+      "rustTests": [
+        "world::pve::piercing_tests::piercing_attack_frozen_after_self_commit_and_current_defense_used",
+        "world::pve::piercing_tests::piercing_budget_at_endpoint_has_priority_over_range_end",
+        "world::pve::piercing_tests::piercing_circle_tangent_hits_and_outside_misses",
+        "world::pve::piercing_tests::piercing_disabled_returning_and_reset_targets_do_not_spend",
+        "world::pve::piercing_tests::piercing_dodge_spends_nothing_and_retries_next_step_only",
+        "world::pve::piercing_tests::piercing_exact_wall_unit_tie_wall_wins",
+        "world::pve::piercing_tests::piercing_full_shield_and_zero_hp_damage_count_and_apply_status",
+        "world::pve::piercing_tests::piercing_high_speed_sweep_hits_three_in_path_order_and_budget_ends",
+        "world::pve::piercing_tests::piercing_kills_drop_once_and_no_future_contacts",
+        "world::pve::piercing_tests::piercing_overlap_once_and_new_generation_is_new_identity",
+        "world::pve::piercing_tests::piercing_range_endpoint_counts_before_range_end",
+        "world::pve::piercing_tests::piercing_tie_uses_id_not_storage_order",
+        "world::pve::piercing_tests::piercing_total_budget_two_stops_before_third",
+        "world::pve::piercing_tests::piercing_wall_corner_disk_tangent_and_boundary",
+        "world::pve::piercing_tests::piercing_wall_truncates_before_later_enemy"
+      ]
+    },
+    "PP04": {
+      "rustTests": [
+        "world::pve::piercing_tests::piercing_cancel_and_background_before_commit_are_free",
+        "world::pve::piercing_tests::piercing_committed_cancel_move_background_keep_flight",
+        "world::pve::piercing_tests::piercing_death_terminal_close_end_once_and_do_not_refund",
+        "world::pve::piercing_tests::piercing_ttl_is_exclusive_before_movement",
+        "world::pve::reset_tests::piercing_actual_reset_cancels_preparing_and_committed_plans_without_new_round_damage"
+      ]
+    },
+    "PP05": {
+      "rustTests": [
+        "world::pve::piercing_tests::piercing_128_identity_history_is_bounded_then_released",
+        "world::pve::piercing_tests::piercing_hundred_closes_release_world_and_frozen_assets",
+        "world::pve::piercing_tests::piercing_peak_output_fault_releases_world_preserves_assets",
+        "world::pve::piercing_tests::piercing_public_reconnect_dedup_keeps_real_history"
+      ]
+    },
+    "PP06": {
+      "rustTests": [],
+      "reports": [
+        "artifacts/sdk-5-14/verification.json",
+        "artifacts/sdk-5-14/capacity-verification.json"
+      ]
+    },
+    "PP07": {
+      "rustTests": [],
+      "reports": [
+        "artifacts/sdk-5-14/verification.json"
+      ]
+    },
+    "PP08": {
+      "rustTests": [
+        "world::pve::piercing_tests::piercing_old_views_omit_new_field"
+      ],
+      "reports": [
+        "artifacts/sdk-5-14/verification.json",
+        "artifacts/sdk-5-14/baseline-verification.json"
+      ]
+    },
+    "PP09": {
+      "rustTests": [],
+      "reports": [
+        "artifacts/sdk-5-14/delivery/independent-verification.json",
+        "artifacts/sdk-5-14/delivery/source-verification.json"
+      ]
+    }
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "batch": "SDK-5-16",
+  "criteria": {
+    "LF01": {
+      "rustTests": [
+        "config::skill_wire::line_tests::line_field_config_both_slots_normalize_public_geometry_and_policy",
+        "config::skill_wire::line_tests::line_field_config_finite_geometry_inclusive_bounds_and_strict_types",
+        "config::skill_wire::line_tests::line_field_config_old_versions_schema_and_pve_rejected",
+        "config::skill_wire::line_tests::line_field_config_required_and_incompatible_fields_reject",
+        "config::skill_wire::line_tests::line_field_config_shared_tick_budget_and_binding_limits"
+      ],
+      "reports": [
+        "artifacts/sdk-5-16/native-verification.json"
+      ]
+    },
+    "LF02": {
+      "rustTests": [
+        "world::pve::line_field_tests::line_field_capsule_footprint_endcaps_side_edges_and_degenerate",
+        "world::pve::line_field_tests::line_field_diagonal_geometry_uses_world_distance",
+        "world::pve::line_field_tests::line_field_legacy_circle_view_does_not_add_geometry",
+        "world::pve::line_field_tests::line_field_nearest_point_visibility_prevents_side_wall_leak",
+        "world::pve::line_field_tests::line_field_wall_and_map_clip_publish_actual_endpoint_and_block_contact"
+      ],
+      "reports": [
+        "artifacts/sdk-5-16/native-verification.json"
+      ]
+    },
+    "LF03": {
+      "rustTests": [
+        "world::pve::line_field_tests::line_field_commit_resource_and_self_capacity_fail_without_partial_effects",
+        "world::pve::line_field_tests::line_field_direct_attack_frozen_current_defense_and_shield_live",
+        "world::pve::line_field_tests::line_field_direction_freezes_at_accept_origin_at_commit_and_geometry_afterwards",
+        "world::pve::line_field_tests::line_field_origin_accept_and_commit_revalidation_are_atomic",
+        "world::pve::line_field_tests::line_field_shared_ground_capacity_is_atomic_and_other_skill_works",
+        "world::pve::line_field_tests::line_field_wrong_intents_directions_and_in_memory_old_versions_reject"
+      ],
+      "reports": [
+        "artifacts/sdk-5-16/native-verification.json"
+      ]
+    },
+    "LF04": {
+      "rustTests": [
+        "world::pve::line_field_tests::line_field_128_successes_keep_one_identity_and_release_budget",
+        "world::pve::line_field_tests::line_field_dodge_does_not_spend_slot_or_clock_shield_contact_does",
+        "world::pve::line_field_tests::line_field_empty_cycles_advance_without_catchup_damage_on_reentry",
+        "world::pve::line_field_tests::line_field_kill_and_drop_once_budget_stops_future_ticks",
+        "world::pve::line_field_tests::line_field_late_processing_is_bounded_and_uses_scheduled_times",
+        "world::pve::line_field_tests::line_field_once_reentry_and_new_generation_identity",
+        "world::pve::line_field_tests::line_field_path_progress_then_distance_then_id_order_and_budget",
+        "world::pve::line_field_tests::line_field_schedule_first_tick_end_exclusive_and_nonintegral_repeat"
+      ],
+      "reports": [
+        "artifacts/sdk-5-16/native-verification.json"
+      ]
+    },
+    "LF05": {
+      "rustTests": [
+        "world::pve::line_field_tests::line_field_background_cancel_and_move_keep_committed_cycles",
+        "world::pve::line_field_tests::line_field_death_terminal_and_close_end_once_and_never_refund",
+        "world::pve::line_field_tests::line_field_direct_pulse_output_peak_releases_world_and_frozen_assets",
+        "world::pve::line_field_tests::line_field_hundred_closes_release_ground_plans_and_frozen_assets",
+        "world::pve::line_field_tests::line_field_prepare_cancel_background_leave_never_spend",
+        "world::pve::line_field_tests::line_field_public_finite_validation_reconnect_and_dedup_preserve_warning",
+        "world::pve::reset_tests::line_field_actual_reset_cancels_preparing_and_committed_plans_without_new_round_damage"
+      ],
+      "reports": [
+        "artifacts/sdk-5-16/native-verification.json"
+      ]
+    },
+    "LF06": {
+      "rustTests": [],
+      "reports": [
+        "artifacts/sdk-5-16/verification.json"
+      ]
+    },
+    "LF07": {
+      "rustTests": [],
+      "reports": [
+        "artifacts/sdk-5-16/verification.json"
+      ]
+    },
+    "LF08": {
+      "rustTests": [],
+      "reports": [
+        "artifacts/sdk-5-16/verification.json",
+        "artifacts/sdk-5-16/native-verification.json",
+        "artifacts/sdk-5-16/baseline-verification.json"
+      ]
+    },
+    "LF09": {
+      "rustTests": [],
+      "reports": [
+        "artifacts/sdk-5-16/baseline-verification.json",
+        "artifacts/sdk-5-16/delivery/independent-verification.json",
+        "artifacts/sdk-5-16/delivery/source-verification.json"
+      ]
+    }
+  }
+}

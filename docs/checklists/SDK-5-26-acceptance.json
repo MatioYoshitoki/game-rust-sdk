@@ -1,0 +1,156 @@
+{
+  "batch": "SDK-5-26",
+  "crate": "0.28.0",
+  "protocol": 6,
+  "schema": 7,
+  "mechanism": 43,
+  "criteria": {
+    "PP01": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::flights::member_flights_configuration_geometry_history_and_output_reject_before_io"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json"
+      ]
+    },
+    "PP02": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::flights::member_flights_duplicate_direction_input_only_pays_and_commits_once",
+        "two_members::tests::capacity::delta::flights::member_flights_primary_secondary_one_two_four_eight_shared_world",
+        "two_members::tests::capacity::delta::flights::member_flights_wrong_kind_and_zero_direction_do_not_pay",
+        "world::two_members::piercing_tests::piercing_accept_direction_kind_and_origin_are_strict",
+        "world::two_members::piercing_tests::piercing_commit_origin_resource_status_and_shared_capacity_fail_atomically",
+        "world::two_members::piercing_tests::piercing_one_two_four_eight_actual_sources_and_independent_costs",
+        "world::two_members::piercing_tests::piercing_shared_slot_race_and_self_or_area_skills_are_independent"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json"
+      ]
+    },
+    "PP03": {
+      "rustTests": [
+        "world::two_members::piercing_tests::piercing_contacts_order_by_swept_progress_then_stable_identity",
+        "world::two_members::piercing_tests::piercing_diagonal_sweep_and_map_boundary_stop_without_far_side_hits",
+        "world::two_members::piercing_tests::piercing_high_speed_sweep_hits_multiple_enemies_without_tunneling",
+        "world::two_members::piercing_tests::piercing_wall_and_unit_tie_is_wall_first_but_front_target_can_contact"
+      ],
+      "reports": [
+        "native-verification.json",
+        "interop-verification.json"
+      ]
+    },
+    "PP04": {
+      "rustTests": [
+        "world::two_members::piercing_tests::piercing_each_owner_and_flight_has_independent_history",
+        "world::two_members::piercing_tests::piercing_elapsed_repeat_without_current_swept_contact_never_hits",
+        "world::two_members::piercing_tests::piercing_once_history_survives_exit_reentry_and_allows_new_generation",
+        "world::two_members::piercing_tests::piercing_repeat_inclusive_clock_once_per_step_and_no_catchup"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json"
+      ]
+    },
+    "PP05": {
+      "rustTests": [
+        "world::two_members::piercing_tests::piercing_attack_frozen_and_current_defense_shield_resolved",
+        "world::two_members::piercing_tests::piercing_dodge_does_not_consume_or_bind_full_shield_does",
+        "world::two_members::piercing_tests::piercing_friendly_dead_and_returning_targets_do_not_block",
+        "world::two_members::piercing_tests::piercing_multiple_lethal_flights_credit_and_drop_once"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json"
+      ]
+    },
+    "PP06": {
+      "rustTests": [
+        "world::two_members::piercing_tests::piercing_budget_exhaustion_stops_later_targets_and_ends_once",
+        "world::two_members::piercing_tests::piercing_commit_step_never_moves_or_contacts",
+        "world::two_members::piercing_tests::piercing_range_exhaustion_and_zero_remaining_never_publish",
+        "world::two_members::piercing_tests::piercing_ttl_deadline_precedes_contact_and_ends_once"
+      ],
+      "reports": [
+        "native-verification.json",
+        "interop-verification.json"
+      ]
+    },
+    "PP07": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::flights::member_flights_reconnect_preserves_flight_history_deadline_and_old_connection_fence",
+        "two_members::tests::capacity::delta::flights::member_flights_unknown_settlement_removes_owner_and_peers_continue",
+        "world::two_members::piercing_tests::piercing_absolute_terminal_clears_all_without_late_contacts",
+        "world::two_members::piercing_tests::piercing_background_and_move_keep_flight_budget_and_absolute_deadline",
+        "world::two_members::piercing_tests::piercing_prepare_cancel_and_source_exit_clean_only_owner"
+      ],
+      "reports": [
+        "native-verification.json",
+        "browser/report.json",
+        "public/report.json"
+      ]
+    },
+    "PP08": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::flights::member_flights_malformed_geometry_counter_history_and_identity_are_atomic",
+        "world::two_members::piercing_tests::piercing_public_plan_excludes_private_input_attack_cost_and_bindings"
+      ],
+      "reports": [
+        "native-verification.json",
+        "public/report.json"
+      ]
+    },
+    "PP09": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::flights::member_flights_once_and_repeat_full_delta_clear_cross_language_vectors"
+      ],
+      "reports": [
+        "native-verification.json",
+        "interop-verification.json"
+      ]
+    },
+    "PP10": {
+      "rustTests": [],
+      "reports": [
+        "public/report.json",
+        "browser/report.json",
+        "visual-verification.json"
+      ]
+    },
+    "PP11": {
+      "rustTests": [
+        "two_members::tests::capacity::delta::flights::member_flights_hundred_public_runtimes_with_committed_flights_release_all_responsibilities",
+        "two_members::tests::capacity::delta::flights::member_flights_recovery_closed_never_restores_flights_or_publications"
+      ],
+      "reports": [
+        "native-verification.json",
+        "crashes/report.json"
+      ]
+    },
+    "PP12": {
+      "rustTests": [],
+      "reports": [
+        "native-verification.json",
+        "delivery/source-verification.json",
+        "delivery/independent-verification.json",
+        "legacy4/report.json",
+        "legacy5/report.json",
+        "legacy6/report.json",
+        "legacy38/report.json",
+        "legacy39/report.json",
+        "legacy40/report.json",
+        "legacy41/report.json",
+        "legacy42/report.json",
+        "local-preview.json"
+      ]
+    }
+  },
+  "limitations": [
+    "Fixed 1-8 required PVE members and straight player-owned piercing flights; no PvP, friendly targeting, homing, bounce, moving areas or complete modes",
+    "Shared ordinary/unit/NPC projectile capacity, hostile contact iterator, contact budget and direct damage pipeline; historical single-member adapters retained",
+    "All gameplay values initialized from config; projectile capacity times maximum piercing hits limited to 128 history entries before I/O",
+    "Reconnect preserves committed flight/history/deadline; restart restores only frozen financial obligations, never World/flights/statuses/baselines",
+    "Original 48 scenarios and 50 numeric vectors have no added execution counts; historical user artifact cleanup exception preserved"
+  ]
+}
