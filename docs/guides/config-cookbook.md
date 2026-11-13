@@ -21,6 +21,9 @@
 
 ## 版本门槛速查（机制 → 最低 mechanism_version）
 
+> 完整机器可读清单：`kernel-host --sdk-info`（`support.json` 同源）。`schema_version` 与 `mechanism_version` 的配对规则见 [validate.rs](../../src/config/validate.rs)：`37..=105 → schema 7`、`36 → schema 6`、`35 → schema 5`、单人技能族 `26..=34 → schema 4`。
+
+<!-- GATES-BEGIN（generated，勿手改；漂移请运行 --fix） -->
 **单人族（schema 4 / 协议 3）**
 
 | 门槛 | sdk_info 键 | 上限 |
@@ -143,8 +146,7 @@
 | 105 | `worldGeometry` | — |
 | 105 | `zeroEntryCost` | — |
 | 105 | `zoneExposure` | — |
-
-> 完整机器可读清单：`kernel-host --sdk-info`（`support.json` 同源）。`schema_version` 与 `mechanism_version` 的配对规则见 [validate.rs](../../src/config/validate.rs)：`37..=105 → schema 7`、`36 → schema 6`、`35 → schema 5`、单人技能族 `26..=34 → schema 4`。
+<!-- GATES-END -->
 
 ## 移动与寻路 ✅
 

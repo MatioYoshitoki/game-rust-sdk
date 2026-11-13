@@ -34,6 +34,7 @@ node adapters/h5/two-member-server.mjs \
 ```sh
 cargo test --locked --all-features
 node --test adapters/node/*.test.mjs adapters/h5/*.test.mjs
+python3 -B scripts/check_config_gates.py --binary target/release/kernel-host  # 配置手册门槛表与 --sdk-info 对账（漂移非零退出；--fix 重写）
 python3 -B scripts/package_sdk.py --out /absolute/path/to/delivery
 ```
 

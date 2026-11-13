@@ -79,6 +79,8 @@ def build(output):
         shutil.copy2(work/'release-target'/target/'release/kernel-host',root/'bin/kernel-host')
         info = json.loads(run('sdk-info',[str(root/'bin/kernel-host'),'--sdk-info'],cwd=work,env=clean_env,logs=output))
         assert info['crateVersion']==version and not info['clocks']['replay']
+        (work/'gates.json').write_text(json.dumps(info,indent=2)+'\n')
+        run('config-gates',[sys.executable,str(ROOT/'scripts/check_config_gates.py'),'--sdk-info-json',str(work/'gates.json')],cwd=ROOT,logs=output)
         (root/'support.json').write_text(json.dumps(info,indent=2)+'\n')
         (root/'hosts').mkdir()
         shutil.copy2(ROOT/'adapters/python/asset_host.py',root/'hosts/asset_host.py')
