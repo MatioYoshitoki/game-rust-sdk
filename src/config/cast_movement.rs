@@ -74,7 +74,7 @@ pub(super) fn fields(document: &Value) -> Result<(), &'static str> {
     for skill in skills {
         if let Some(policy) = skill.get("cast_movement") {
             if document["schema_version"] != 7
-                || !matches!(document["mechanism_version"].as_u64(), Some(46..=105))
+                || !matches!(document["mechanism_version"].as_u64(), Some(46..=106))
             {
                 return Err("CONFIG_CAST_MOVEMENT_CAPABILITY");
             }

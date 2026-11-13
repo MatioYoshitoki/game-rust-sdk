@@ -6,6 +6,8 @@ mod character_build;
 pub use character_build::*;
 mod skill_loadouts;
 pub use skill_loadouts::*;
+mod training_tools;
+pub use training_tools::*;
 mod weapon_equipment;
 pub use weapon_equipment::*;
 mod status;
@@ -196,6 +198,8 @@ pub enum Action {
     },
     ClearOwnedTargets {},
     ResetTrainingMetrics {},
+    ResetTrainingCooldowns(crate::protocol::training_tools::ResetTrainingCooldowns),
+    RestoreTrainingMember(crate::protocol::training_tools::RestoreTrainingMember),
     AttackUnit {
         target: UnitTarget,
     },
@@ -842,6 +846,15 @@ pub struct Snapshot {
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub enum Event {
+    TrainingCooldownsReset {
+        participant_id: String,
+    },
+    TrainingMemberRestored {
+        participant_id: String,
+        hp: u32,
+        spirit: u32,
+        cleansed: Vec<String>,
+    },
     BoonClaimStarted {
         claim: BoonPendingClaimView,
     },

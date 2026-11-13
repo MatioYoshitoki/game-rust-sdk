@@ -14,7 +14,7 @@ pub(crate) struct FollowupConfig {
 pub(super) fn fields(document: &Value) -> Result<(), &'static str> {
     if let Some(definition) = document.get("skill_followup") {
         if document["schema_version"] != 7
-            || !matches!(document["mechanism_version"].as_u64(), Some(51..=105))
+            || !matches!(document["mechanism_version"].as_u64(), Some(51..=106))
         {
             return Err("CONFIG_FOLLOWUP_CAPABILITY");
         }

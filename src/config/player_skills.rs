@@ -135,7 +135,7 @@ pub(super) fn validate_skill_effects(c: &Config) -> Result<(), &'static str> {
 
 pub(crate) const MAX_MEMBER_SKILLS: usize = 8;
 pub(super) fn field_limit(v: &serde_json::Value) -> usize {
-    if v["schema_version"] == 7 && matches!(v["mechanism_version"].as_u64(), Some(44..=105)) {
+    if v["schema_version"] == 7 && matches!(v["mechanism_version"].as_u64(), Some(44..=106)) {
         MAX_MEMBER_SKILLS
     } else {
         2

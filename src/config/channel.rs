@@ -142,7 +142,7 @@ pub(super) fn fields(document: &Value) -> Result<(), &'static str> {
     for skill in skills {
         if skill["mechanism"] == "unit_effect"
             && (document["schema_version"] != 7
-                || document["mechanism_version"] != 105
+                || !matches!(document["mechanism_version"].as_u64(), Some(105..=106))
                 || !document["members"].is_object())
         {
             return Err("CONFIG_UNIT_EFFECT_CAPABILITY");
@@ -150,7 +150,7 @@ pub(super) fn fields(document: &Value) -> Result<(), &'static str> {
 
         if let Some(channel) = skill.get("channel") {
             if document["schema_version"] != 7
-                || !matches!(document["mechanism_version"].as_u64(), Some(49..=105))
+                || !matches!(document["mechanism_version"].as_u64(), Some(49..=106))
             {
                 return Err("CONFIG_CHANNEL_CAPABILITY");
             }

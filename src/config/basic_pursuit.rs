@@ -17,7 +17,7 @@ pub(crate) struct BasicPursuitConfig {
 pub(super) fn fields(document: &Value) -> Result<(), &'static str> {
     if let Some(definition) = document.get("basic_pursuit") {
         if document["schema_version"] != 7
-            || !matches!(document["mechanism_version"].as_u64(), Some(55..=105))
+            || !matches!(document["mechanism_version"].as_u64(), Some(55..=106))
         {
             return Err("CONFIG_BASIC_PURSUIT_CAPABILITY");
         }
@@ -25,7 +25,7 @@ pub(super) fn fields(document: &Value) -> Result<(), &'static str> {
             return Err("CONFIG_BASIC_PURSUIT_SHAPE");
         }
         if let Some(range) = definition.get("auto_max_range") {
-            if !matches!(document["mechanism_version"].as_u64(), Some(56..=105)) {
+            if !matches!(document["mechanism_version"].as_u64(), Some(56..=106)) {
                 return Err("CONFIG_BASIC_PURSUIT_CAPABILITY");
             }
             if !range.is_number() {

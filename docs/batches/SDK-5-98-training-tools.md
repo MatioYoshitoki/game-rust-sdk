@@ -1,6 +1,6 @@
-# SDK-5-98 训练模式房主有限管理机制（规格提案，待宿主确认后实施）
+# SDK-5-98 训练模式房主有限管理机制（已交付，0.186.0）
 
-2026-11-13。来源：宿主训练房需求（training-sanctum.DESIGN v2.3 §4 转发件）。机制版本 **106** / schema 7 / 协议 6，目标版本 0.186.0。
+2026-11-13。来源：宿主训练房需求（training-sanctum.DESIGN v2.3 §4 转发件），宿主已确认提交通道。机制版本 **106** / schema 7 / 协议 6，交付版本 **0.186.0**。实现：受信宿主 RPC `reset_training_cooldowns` / `restore_training_member`（kernel-host Command + runtime/session/coordinator 管道）；`members.training_tools{enabled, restore_clears}` 配置；私有事件 `TrainingCooldownsReset` / `TrainingMemberRestored{participant_id, hp, spirit, cleansed[]}`；净化语义 = 内核 `harmful` 分类（clears 为空清除全部有害状态，非空为显式 id 过滤）。功能验收（真实协议栈驱动）：开关拒绝（TT01）、CD 重置与席位隔离（TT02/03）、恢复满血满灵（TT05）、位置保留（TT06）、死亡恢复 INVALID_STATE（TT07）、request_id 幂等（TT08）；Rust 单元 5 项（门禁/重置/恢复净化/正面保留/死亡拒绝）。
 
 ## 0. 结论速览（对照宿主三动作请求）
 
@@ -65,7 +65,7 @@
  "request_id":…}}
 ```
 
-- 效果：hp/spirit 补至当前最大值；清除**可驱散负面/控制**状态（复用机制 87 的 cleanse 分类语义）；`ModeRespawned` 同族私有事件（新事件 `TrainingMemberRestored`）
+- 效果：hp/spirit 补至当前最大值；清除**有害状态**（内核 `StatusDefinition.harmful` 分类：控制/减益/periodic 伤害等自动归类，正面增益永不触碰）；可选 `restore_clears` 显式过滤清单（机制 87 语义）；私有事件 `TrainingMemberRestored{participant_id, hp, spirit, cleansed[]}`
 - 保留：正面增益、CD（与 reset 正交）、位置、普攻时钟/后摇、在途技能实体、统计
 - 死亡成员：`INVALID_STATE`（死亡恢复由 respawn 或重开覆盖；不复活）
 - 门禁/幂等：同上

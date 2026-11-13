@@ -11,6 +11,8 @@ enum Command {
     Input(Input),
     SetSkillLoadout(SetSkillLoadout),
     SetEquippedWeapon(SetEquippedWeapon),
+    ResetTrainingCooldowns(crate::protocol::ResetTrainingCooldowns),
+    RestoreTrainingMember(crate::protocol::RestoreTrainingMember),
     Business(BusinessReceiptRequest),
     Transport(TransportReceipt),
     Spectate(SpectateV6),
@@ -61,6 +63,27 @@ impl Client {
     pub fn set_skill_loadout(&self, request: SetSkillLoadout) -> Result<SkillLoadoutReceipt> {
         match self.call(Command::SetSkillLoadout(request))? {
             Response::SkillLoadout(receipt) => Ok(receipt),
+            _ => Err(Error::Faulted),
+        }
+    }
+    /// Training-room host tool: clear battle-skill cooldowns for one or all seats.
+    pub fn reset_training_cooldowns(
+        &self,
+        request: crate::protocol::ResetTrainingCooldowns,
+    ) -> Result<Status> {
+        match self.call(Command::ResetTrainingCooldowns(request))? {
+            Response::Status(status) => Ok(status),
+            _ => Err(Error::Faulted),
+        }
+    }
+    /// Training-room host tool: restore alive members to full hp/spirit and
+    /// clear the configured cleansable statuses.
+    pub fn restore_training_member(
+        &self,
+        request: crate::protocol::RestoreTrainingMember,
+    ) -> Result<Status> {
+        match self.call(Command::RestoreTrainingMember(request))? {
+            Response::Status(status) => Ok(status),
             _ => Err(Error::Faulted),
         }
     }
@@ -179,6 +202,12 @@ impl Runtime {
                                 Command::SetEquippedWeapon(request) => engine
                                     .set_equipped_weapon(request)
                                     .map(Response::WeaponEquipment),
+                                Command::ResetTrainingCooldowns(request) => engine
+                                    .reset_training_cooldowns(request)
+                                    .map(Response::Status),
+                                Command::RestoreTrainingMember(request) => engine
+                                    .restore_training_member(request)
+                                    .map(Response::Status),
                                 Command::Input(request) => {
                                     engine.input(request).map(Response::Status)
                                 }

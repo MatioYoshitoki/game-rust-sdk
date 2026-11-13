@@ -258,7 +258,7 @@ impl ConfigCatalog {
                         return Err(invalid("CONFIG_MAP_BOUNDS"));
                     }
                     if pve.isometric_grid.is_some_and(|iso| {
-                        config.mechanism_version != 105
+                        !matches!(config.mechanism_version, 105..=106)
                             || config.replication.is_none()
                             || !(4.0..=128.0).contains(&iso.tile_height)
                             || !iso.origin.iter().all(|v| v.is_finite())

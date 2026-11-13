@@ -56,7 +56,7 @@ pub(super) fn fields(document: &Value) -> Result<(), &'static str> {
     for skill in skills {
         if let Some(charge) = skill.get("charge") {
             if document["schema_version"] != 7
-                || !matches!(document["mechanism_version"].as_u64(), Some(47..=105))
+                || !matches!(document["mechanism_version"].as_u64(), Some(47..=106))
             {
                 return Err("CONFIG_CHARGE_CAPABILITY");
             }
@@ -69,7 +69,7 @@ pub(super) fn fields(document: &Value) -> Result<(), &'static str> {
                 return Err("CONFIG_CAST_LIFECYCLE_CAPABILITY");
             }
             if let Some(aim) = charge.get("aim_update") {
-                if !matches!(document["mechanism_version"].as_u64(), Some(48..=105)) {
+                if !matches!(document["mechanism_version"].as_u64(), Some(48..=106)) {
                     return Err("CONFIG_CHARGE_AIM_CAPABILITY");
                 }
                 if !aim.is_object() {

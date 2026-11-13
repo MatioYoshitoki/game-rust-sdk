@@ -52,6 +52,15 @@ pub(crate) struct MembersConfig {
     pub deployment_timeout_ms: u64,
     pub publication_queue_capacity: usize,
     pub projectile_capacity: usize,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub training_tools: Option<TrainingTools>,
+}
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct TrainingTools {
+    pub enabled: bool,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub restore_clears: Vec<String>,
 }
 pub(crate) const MAX_SPECTATORS: u8 = 8;
 pub(crate) const MAX_SPECTATOR_EVENTS: usize = 32;
@@ -84,7 +93,7 @@ pub(crate) struct MemberSettings<'a> {
 pub(super) fn validation_document(v: &Value) -> Result<Value, &'static str> {
     let replicated = v["schema_version"] == 7;
     if v.pointer("/params/entry_years").and_then(Value::as_u64) == Some(0)
-        && (!replicated || v["mechanism_version"] != 105)
+        && (!replicated || !matches!(v["mechanism_version"].as_u64(), Some(105..=106)))
     {
         return Err("CONFIG_PARAMETER_BOUNDS");
     }
@@ -106,7 +115,7 @@ pub(super) fn validation_document(v: &Value) -> Result<Value, &'static str> {
             || v.get("members").is_some())
         || multi
             && (if replicated {
-                !matches!(v["mechanism_version"].as_u64(), Some(37..=105))
+                !matches!(v["mechanism_version"].as_u64(), Some(37..=106))
             } else {
                 v["mechanism_version"] != 36
             } || !v["members"].is_object()
@@ -180,7 +189,7 @@ pub(super) fn validate(c: &Config) -> Result<(), &'static str> {
             c.two_members.is_some(),
             c.members.is_some()
         ),
-        (5, 35, true, false) | (6, 36, false, true) | (7, 37..=105, false, true)
+        (5, 35, true, false) | (6, 36, false, true) | (7, 37..=106, false, true)
     ) || c.asset_contract.is_none()
         || c.result_contract.is_none()
     {

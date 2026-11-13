@@ -36,7 +36,7 @@ pub(super) fn validate(c: &Config) -> Result<(), &'static str> {
         return Ok(());
     };
     if c.protocol_version() != 6
-        || c.mechanism_version != 105
+        || !matches!(c.mechanism_version, 105..=106)
         || c.members.is_none()
         || c.pve.is_none()
         || c.combat_rules.is_none()

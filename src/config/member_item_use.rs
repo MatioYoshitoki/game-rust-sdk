@@ -104,7 +104,7 @@ pub(crate) struct MemberItemUseConfig {
 pub(super) fn fields(document: &Value) -> Result<(), &'static str> {
     if let Some(definition) = document.get("member_item_use") {
         if document["schema_version"] != 7
-            || !matches!(document["mechanism_version"].as_u64(), Some(58..=105))
+            || !matches!(document["mechanism_version"].as_u64(), Some(58..=106))
         {
             return Err("CONFIG_MEMBER_ITEM_USE_CAPABILITY");
         }
@@ -118,21 +118,21 @@ pub(super) fn fields(document: &Value) -> Result<(), &'static str> {
         {
             return Err("CONFIG_MEMBER_ITEM_COOLDOWN_CAPABILITY");
         }
-        if !matches!(document["mechanism_version"].as_u64(), Some(60..=105))
+        if !matches!(document["mechanism_version"].as_u64(), Some(60..=106))
             && definitions
                 .values()
                 .any(|entry| entry.get("restore_spirit").is_some())
         {
             return Err("CONFIG_MEMBER_ITEM_SPIRIT_CAPABILITY");
         }
-        if !matches!(document["mechanism_version"].as_u64(), Some(61..=105))
+        if !matches!(document["mechanism_version"].as_u64(), Some(61..=106))
             && definitions
                 .values()
                 .any(|entry| entry.get("cooldown_group").is_some())
         {
             return Err("CONFIG_MEMBER_ITEM_COOLDOWN_GROUP_CAPABILITY");
         }
-        if !matches!(document["mechanism_version"].as_u64(), Some(63..=105))
+        if !matches!(document["mechanism_version"].as_u64(), Some(63..=106))
             && definitions.values().any(|entry| {
                 entry.get("heal_max_hp_bps").is_some()
                     || entry.get("restore_max_spirit_bps").is_some()
@@ -140,35 +140,35 @@ pub(super) fn fields(document: &Value) -> Result<(), &'static str> {
         {
             return Err("CONFIG_MEMBER_ITEM_RATIO_RECOVERY_CAPABILITY");
         }
-        if !matches!(document["mechanism_version"].as_u64(), Some(64..=105))
+        if !matches!(document["mechanism_version"].as_u64(), Some(64..=106))
             && definitions
                 .values()
                 .any(|entry| entry.get("quality_multiplier_bps").is_some())
         {
             return Err("CONFIG_MEMBER_ITEM_QUALITY_RECOVERY_CAPABILITY");
         }
-        if !matches!(document["mechanism_version"].as_u64(), Some(65..=105))
+        if !matches!(document["mechanism_version"].as_u64(), Some(65..=106))
             && definitions
                 .values()
                 .any(|entry| entry.get("on_use_self_statuses").is_some())
         {
             return Err("CONFIG_MEMBER_ITEM_SELF_STATUS_CAPABILITY");
         }
-        if !matches!(document["mechanism_version"].as_u64(), Some(66..=105))
+        if !matches!(document["mechanism_version"].as_u64(), Some(66..=106))
             && definitions
                 .values()
                 .any(|entry| entry.get("on_use_self_status_overrides").is_some())
         {
             return Err("CONFIG_MEMBER_ITEM_STATUS_QUALITY_CAPABILITY");
         }
-        if !matches!(document["mechanism_version"].as_u64(), Some(70..=105))
+        if !matches!(document["mechanism_version"].as_u64(), Some(70..=106))
             && definitions
                 .values()
                 .any(|entry| entry.get("apply_healing_received").is_some())
         {
             return Err("CONFIG_MEMBER_ITEM_HEALING_RECEIVED_CAPABILITY");
         }
-        if !matches!(document["mechanism_version"].as_u64(), Some(75..=105))
+        if !matches!(document["mechanism_version"].as_u64(), Some(75..=106))
             && definitions
                 .values()
                 .any(|entry| entry.get("overheal_shield").is_some())

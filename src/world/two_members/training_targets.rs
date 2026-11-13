@@ -379,3 +379,120 @@ impl World {
         *npc = next;
     }
 }
+
+impl World {
+    /// 训练工具：清除目标席位的战斗技能与携带神通冷却（物品冷却不受影响）。
+    fn training_tools_gate(&self, c: &Config) -> Result<()> {
+        if c.training_targets().is_none()
+            || c.mechanism_version != 106
+            || c.training_tools().is_none_or(|tools| !tools.enabled)
+        {
+            return Err(Error::Unsupported);
+        }
+        Ok(())
+    }
+
+    pub(crate) fn reset_training_cooldowns(
+        &mut self,
+        seats: &[usize],
+        c: &Config,
+        events: &mut Events,
+    ) -> Result<()> {
+        self.training_tools_gate(c)?;
+        for &i in seats {
+            let participant = self.members[i].reference.owner_id.clone();
+            self.members[i].cooldowns.clear();
+            events.push((
+                Some(i),
+                EventV4::Private {
+                    event: Event::TrainingCooldownsReset {
+                        participant_id: participant.clone(),
+                    },
+                },
+            ));
+        }
+        Ok(())
+    }
+
+    /// 训练工具：存活成员补满生命/灵力，并按配置清单清除（净化）状态。
+    /// 清单为空则只做数值恢复。死亡成员 `InvalidState`（先整体校验再施加，保持原子）。
+    pub(crate) fn restore_training_member(
+        &mut self,
+        seats: &[usize],
+        clears: &[String],
+        c: &Config,
+        now: u64,
+        events: &mut Events,
+    ) -> Result<()> {
+        self.training_tools_gate(c)?;
+        for &i in seats {
+            if self.members[i].hp == 0 {
+                return Err(Error::InvalidState);
+            }
+        }
+        // 负面分类：clears 为空 = 清除全部 harmful 定义（内核 is_harmful 分类）；
+        // 非空 = 只清除清单内 id（机制 87 显式列表语义）。正面增益永不触碰。
+        let harmful_defs: std::collections::BTreeSet<String> = c
+            .pve
+            .as_ref()
+            .map(|pve| {
+                pve.status_definitions
+                    .iter()
+                    .filter(|d| d.is_harmful())
+                    .map(|d| d.id.clone())
+                    .collect()
+            })
+            .unwrap_or_default();
+        for &i in seats {
+            let entity = self.members[i].reference.entity.clone();
+            let max_hp = self.entity_max_hp(&entity, c, now).ok_or(Error::NotReady)?;
+            let max_spirit = self.member_max_spirit(i, c, now);
+            let participant = self.members[i].reference.owner_id.clone();
+            let internal = status_entity(&entity);
+            let mut cleansed = vec![];
+            {
+                let before = self.statuses.entries().to_vec();
+                let to_cleanse: std::collections::BTreeSet<String> = before
+                    .iter()
+                    .filter(|s| {
+                        s.target == internal
+                            && (clears.is_empty() || clears.contains(&s.definition_id))
+                            && harmful_defs.contains(&s.definition_id)
+                    })
+                    .map(|s| s.definition_id.clone())
+                    .collect();
+                let instance_ids: Vec<String> = before
+                    .iter()
+                    .filter(|s| s.target == internal && to_cleanse.contains(&s.definition_id))
+                    .map(|s| s.instance_id.clone())
+                    .collect();
+                if !instance_ids.is_empty() {
+                    let mut raw = vec![];
+                    self.statuses.remove(
+                        StatusRemovalReason::Cleansed,
+                        |s| instance_ids.contains(&s.instance_id),
+                        &mut raw,
+                    );
+                    self.route_status_events(raw, &before, events);
+                    self.reconcile_caps(c, now);
+                }
+                cleansed.extend(to_cleanse);
+            }
+            let m = &mut self.members[i];
+            m.hp = max_hp;
+            m.spirit = max_spirit;
+            events.push((
+                Some(i),
+                EventV4::Private {
+                    event: Event::TrainingMemberRestored {
+                        participant_id: participant,
+                        hp: max_hp,
+                        spirit: max_spirit,
+                        cleansed,
+                    },
+                },
+            ));
+        }
+        Ok(())
+    }
+}

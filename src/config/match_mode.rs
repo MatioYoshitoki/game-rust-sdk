@@ -116,7 +116,7 @@ pub(super) fn validate(c: &Config) -> Result<(), &'static str> {
         return Err("CONFIG_MATCH_MODE_CAPABILITY");
     };
     if c.schema_version != 7
-        || c.mechanism_version != 105
+        || !matches!(c.mechanism_version, 105..=106)
         || c.combat_rules.is_none()
         || mode.opposed() && members.capacity != 2
     {

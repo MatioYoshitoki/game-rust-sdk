@@ -12,7 +12,7 @@ pub(crate) struct BasicFollowupConfig {
 pub(super) fn fields(document: &Value) -> Result<(), &'static str> {
     if let Some(definition) = document.get("basic_followup") {
         if document["schema_version"] != 7
-            || !matches!(document["mechanism_version"].as_u64(), Some(53..=105))
+            || !matches!(document["mechanism_version"].as_u64(), Some(53..=106))
         {
             return Err("CONFIG_BASIC_FOLLOWUP_CAPABILITY");
         }

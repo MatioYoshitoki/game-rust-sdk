@@ -54,9 +54,11 @@ struct Seat {
     stream: Option<replication::Stream>,
 }
 mod skill_loadouts;
+mod training_tools;
 mod weapon_equipment;
 pub(crate) struct TwoMembers {
     skill_control: SkillControlCheckpoint,
+    training_tool_requests: Vec<String>,
     weapon_operations: Vec<WeaponEquipmentOperation>,
     pub config: Config,
     create: CreateV4,
@@ -254,6 +256,7 @@ impl TwoMembers {
             .collect();
         let mut next = Self {
             skill_control,
+            training_tool_requests: Vec::new(),
             weapon_operations,
             config,
             create,

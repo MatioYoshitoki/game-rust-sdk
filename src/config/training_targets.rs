@@ -80,18 +80,37 @@ impl Config {
     pub(crate) fn training_runtime(&self) -> Option<&TrainingRuntime> {
         self.members.as_ref()?.training_runtime.as_ref()
     }
+    pub(crate) fn training_tools(&self) -> Option<&super::two_members::TrainingTools> {
+        self.members.as_ref()?.training_tools.as_ref()
+    }
 }
 
 pub(super) fn validate(c: &Config) -> Result<(), &'static str> {
     let Some(seats) = c.training_targets() else {
-        return if c.training_runtime().is_some() {
+        return if c.training_runtime().is_some() || c.training_tools().is_some() {
             Err("CONFIG_TRAINING_CAPABILITY")
         } else {
             Ok(())
         };
     };
+    if let Some(tools) = c.training_tools() {
+        if !tools.enabled {
+            return Err("CONFIG_TRAINING_TOOLS");
+        }
+        if !matches!(c.mechanism_version, 105..=106) {
+            return Err("CONFIG_TRAINING_TOOLS");
+        }
+        if c.pve.as_ref().is_some_and(|pve| {
+            tools
+                .restore_clears
+                .iter()
+                .any(|id| !pve.status_definitions.iter().any(|d| d.id == *id))
+        }) {
+            return Err("CONFIG_TRAINING_TOOLS");
+        }
+    }
     if c.protocol_version() != 6
-        || c.mechanism_version != 105
+        || !matches!(c.mechanism_version, 105..=106)
         || c.combat_rules.is_none()
         || c.pve.is_none()
         || c.match_mode.is_some()

@@ -32,6 +32,8 @@ mod source_scenario_combat_tests;
 mod source_vector_oracle_tests;
 #[path = "training_target_contract_tests.rs"]
 mod training_target_contract_tests;
+#[path = "training_tools_tests.rs"]
+mod training_tools_tests;
 #[path = "world_loot_contract_tests.rs"]
 mod world_loot_contract_tests;
 #[path = "zone_exposure_contract_tests.rs"]

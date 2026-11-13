@@ -13,7 +13,7 @@ pub(crate) struct MemberLootDropConfig {
 pub(super) fn fields(document: &Value) -> Result<(), &'static str> {
     if let Some(definition) = document.get("member_loot_drop") {
         if document["schema_version"] != 7
-            || !matches!(document["mechanism_version"].as_u64(), Some(57..=105))
+            || !matches!(document["mechanism_version"].as_u64(), Some(57..=106))
         {
             return Err("CONFIG_MEMBER_LOOT_DROP_CAPABILITY");
         }

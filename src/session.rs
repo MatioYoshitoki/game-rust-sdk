@@ -98,6 +98,24 @@ impl Session {
             .ok_or(Error::Unsupported)?
             .set_skill_loadout(request)
     }
+    pub(crate) fn reset_training_cooldowns(
+        &mut self,
+        request: crate::protocol::ResetTrainingCooldowns,
+    ) -> Result<Status> {
+        self.two
+            .as_mut()
+            .ok_or(Error::Unsupported)?
+            .reset_training_cooldowns(request)
+    }
+    pub(crate) fn restore_training_member(
+        &mut self,
+        request: crate::protocol::RestoreTrainingMember,
+    ) -> Result<Status> {
+        self.two
+            .as_mut()
+            .ok_or(Error::Unsupported)?
+            .restore_training_member(request)
+    }
     pub(crate) fn set_equipped_weapon(
         &mut self,
         request: SetEquippedWeapon,

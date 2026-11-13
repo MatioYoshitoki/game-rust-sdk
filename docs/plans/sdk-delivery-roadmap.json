@@ -909,13 +909,9 @@
     }
   ],
   "nextBatch": {
-    "status": "spec_awaiting_host_confirmation",
-    "deliveryTask": "SDK-5-98",
-    "spec": "docs/batches/SDK-5-98-training-tools.md",
-    "scopeNote": "训练模式房主有限管理机制（机制 106 / schema 7 / 协议 6，目标 0.186.0）：受信宿主 RPC reset_training_cooldowns / restore_training_member + members.training_tools 开关；目标预设动作已存在（SetOwnedTargets/ClearOwnedTargets）。三问答复（重入=终局不可重入；木桩=Dummy{reset_on_defeat} 一等机制；零结算=正常 Defeat 流水零金额）见规格 §2。",
-    "dependsOn": [
-      "宿主确认 §3.1 提交通道（受信 RPC vs 成员 Action）与 §3.3 边界"
-    ]
+    "status": "awaiting_host_input",
+    "deliveryTask": "DELIVERY-06",
+    "scopeNote": "SDK-5-98 已交付（0.186.0）。剩余宿主输入项：R6.1 真实环境登记、历史回归夹具目录、R6.3 容量 profile 与阈值；可选扩展：运行时按模板新增训练目标实例（需宿主确认后再批）。"
   },
   "constraints": [
     "游戏配置、数值与 ID 由宿主显式提供。SDK 提供可复用机制、配置校验与接口。Node 负责认证、传输与外部 I/O。",
@@ -1057,11 +1053,11 @@
     "newOriginalVectorRuns": 0
   },
   "currentBatch": {
-    "id": "PLAY-1",
+    "id": "SDK-5-98",
     "status": "completed",
-    "scope": "多场完整对局玩法验收（战斗/开箱/拾取/成功撤离/战败，单人+成员双模式）与单人 PVE 掉落时钟缺陷修复",
-    "spec": "docs/evidence/gameplay-2026-11-12.md",
-    "latestVerifiedSlice": "docs/evidence/gameplay-2026-11-12.md"
+    "scope": "训练模式房主有限管理机制：受信宿主 RPC reset_training_cooldowns / restore_training_member + members.training_tools 开关（机制 106）",
+    "spec": "docs/batches/SDK-5-98-training-tools.md",
+    "latestVerifiedSlice": "docs/batches/SDK-5-98-training-tools.md"
   },
   "lastSpecifiedBatch": {
     "id": "SDK-5-94",
@@ -1288,5 +1284,5 @@
     "scope": "最近签收的 DELIVERY-04 SDK 范围，保留 DELIVERY-01 来源矩阵用于追溯。",
     "scopeSpec": "docs/batches/SDK-5-91-resources-instances-and-containers.md"
   },
-  "currentSdkVersion": "0.185.1"
+  "currentSdkVersion": "0.186.0"
 }
