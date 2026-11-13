@@ -98,3 +98,28 @@
 ## 5. 交付形态
 
 机制 106 / schema 7 / 协议 6；`sdk_info` 新增 `trainingTools` 能力键；版本 0.186.0；Node 参考入口 + H5 训练房页签（工具条三按钮）；验收记录 + gap 矩阵/roadmap 更新；新 release tag（遵守发布纪律）。
+
+## 6. 宿主接入前追问答复（2026-11-13，代码事实）
+
+### 6.1 迟到 Join / 动态席位（阻塞项）
+
+- **a) 预分配席位陆续 Join**：✅ 支持，但**仅在 Deploying 阶段**。`Action::Join` 要求成员相位为 Deploying（two_members world:1216）；激活前席位可任意时刻陆续 Join（邀请码模型成立）。`deployment_timeout_ms` 内未全员就绪 → `abort()` 整局废弃（不是部分开局）。
+- **b) 激活条件**：硬编码 `active_at 为空 && 所有成员 joined && ready`（two_members 协调器:1247）——**全员 CombatReady 才激活**，无"部分就绪即激活"配置。激活后 `Join` 一律 `InvalidState`（相位已非 Deploying）；激活后 `CombatReady` 仍被接受（用于撤保护）。"个人随时退出"✓：激活后 `Leave` → 该席终局（零金额 Defeat），其余成员继续。
+- **c) 未 Join 席位关局收尾**：`finish_close` 对**每一席**（含未 Join）执行 `ledger_close`；未激活的入场按补偿路径处理（训练配置全零金额 → 零金额补偿凭据）。`Closed` 事件列出 pending_operations，宿主照常回执清零即可。
+- **d) 推荐模式确认**：✅ "成员变更即重开对局（新 create 新名单）+ 宿主跨代聚合个人统计"是内核模型下的正确模式，无内核侧隐患。注意两点：训练配置 `entry_years=0/零入场/零奖励`，重开零成本；重开 = 新 create，需走完整 Deploying→CombatReady（部署窗口 `deployment_timeout_ms` 可配置拉长，容纳"房间等人"）。产品映射建议：**"邀请码加入"发生在 Deploying 阶段（开局前收齐人）**；激活后新成员 → 下一局。
+
+### 6.2 预设目标归属语义
+
+- **归属 = 控制 + 交战双重私有**：目标 `training_owner` 绑定席位——只攻击其归属席；非归属席对目标施法/攻击 → `InvalidTarget`（[训练契约测试](../../src/world/two_members/training_target_contract_tests.rs) 断言跨席施法被拒）。
+- **房主席启用供全体**：❌ 不支持——归属按席隔离是机制边界。产品映射：**每席自助**（各成员用自己的 `SetOwnedTargets` 启停**自己的**目标；房主不代操作）。宿主侧 UX 建议按"每人独立木桩/靶组"呈现。
+
+### 6.3 运行时按模板新增实例（排期评估）
+
+- 现状约束：目标 = 配置期预布置实例（`monster_positions`+`extra_spawns` ≤32），预设组 = 实例子集（每席 1~8 组 × 1~16 实例，组内可混编模板）。**白名单模板数 ≠ 预设组数**：每组可混编；超 8 套组合才触及上限。
+- 短期适配（零开发）：把白名单模板**全部预布置为实例**（≤32 内），按"训练课目"编组预设（每组恰好 3 只 = 产品存活上限；死亡不刷新用 `reset_on_defeat:false`）；`SetOwnedTargets` 重启用同一预设 = 手动刷新。
+- 运行时扩展（`SpawnTrainingTarget{template_id, position}` 动作 + 注册表校验 + 归属绑定 + 存活上限）：中等复杂度，一个标准批次可交付，登记为 **SDK-5-99 候选**（roadmap 已登记，待产品确认后排期）。
+
+### 6.4 口径核实
+
+- **TrainingView metrics**：不止 DPS——每席窗口发布 `damage / hits / critical_hits / highest_hit / rolling_dps / average_dps / by_source{basic, skill, periodic, summon, other}` + `sampled_at_ms`（[TrainingMetricsView](../../src/protocol/v4.md)），窗口 `window_ms`/发布间隔 `publish_interval_ms` 可配。跨局/细粒度统计仍归宿主事件流聚合。
+- **checkpoint 禁用**：确认为**玩法检查点区域配置**（SDK-5-88-checkpoint-zones 的 `checkpoint_schedules`）。财务责任恢复持久化不受影响——训练面全零金额，但宿主仍按恢复契约持久化责任账并落账至 `Closed`（含未到场席位的零金额补偿凭据）。

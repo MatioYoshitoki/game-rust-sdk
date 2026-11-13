@@ -1284,5 +1284,13 @@
     "scope": "最近签收的 DELIVERY-04 SDK 范围，保留 DELIVERY-01 来源矩阵用于追溯。",
     "scopeSpec": "docs/batches/SDK-5-91-resources-instances-and-containers.md"
   },
-  "currentSdkVersion": "0.186.0"
+  "currentSdkVersion": "0.186.0",
+  "candidateBatches": [
+    {
+      "id": "SDK-5-99",
+      "status": "candidate_awaiting_product_decision",
+      "scope": "训练目标运行时生成扩展：SpawnTrainingTarget{template_id, position} 动作 + 注册表校验 + 归属绑定 + 存活上限（产品侧若采用预设分组呈现则本批取消）",
+      "spec": "docs/batches/SDK-5-98-training-tools.md#63-运行时按模板新增实例排期评估"
+    }
+  ]
 }
