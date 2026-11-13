@@ -3,6 +3,7 @@ name = "match-kernel"
 version = "0.185.0"
 edition = "2024"
 description = "Authoritative match runtime SDK with versioned gameplay and asset contracts"
+license = "MIT OR Apache-2.0"
 publish = false
 readme = "SDK.md"
 autobins = false
