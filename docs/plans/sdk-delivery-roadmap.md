@@ -850,3 +850,7 @@ HOT双资源恢复与余量分配仍归SDK-5-88：PR01～PR10声明形式通过�
 2026-11-09 · v1.160：DELIVERY-01 内部可信阶段闭区间、严格单位提交、双方状态组合和消费前资源倍率完成 core-36 同源验收。两端消费后原子预检、容量/政策/免控/错误极性失败不吞条件、3层一次消费/5秒攻防及圆满20%吸血、两种显式资源乘区与冻结引导预算、击杀只刷新既有状态10秒而不增层、原实例/窗口/时钟和重连退场通过。新增31项Rust，默认/全特性各2539项、适配187项；同包四/八成员公开Node和46个H5房间、44配置/144运行时/28浏览器状态/112事件及31个非法Schema片段、438份源码和74份样例通过。包外空缓存离线、旧104及711份既有检查点原哈希保持。原HP夺取管线、每层倍率乘区仍待裁定，完整原成长/阶段投放及整模块继续开放；同模块继续PA01～PA20已付成本返还与次数耗尽组合。
 
 2026-11-09 · v1.163：DELIVERY-01 已验 [SDK 0.102.0 / core-39](../evidence/SDK-5-88-core-39-2026-11-09.json)，仍按[收尾核对](../batches/SDK-5-88-remaining-gates.md)跟踪产品裁定、原配置及外部验收。
+
+## SDK-5-98 训练模式房主有限管理（规格提案，2026-11-13）
+
+宿主训练房（training-sanctum v2.3 §4）转发需求已对照内核机制面完成答复：`SetOwnedTargets`/`ClearOwnedTargets`/`ResetTrainingMetrics` 与木桩（`Dummy{reset_on_defeat}`）、复活（`training_runtime.respawn`）、零结算流水均已存在；新增项为受信宿主 RPC `reset_training_cooldowns` / `restore_training_member` 与 `members.training_tools{enabled}` 开关（机制 106 / schema 7 / 协议 6，目标 0.186.0）。三问答复（重入=Leave 即判负终局不可重入；木桩=一等机制无需新做；零结算=正常 Defeat 流水零金额）见[规格提案](../batches/SDK-5-98-training-tools.md)，待宿主确认提交通道后实施。

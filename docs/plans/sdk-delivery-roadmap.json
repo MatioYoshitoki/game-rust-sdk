@@ -909,12 +909,13 @@
     }
   ],
   "nextBatch": {
-    "status": "awaiting_host_input",
-    "deliveryTask": "DELIVERY-06",
+    "status": "spec_awaiting_host_confirmation",
+    "deliveryTask": "SDK-5-98",
+    "spec": "docs/batches/SDK-5-98-training-tools.md",
+    "scopeNote": "训练模式房主有限管理机制（机制 106 / schema 7 / 协议 6，目标 0.186.0）：受信宿主 RPC reset_training_cooldowns / restore_training_member + members.training_tools 开关；目标预设动作已存在（SetOwnedTargets/ClearOwnedTargets）。三问答复（重入=终局不可重入；木桩=Dummy{reset_on_defeat} 一等机制；零结算=正常 Defeat 流水零金额）见规格 §2。",
     "dependsOn": [
-      "SDK-5-97"
-    ],
-    "scopeNote": "SDK 侧可独立推进项已清空（机制、性能、玩法验收均收口）。剩余：R6.1 真实环境登记、历史回归夹具目录、R6.3 容量 profile 与阈值。宝箱多人开放属机制扩展需走版本升级流程。"
+      "宿主确认 §3.1 提交通道（受信 RPC vs 成员 Action）与 §3.3 边界"
+    ]
   },
   "constraints": [
     "游戏配置、数值与 ID 由宿主显式提供。SDK 提供可复用机制、配置校验与接口。Node 负责认证、传输与外部 I/O。",
