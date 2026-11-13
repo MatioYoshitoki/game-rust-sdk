@@ -32,4 +32,4 @@ node hosts/h5/two-member-server.mjs --binary "$PWD/bin/kernel-host" \
   --host-config /absolute/path/to/game/host.json --database /absolute/path/to/game/members.sqlite
 ```
 
-查阅 [SDK 接入说明](sdk/SDK.md)、[接入指南](docs/guides/sdk-integration.md)、[Node 快速上手](docs/guides/node-quickstart.md)（十分钟跑通成员模式完整对局）和 [接口契约](docs/interfaces/)。部署前按宿主的存储和传输实现验收准入、发布回执、结算和恢复。
+查阅 [SDK 接入说明](sdk/SDK.md)、[接入指南](docs/guides/sdk-integration.md)、[Node 快速上手](docs/guides/node-quickstart.md)（十分钟跑通成员模式完整对局）和 [接口契约](docs/interfaces/)。Linux 生产部署（x86_64/aarch64 musl 静态产物）与供应链审计见 [构建与供应链](docs/delivery/linux-build-and-supply-chain.md)。部署前按宿主的存储和传输实现验收准入、发布回执、结算和恢复。

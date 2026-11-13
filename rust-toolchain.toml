@@ -1,0 +1,5 @@
+# 交付可复现性：所有构建（本机、交付包、Linux 生产产物）钉同一工具链。
+# rustup 检测到本文件会自动安装并对齐该版本；default profile 含 rustfmt/clippy，仓库门禁依赖它们。
+[toolchain]
+channel = "1.96.0"
+profile = "default"

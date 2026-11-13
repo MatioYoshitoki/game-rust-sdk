@@ -8,7 +8,7 @@
 python3 -B scripts/package_sdk.py --out /absolute/path/to/delivery
 ```
 
-构建器生成 Cargo 源包，从源包在离线环境构建普通 JSONL 二进制，并校验交付包摘要。详见 [包内接入说明](../../delivery/README.md)。
+构建器生成 Cargo 源包，从源包在离线环境构建普通 JSONL 二进制，并校验交付包摘要。工具链由根目录 [rust-toolchain.toml](../../rust-toolchain.toml) 钉死（1.96.0）。Linux 生产产物（x86_64/aarch64 musl 静态二进制）与供应链审计见 [Linux 构建与供应链](../delivery/linux-build-and-supply-chain.md)。详见 [包内接入说明](../../delivery/README.md)。
 
 解压后用 `python3 -B verify_bundle.py` 校验文件，再用 `bin/kernel-host --sdk-info` 查看支持信息。使用宿主清单启动 `bin/kernel-host --configs /absolute/path/to/game/catalog.json`。用包外数据和账本验收准入、回执、结算和恢复。
 

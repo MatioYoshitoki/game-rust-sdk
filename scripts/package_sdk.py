@@ -205,6 +205,20 @@ def build(output):
         consumer=(ROOT/'examples/minimal-host/Cargo.toml').read_text().replace('path = "../.."','path = "../sdk"')
         (root/'consumer/Cargo.toml').write_text(consumer)
         shutil.copy2(ROOT/'examples/minimal-host/Cargo.lock',root/'consumer/Cargo.lock')
+        (root/'docs/delivery').mkdir(exist_ok=True)
+        for source in ['linux-build-and-supply-chain.md','dependency-inventory-0.185.0.md','dependency-inventory-0.185.0.json']:
+            doc=root/'docs/delivery'/source
+            shutil.copy2(ROOT/'docs/delivery'/source,doc)
+            # 包根布局：工具链/锁定/审计配置与构建脚本随包提供，链接改为包内相对路径。
+            text=(doc.read_text()
+                  .replace('(../../rust-toolchain.toml)','(../rust-toolchain.toml)')
+                  .replace('(../../Cargo.lock)','(../Cargo.lock)')
+                  .replace('(../../deny.toml)','(../deny.toml)')
+                  .replace('../../scripts/Dockerfile.linux-build','scripts/Dockerfile.linux-build')
+                  .replace('`sh scripts/build-linux.sh`','`sh scripts/build-linux.sh`（包内已含）'))
+            doc.write_text(text)
+        for source in ['rust-toolchain.toml','deny.toml','Cargo.lock','scripts/build-linux.sh','scripts/Dockerfile.linux-build']:
+            shutil.copy2(ROOT/source,root/source)
         shutil.copy2(ROOT/'delivery/README.md',root/'README.md')
         shutil.copy2(ROOT/'delivery/verify_bundle.py',root/'verify_bundle.py')
         dependencies=[]
@@ -227,7 +241,8 @@ def build(output):
             if relative.as_posix() in {
                 'support.json', 'distribution.json', 'sdk/.cargo_vcs_info.json',
                 'docs/batches/SDK-5-88-coverage.json',
-            } or (relative.parts[:2] == ('docs', 'interfaces') and file.name.endswith('.schema.json')):
+            } or (relative.parts[:2] == ('docs', 'interfaces') and file.name.endswith('.schema.json'))
+              or (relative.parts[:2] == ('docs', 'delivery') and file.name.endswith('.json')):
                 continue
             raise ValueError(f'unexpected JSON in SDK delivery: {relative}')
         files=sorted(p for p in root.rglob('*') if p.is_file())

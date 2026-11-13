@@ -1,0 +1,10 @@
+# 可复现 Linux 构建的权威定义：固定官方 rust 镜像 + 本仓库 rust-toolchain.toml 双重钉死。
+# 在 x86_64 机器上构建 x86_64 产物、arm64 机器上构建 aarch64 产物；
+# 双架构可复现产物请分别在两类机器上各构建一次并各自记录 sha256。
+FROM rust:1.96.0
+RUN apt-get update && apt-get install -y --no-install-recommends musl-tools && rm -rf /var/lib/apt/lists/*
+WORKDIR /repo
+COPY . .
+ENV CARGO_NET_OFFLINE=true
+RUN sh scripts/build-linux.sh
+CMD ["sh", "-c", "cat dist/*.sha256"]
