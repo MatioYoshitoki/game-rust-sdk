@@ -1287,5 +1287,5 @@
     "scope": "最近签收的 DELIVERY-04 SDK 范围，保留 DELIVERY-01 来源矩阵用于追溯。",
     "scopeSpec": "docs/batches/SDK-5-91-resources-instances-and-containers.md"
   },
-  "currentSdkVersion": "0.185.0"
+  "currentSdkVersion": "0.185.1"
 }
