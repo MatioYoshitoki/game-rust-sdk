@@ -19,7 +19,7 @@ cargo run --locked --manifest-path examples/minimal-host/Cargo.toml -- \
 
 样例使用普通 Runtime，先执行读取/入场业务，再提交 Join，接收完整状态并回报 Sent，使用该发布 ID 提交 CombatReady。最后脚本玩家提交 Leave，由 Rust 按当前协议生成死亡结算。最终输出 JSON 包括配置哈希、原业务正文及凭据、账户余额、World 与未决操作数。完整战斗/撤离另见现有 [B1 规格](../batches/B1-minimal-loop.md)。
 
-模式包括 `normal`、`unknown-settlement`、`refused-admission`、`close-before-ready`、`failed-publication`、`config-mismatch`。验收运行 `python3 scripts/verify_sdk_2.py`；它在仓库外复制、构建消费方并核对八项标准。
+模式包括 `normal`、`unknown-settlement`、`refused-admission`、`close-before-ready`、`failed-publication`、`config-mismatch`。验收运行 `python3 scripts/verify_sdk_2.py`；它在仓库外复制、构建消费方并核对八项标准。脚本需宿主历史验收资料 `examples/minimal-host/account.json` 与 `config/b1.json`（游戏配表与账户事实按边界不入 SDK 源码与交付包，由宿主持有提供）。三类矩阵 [sdk-requirements-gap.md](../checklists/sdk-requirements-gap.md) 随交付包提供（包内版本链接指回 GitHub 仓库全量）。
 
 ## 初始化与六个调用
 

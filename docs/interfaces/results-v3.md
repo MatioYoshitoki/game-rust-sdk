@@ -47,6 +47,8 @@ LoadAssets、AssetsLoaded、Admission、Compensation 及原业务/传输回执�
 
 summary 的 inventory 与可选 scoring/map_progress/reset_progress 承接原收支与机制证明；result 中的 ID 与策略共同冻结。summary 没有 Outcome 字段。正数量、唯一、按资产 ID 排序、事务原子性、revision/commit_id 与原责任身份要求见 [资产契约](assets-v2.md)。宿主不依据结果名或策略重算金额。
 
+**`itemsGained` 口径（D-05，2026-11-13 已裁定）**：`summary.inventory` 各行的 `carried/looted/kept/dropped` 是权威拆分事实。宿主如需旧 `itemsGained` 展示字段，按经手总量语义以 `kept + dropped` 合并生成（含战备携带物），文案表述"本局结算涉及物品（含战备携带）"，不得宣称"净获得"，也不引入入局基线差分。分字段保留为可选增强，不得用不明字段影响奖励金额；`enterInventory` 为兼容字段，结算不读取。详见 [D-05 裁定](../decisions/D-05-items-gained-semantics.md)。
+
 Rust 接纳提交证明后发 `ResultSettlementApplied {credits,summary}`，与原冻结请求一致。协议 2 继续 AssetSettlementApplied，协议 1 继续 SettlementApplied。事件必须与实际已验证的业务提交区分于 Closed；World 关闭仍可能留下待核对资产责任。
 
 ## 恢复与兼容

@@ -3,6 +3,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 from pathlib import Path, PurePosixPath
 import shutil
 import subprocess
@@ -96,7 +97,7 @@ def build(output):
         for source in ['two-member.html','two-member.js','member.html','member.js','delta.html','delta.js','replication.mjs','periodic.mjs','multiplayer-periodic.html','multiplayer-periodic.js','shields.mjs','multiplayer-shield.html','multiplayer-shield.js','combat.mjs','multiplayer-combat.html','multiplayer-combat.js','areas.mjs','member-area.html','member-area.js','member-line.html','member-line.js','flights.mjs','member-piercing.html','member-piercing.js','skill-slots.mjs','member-skills.html','member-skills.js','hp-costs.mjs','skill-hp-cost.html','skill-hp-cost.js']:
             shutil.copy2(ROOT/'web'/source,root/'web'/source)
         (root/'docs/interfaces').mkdir(parents=True)
-        for source in ['cast-interception-v1.md','cast-interception-v1.schema.json','paid-resource-effects-v1.md','paid-resource-effects-v1.schema.json','conditional-activation-v1.md','conditional-activation-v1.schema.json','status-counters-v1.md','status-counters-v1.schema.json','source-gates-v1.md','source-gates-v1.schema.json','status-ends-v1.md','status-ends-v1.schema.json','character-build-v1.md','character-build-v1.schema.json','resource-steal-v1.md','resource-steal-v1.schema.json','resource-commit-v1.md','resource-commit-v1.schema.json','unit-effects-v1.md','unit-effects-v1.schema.json','skill-loadouts-v1.md','skill-loadouts-v1.schema.json','cast-lifecycle-v1.md','cast-lifecycle-v1.schema.json','two-members-v4.md','two-members-v4.schema.json','members-v5.md','members-v5.schema.json','publications-v6.md','publications-v6.schema.json','multiplayer-periodic-v1.md','multiplayer-periodic-v1.schema.json','multiplayer-shields-v1.md','multiplayer-shields-v1.schema.json','unified-member-combat-v1.md','unified-member-combat-v1.schema.json','member-circle-plans-v1.md','member-circle-plans-v1.schema.json','member-line-plans-v1.md','member-line-plans-v1.schema.json','member-piercing-v1.md','member-piercing-v1.schema.json','member-skill-slots-v1.md','member-skill-slots-v1.schema.json','skill-hp-cost-v1.md','skill-hp-cost-v1.schema.json','cast-movement-v1.md','direction-charge-v1.md','charge-reaim-v1.md','fixed-channel-v1.md','projectile-recast-v1.md','recovery-followup-v1.md','cancelable-recovery-v1.md','basic-followup-v1.md','locked-basic-target-v1.md','basic-pursuit-v1.md','auto-basic-pursuit-v1.md','member-loot-drop-v1.md','member-item-use-v1.md','member-item-cooldown-v1.md','member-item-spirit-v1.md','member-item-cooldown-group-v1.md','member-item-dual-recovery-v1.md','member-item-ratio-recovery-v1.md','member-item-quality-recovery-v1.md','member-item-self-status-v1.md','member-item-status-quality-v1.md','member-item-damage-reduction-v1.md','member-periodic-damage-reduction-v1.md','member-periodic-healing-received-v1.md','member-item-healing-received-v1.md','member-recovery-orb-v1.md','member-recovery-strength-v1.md','member-spirit-recovery-lock-v1.md','member-npc-spirit-recovery-lock-v1.md','member-overheal-shield-v1.md','member-periodic-overheal-shield-v1.md','member-instant-self-heal-v1.md','member-ally-heal-v1.md','member-ally-hot-v1.md','member-ally-shield-v1.md','member-ally-overheal-shield-v1.md','member-ally-hot-overheal-shield-v1.md','member-npc-silence-v1.md','member-control-immunity-v1.md','member-control-duration-reduction-v1.md','member-first-control-immunity-v1.md','member-item-cleanse-v1.md','member-npc-root-v1.md','member-npc-stun-v1.md','member-npc-movement-slow-v1.md','member-movement-haste-v1.md','member-cooldown-reduction-v1.md','member-armor-penetration-v1.md','member-critical-chance-v1.md','member-critical-damage-bonus-v1.md','member-dodge-penalty-v1.md','member-dodge-chance-v1.md','member-accuracy-v1.md','member-npc-hit-v1.md','member-damage-immunity-v1.md','member-npc-unavoidable-v1.md','member-unavoidable-v1.md','direct-ignore-armor-v1.md','member-skill-power-v1.md','combat-rules-v1.md','combat-rules-v1.schema.json']:
+        for source in ['independent-match-kernel.INTERFACE.md','cast-interception-v1.md','cast-interception-v1.schema.json','paid-resource-effects-v1.md','paid-resource-effects-v1.schema.json','conditional-activation-v1.md','conditional-activation-v1.schema.json','status-counters-v1.md','status-counters-v1.schema.json','source-gates-v1.md','source-gates-v1.schema.json','status-ends-v1.md','status-ends-v1.schema.json','character-build-v1.md','character-build-v1.schema.json','resource-steal-v1.md','resource-steal-v1.schema.json','resource-commit-v1.md','resource-commit-v1.schema.json','unit-effects-v1.md','unit-effects-v1.schema.json','skill-loadouts-v1.md','skill-loadouts-v1.schema.json','cast-lifecycle-v1.md','cast-lifecycle-v1.schema.json','two-members-v4.md','two-members-v4.schema.json','members-v5.md','members-v5.schema.json','publications-v6.md','publications-v6.schema.json','multiplayer-periodic-v1.md','multiplayer-periodic-v1.schema.json','multiplayer-shields-v1.md','multiplayer-shields-v1.schema.json','unified-member-combat-v1.md','unified-member-combat-v1.schema.json','member-circle-plans-v1.md','member-circle-plans-v1.schema.json','member-line-plans-v1.md','member-line-plans-v1.schema.json','member-piercing-v1.md','member-piercing-v1.schema.json','member-skill-slots-v1.md','member-skill-slots-v1.schema.json','skill-hp-cost-v1.md','skill-hp-cost-v1.schema.json','cast-movement-v1.md','direction-charge-v1.md','charge-reaim-v1.md','fixed-channel-v1.md','projectile-recast-v1.md','recovery-followup-v1.md','cancelable-recovery-v1.md','basic-followup-v1.md','locked-basic-target-v1.md','basic-pursuit-v1.md','auto-basic-pursuit-v1.md','member-loot-drop-v1.md','member-item-use-v1.md','member-item-cooldown-v1.md','member-item-spirit-v1.md','member-item-cooldown-group-v1.md','member-item-dual-recovery-v1.md','member-item-ratio-recovery-v1.md','member-item-quality-recovery-v1.md','member-item-self-status-v1.md','member-item-status-quality-v1.md','member-item-damage-reduction-v1.md','member-periodic-damage-reduction-v1.md','member-periodic-healing-received-v1.md','member-item-healing-received-v1.md','member-recovery-orb-v1.md','member-recovery-strength-v1.md','member-spirit-recovery-lock-v1.md','member-npc-spirit-recovery-lock-v1.md','member-overheal-shield-v1.md','member-periodic-overheal-shield-v1.md','member-instant-self-heal-v1.md','member-ally-heal-v1.md','member-ally-hot-v1.md','member-ally-shield-v1.md','member-ally-overheal-shield-v1.md','member-ally-hot-overheal-shield-v1.md','member-npc-silence-v1.md','member-control-immunity-v1.md','member-control-duration-reduction-v1.md','member-first-control-immunity-v1.md','member-item-cleanse-v1.md','member-npc-root-v1.md','member-npc-stun-v1.md','member-npc-movement-slow-v1.md','member-movement-haste-v1.md','member-cooldown-reduction-v1.md','member-armor-penetration-v1.md','member-critical-chance-v1.md','member-critical-damage-bonus-v1.md','member-dodge-penalty-v1.md','member-dodge-chance-v1.md','member-accuracy-v1.md','member-npc-hit-v1.md','member-damage-immunity-v1.md','member-npc-unavoidable-v1.md','member-unavoidable-v1.md','direct-ignore-armor-v1.md','member-skill-power-v1.md','combat-rules-v1.md','combat-rules-v1.schema.json']:
             shutil.copy2(ROOT/'docs/interfaces'/source,root/'docs/interfaces'/source)
             if source.endswith('.md'):
                 file=root/'docs/interfaces'/source
@@ -104,6 +105,7 @@ def build(output):
         (root/'docs/batches').mkdir()
         for source in ['world-geometry-v1.md', 'npc-combat-ai-v1.md', 'participant-ai-v1.md', 'world-loot-v1.md', 'settlement-rewards-v1.md', 'settlement-facts-v1.md', 'settlement-facts-v1.schema.json', 'world-boons-v1.md']:
             shutil.copy2(ROOT/'docs/interfaces'/source,root/'docs/interfaces'/source)
+        shutil.copy2(ROOT/'docs/batches/SDK-2-host-contract.md',root/'docs/batches/SDK-2-host-contract.md')
         shutil.copy2(ROOT/'docs/batches/SDK-5-21-multiplayer-periodic.md',root/'docs/batches/SDK-5-21-multiplayer-periodic.md')
         shutil.copy2(ROOT/'docs/batches/SDK-5-22-multiplayer-shields.md',root/'docs/batches/SDK-5-22-multiplayer-shields.md')
         shutil.copy2(ROOT/'docs/batches/SDK-5-23-unified-member-combat.md',root/'docs/batches/SDK-5-23-unified-member-combat.md')
@@ -174,6 +176,8 @@ def build(output):
         for source in ['SDK-5-88-combat-and-casting.md','SDK-5-88-coverage.json','SDK-5-88-cast-interception.md','SDK-5-88-source-execution.md','SDK-5-88-source-cast-scenarios.md','SDK-5-88-action-terminal-counters.md','SDK-5-88-basic-wave.md','SDK-5-88-basic-profiles.md','SDK-5-88-basic-impact.md','SDK-5-88-basic-hitscan-patterns.md','SDK-5-88-basic-beam.md','SDK-5-88-basic-wave-controls.md','SDK-5-88-basic-projectile-followups.md','SDK-5-88-basic-projectile-paths.md','SDK-5-88-basic-world-fields.md','SDK-5-88-basic-burning-fields.md','SDK-5-88-basic-charge.md','SDK-5-88-basic-flight-and-stack-finisher.md','SDK-5-88-weapon-equipment.md','SDK-5-88-moving-enter-area.md','SDK-5-88-detached-enter-area.md','SDK-5-88-npc-ground-field.md','SDK-5-88-npc-ground-strike.md','SDK-5-88-checkpoint-zones.md','SDK-5-88-member-ground-traps.md','SDK-5-88-member-cast-anchors.md','SDK-5-88-member-anchor-recast.md','SDK-5-88-anchor-following-fields.md','SDK-5-88-anchor-return-and-end.md','SDK-5-88-source-time-current.md','SDK-5-88-source-primordial-seal.md','SDK-5-88-source-retaliation-window.md','SDK-5-88-source-guard-families.md','SDK-5-88-source-stillness-guard.md','SDK-5-88-source-ally-recovery.md','SDK-5-88-source-ally-self-and-marks.md']:
             shutil.copy2(ROOT/'docs/batches'/source,root/'docs/batches'/source)
         (root/'docs/decisions').mkdir(exist_ok=True)
+        for source in ['D-05-items-gained-semantics.md','SDK-5-95-divergence-arbitration.md']:
+            shutil.copy2(ROOT/'docs/decisions'/source,root/'docs/decisions'/source)
         for source in (ROOT/'docs/decisions').glob('SDK-5-88-*.md'):
             shutil.copy2(source,root/'docs/decisions'/source.name)
         for decision in ['SDK-5-88-movement-status-mapping.md','SDK-5-88-attack-speed-mapping.md']:
@@ -203,6 +207,31 @@ def build(output):
                   .replace('[AGENTS.md](../../AGENTS.md)','仓库 AGENTS.md')
                   .replace('[PRD §3.7](../../PRD-367-independent-rust-match-kernel.md)','PRD §3.7（仓库 PRD-367）'))
             guide.write_text(text)
+        (root/'docs/checklists').mkdir(exist_ok=True)
+        gh = 'https://github.com/MatioYoshitoki/game-rust-sdk/blob/main/'
+        gapdoc = root/'docs/checklists/sdk-requirements-gap.md'
+        shutil.copy2(ROOT/'docs/checklists/sdk-requirements-gap.md',gapdoc)
+        g = (gapdoc.read_text()
+             .replace('](../plans/','](https://github.com/MatioYoshitoki/game-rust-sdk/blob/main/docs/plans/')
+             .replace('](../audits/','](https://github.com/MatioYoshitoki/game-rust-sdk/blob/main/docs/audits/')
+             .replace('](../evidence/','](https://github.com/MatioYoshitoki/game-rust-sdk/blob/main/docs/evidence/')
+             .replace('](../checklists/','](https://github.com/MatioYoshitoki/game-rust-sdk/blob/main/docs/checklists/')
+             .replace('](../../PRD-367-independent-rust-match-kernel.md)','](https://github.com/MatioYoshitoki/game-rust-sdk/blob/main/PRD-367-independent-rust-match-kernel.md)'))
+        g = re.sub(r'\]\(\.\./\.\./rust-match-kernel-v1\.1/[^)]+\)', '（宿主回归夹具，仓库外）', g)
+        gapdoc.write_text(g)
+        (root/'scripts').mkdir(exist_ok=True)
+        vs = root/'scripts/verify_sdk_2.py'
+        shutil.copy2(ROOT/'scripts/verify_sdk_2.py',vs)
+        vs_header = ('"""交付包布局：CONSUMER 指向包内 consumer/，crate 源在 sdk/。\n'
+                     '运行前置：宿主提供 consumer/account.json 与 sdk/config/b1.json（历史验收资料，\n'
+                     '游戏配表与账户事实不入 SDK 包）。"""\n')
+        t = vs_header + vs.read_text()
+        t = (t.replace("'examples/minimal-host'","'consumer'")
+              .replace("ROOT / 'Cargo.toml'","ROOT / 'sdk/Cargo.toml'")
+              .replace("ROOT / 'src/lib.rs'","ROOT / 'sdk/src/lib.rs'")
+              .replace("*ROOT.glob('src/**/*.rs')","*ROOT.glob('sdk/src/**/*.rs')")
+              .replace("*ROOT.glob('src/**/*.json')","*ROOT.glob('sdk/src/**/*.json')"))
+        vs.write_text(t)
         shutil.copytree(ROOT/'examples/minimal-host/src',root/'consumer/src')
         consumer=(ROOT/'examples/minimal-host/Cargo.toml').read_text().replace('path = "../.."','path = "../sdk"')
         (root/'consumer/Cargo.toml').write_text(consumer)

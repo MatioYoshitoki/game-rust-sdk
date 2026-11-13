@@ -14,6 +14,13 @@ python3 -B scripts/package_sdk.py --out /absolute/path/to/delivery
 
 升级时保存接入方配置原文、id/hash、原 Create 身份和可信检查点。旧配置 schema 1 依赖历史版本的内置参数，先用原版本处理未决责任，再由宿主迁移到 schema 2。
 
+## 发布纪律
+
+- **已发布 tag 与资产哈希不可变**：Release 一经发出，其 tag 不得原地重打（v0.185.0 曾因包内容刷新被移动 ee6b5fc → aa976be，旧引用全部作废——以此为戒）。
+- **新版本一律新 tag**：`vX.Y.Z` 对应 Cargo.toml 同版本的一次发布；内容变更走版本号递增，不在既有 tag 上追加资产。
+- 交付包每次构建产出独立 `SHA256SUMS` 与 `package.json`（含 tarball/crate/二进制 sha256）；Release 说明中的校验值必须与最终上传资产一致。
+- 打包器内置 `config-gates` 步骤：配置手册门槛表与 `--sdk-info` 漂移时交付构建直接失败。
+
 ## 历史机制记录
 
 以下版本、批次证据和样例路径为历史记录。

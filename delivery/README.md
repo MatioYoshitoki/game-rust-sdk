@@ -11,6 +11,8 @@ bin/kernel-host --sdk-info
 
 [distribution.json](distribution.json) 记录版本、目标平台与源码摘要。[support.json](support.json) 记录二进制支持的协议、配置 schema 和机制版本。
 
+发布纪律：已发布 tag 与资产哈希不可变；新版本一律以新 tag 发新版本，不在既有 tag 上重打或替换历史资产。
+
 ## 启动
 
 ```sh
