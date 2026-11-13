@@ -218,6 +218,7 @@ def build(output):
                   .replace('`sh scripts/build-linux.sh`','`sh scripts/build-linux.sh`（包内已含）'))
             doc.write_text(text)
         for source in ['rust-toolchain.toml','deny.toml','Cargo.lock','scripts/build-linux.sh','scripts/Dockerfile.linux-build']:
+            (root/source).parent.mkdir(parents=True,exist_ok=True)
             shutil.copy2(ROOT/source,root/source)
         shutil.copy2(ROOT/'delivery/README.md',root/'README.md')
         shutil.copy2(ROOT/'delivery/verify_bundle.py',root/'verify_bundle.py')
@@ -238,11 +239,12 @@ def build(output):
             relative = file.relative_to(root)
             if relative.parts[0] == 'vendor':
                 continue
-            if relative.as_posix() in {
+            if ((relative.as_posix() in {
                 'support.json', 'distribution.json', 'sdk/.cargo_vcs_info.json',
                 'docs/batches/SDK-5-88-coverage.json',
-            } or (relative.parts[:2] == ('docs', 'interfaces') and file.name.endswith('.schema.json'))
-              or (relative.parts[:2] == ('docs', 'delivery') and file.name.endswith('.json')):
+            })
+              or (relative.parts[:2] == ('docs', 'interfaces') and file.name.endswith('.schema.json'))
+              or (relative.parts[:2] == ('docs', 'delivery') and file.name.endswith('.json'))):
                 continue
             raise ValueError(f'unexpected JSON in SDK delivery: {relative}')
         files=sorted(p for p in root.rglob('*') if p.is_file())
