@@ -146,7 +146,7 @@
 | 105 | `worldGeometry` | — |
 | 105 | `zeroEntryCost` | — |
 | 105 | `zoneExposure` | — |
-| 106 | `trainingTools` | — |
+| 107 | `trainingTools` | — |
 <!-- GATES-END -->
 
 ## 移动与寻路 ✅
