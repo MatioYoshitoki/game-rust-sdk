@@ -17,7 +17,7 @@ pub(super) fn fields(document: &Value) -> Result<(), &'static str> {
     for skill in skills {
         if let Some(recast) = skill.get("recast") {
             if document["schema_version"] != 7
-                || !matches!(document["mechanism_version"].as_u64(), Some(50..=106))
+                || !matches!(document["mechanism_version"].as_u64(), Some(50..=107))
             {
                 return Err("CONFIG_RECAST_CAPABILITY");
             }

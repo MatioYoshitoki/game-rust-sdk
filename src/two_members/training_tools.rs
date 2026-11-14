@@ -4,7 +4,8 @@
 //! 且训练配置（`training_targets`）存在；否则 `Unsupported`。`request_id` 幂等。
 use super::*;
 use crate::protocol::{
-    MatchKey, ResetTrainingCooldowns, RestoreTrainingMember, TrainingToolTargets,
+    DespawnTrainingTargets, MatchKey, ResetTrainingCooldowns, RestoreTrainingMember,
+    SpawnTrainingTargets, TrainingToolTargets,
 };
 
 const MAX_TRACKED_REQUESTS: usize = 256;
@@ -40,6 +41,102 @@ impl TwoMembers {
         )
     }
 
+    pub(crate) fn spawn_training_targets(
+        &mut self,
+        request: SpawnTrainingTargets,
+    ) -> Result<Status> {
+        if request.key != self.create.key {
+            return Err(Error::StaleMatch);
+        }
+        if matches!(self.phase, Phase::Closed | Phase::Faulted) {
+            return Err(Error::Closed);
+        }
+        if self
+            .config
+            .training_tools()
+            .is_none_or(|tools| !tools.enabled)
+            || self.config.training_targets().is_none()
+            || self.config.mechanism_version != 107
+        {
+            return Err(Error::Unsupported);
+        }
+        if self
+            .training_tool_requests
+            .iter()
+            .any(|seen| seen == &request.request_id)
+        {
+            return Ok(self.status());
+        }
+        if self.training_tool_requests.len() >= MAX_TRACKED_REQUESTS {
+            self.training_tool_requests.remove(0);
+        }
+        self.training_tool_requests.push(request.request_id.clone());
+        let seat = self
+            .seats
+            .iter()
+            .position(|s| s.original.participant_id == request.participant_id)
+            .ok_or(Error::Unauthorized)?;
+        self.reserve()?;
+        let mut events = vec![];
+        let world = self.world.as_mut().ok_or(Error::NotReady)?;
+        let ids = world.spawn_training_targets(
+            seat,
+            &request.participant_id,
+            &request.template_id,
+            &request.positions,
+            &self.config,
+            self.now,
+            &mut events,
+        )?;
+        self.events(events);
+        self.dirty = true;
+        Ok(self.status())
+    }
+
+    pub(crate) fn despawn_training_targets(
+        &mut self,
+        request: DespawnTrainingTargets,
+    ) -> Result<Status> {
+        if request.key != self.create.key {
+            return Err(Error::StaleMatch);
+        }
+        if matches!(self.phase, Phase::Closed | Phase::Faulted) {
+            return Err(Error::Closed);
+        }
+        if self
+            .config
+            .training_tools()
+            .is_none_or(|tools| !tools.enabled)
+            || self.config.training_targets().is_none()
+            || self.config.mechanism_version != 107
+        {
+            return Err(Error::Unsupported);
+        }
+        if self
+            .training_tool_requests
+            .iter()
+            .any(|seen| seen == &request.request_id)
+        {
+            return Ok(self.status());
+        }
+        if self.training_tool_requests.len() >= MAX_TRACKED_REQUESTS {
+            self.training_tool_requests.remove(0);
+        }
+        self.training_tool_requests.push(request.request_id.clone());
+        let seat = self
+            .seats
+            .iter()
+            .position(|s| s.original.participant_id == request.participant_id)
+            .ok_or(Error::Unauthorized)?;
+        self.reserve()?;
+        let mut events = vec![];
+        let world = self.world.as_mut().ok_or(Error::NotReady)?;
+        world.despawn_training_targets(seat, &request.ids, &self.config, self.now, &mut events)?;
+        self.events(events);
+        self.dirty = true;
+        Ok(self.status())
+    }
+
     fn training_tool(
         &mut self,
         kind: ToolKind,
@@ -58,7 +155,7 @@ impl TwoMembers {
             .map(|tools| tools.restore_clears.clone())
             .unwrap_or_default();
         if self.config.training_targets().is_none()
-            || self.config.mechanism_version != 106
+            || self.config.mechanism_version != 107
             || tools.is_none()
         {
             return Err(Error::Unsupported);

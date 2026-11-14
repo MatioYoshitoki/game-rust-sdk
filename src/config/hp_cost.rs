@@ -48,7 +48,7 @@ pub(super) fn fields(v: &serde_json::Value) -> Result<(), &'static str> {
     for s in super::player_skills::raw(v) {
         if let Some(cost) = s.get("hp_cost") {
             if v["schema_version"] != 7
-                || !matches!(v["mechanism_version"].as_u64(), Some(45..=106))
+                || !matches!(v["mechanism_version"].as_u64(), Some(45..=107))
             {
                 return Err("CONFIG_HP_COST_CAPABILITY");
             }

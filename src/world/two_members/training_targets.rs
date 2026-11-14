@@ -281,7 +281,28 @@ impl World {
             Owner::Npc(i) => self.npcs[i].training_owner,
             Owner::Summon(i) => Some(self.summons[i].member),
         };
-        seat(a) == seat(b)
+        let (sa, sb) = (seat(a), seat(b));
+        if sa == sb {
+            return true;
+        }
+        // 共享作用域：目标归属席声明 owner_scope=all 时，其他成员可与之互动作
+        //（攻击/受击/增益同一条 relation 链；npc 主动行为仍按归属席）。
+        let npc_owned_by = |owner: Owner| match owner {
+            Owner::Npc(i) => self.npcs[i].training_owner,
+            _ => None,
+        };
+        let shared_with = |npc_owner: usize, member: usize| {
+            member != npc_owner
+                && self
+                    .training_shared_seats
+                    .iter()
+                    .any(|&shared| shared == npc_owner)
+        };
+        match (sa, sb) {
+            (Some(member), Some(npc_owner)) => shared_with(npc_owner, member),
+            (Some(npc_owner), Some(member)) => shared_with(npc_owner, member),
+            _ => false,
+        }
     }
 
     pub(super) fn change_training_targets(
@@ -384,7 +405,7 @@ impl World {
     /// 训练工具：清除目标席位的战斗技能与携带神通冷却（物品冷却不受影响）。
     fn training_tools_gate(&self, c: &Config) -> Result<()> {
         if c.training_targets().is_none()
-            || c.mechanism_version != 106
+            || c.mechanism_version != 107
             || c.training_tools().is_none_or(|tools| !tools.enabled)
         {
             return Err(Error::Unsupported);
@@ -492,6 +513,115 @@ impl World {
                     },
                 },
             ));
+        }
+        Ok(())
+    }
+}
+
+impl World {
+    /// 训练工具：按注册模板在宿主候选点生成目标实例（归属请求席、作用域按席配置）。
+    /// 生成数与该席运行时存活数合计受 `training_tools.spawn_max_alive` 约束。
+    pub(crate) fn spawn_training_targets(
+        &mut self,
+        seat: usize,
+        participant_id: &str,
+        template_id: &str,
+        positions: &[[f64; 2]],
+        c: &Config,
+        now: u64,
+        events: &mut Events,
+    ) -> Result<Vec<String>> {
+        self.training_tools_gate(c)?;
+        let pve = c.pve.as_ref().ok_or(Error::Unsupported)?;
+        let profile = pve
+            .profiles
+            .get(template_id)
+            .cloned()
+            .ok_or(Error::InvalidTarget)?;
+        let max_alive = c
+            .training_tools()
+            .map(|tools| tools.spawn_max_alive)
+            .unwrap_or(3) as usize;
+        let alive_spawned = self
+            .npcs
+            .iter()
+            .filter(|n| n.runtime_spawned && n.training_owner == Some(seat) && n.hp > 0)
+            .count();
+        if alive_spawned + positions.len() > max_alive {
+            return Err(Error::Capacity);
+        }
+        // 落点校验：在图内、足迹可清（可站立）
+        for &pos in positions {
+            if !self.grid.clear(pos, profile.combat.radius, 0) {
+                return Err(Error::InvalidTarget);
+            }
+        }
+        let mut ids = vec![];
+        let mut next = self.npcs.len() + 1;
+        for &pos in positions {
+            let id = loop {
+                let candidate = format!("npc-{next}");
+                next += 1;
+                if self.npcs.iter().all(|n| n.entity.id != candidate)
+                    && ids.iter().all(|i: &String| i != &candidate)
+                {
+                    break candidate;
+                }
+            };
+            let mut npc = crate::world::two_members::Npc::new(
+                EntityRef {
+                    kind: StatusEntityKind::Monster,
+                    id: id.clone(),
+                    generation: 1,
+                },
+                template_id.to_string(),
+                profile.clone(),
+                pos,
+            );
+            npc.training_owner = Some(seat);
+            npc.training_active = true;
+            npc.runtime_spawned = true;
+            self.npcs.push(npc);
+            ids.push(id);
+        }
+        events.push((
+            None,
+            EventV4::TrainingTargetsSpawned {
+                participant_id: participant_id.to_string(),
+                ids: ids.clone(),
+            },
+        ));
+        Ok(ids)
+    }
+
+    /// 训练工具：移除运行时生成目标（退出战斗、清瞬态、槽位保留防索引漂移）。
+    /// 目录预布置实例不可移除（归预设语义）。
+    pub(crate) fn despawn_training_targets(
+        &mut self,
+        seat: usize,
+        ids: &[String],
+        c: &Config,
+        now: u64,
+        events: &mut Events,
+    ) -> Result<()> {
+        self.training_tools_gate(c)?;
+        let mut despawned = vec![];
+        for id in ids {
+            let index = self
+                .npcs
+                .iter()
+                .position(|n| {
+                    &n.entity.id == id && n.runtime_spawned && n.training_owner == Some(seat)
+                })
+                .ok_or(Error::InvalidTarget)?;
+            let entity = self.npcs[index].entity.clone();
+            self.clear_combat_target(&entity, now, events);
+            self.npcs[index].hp = 0;
+            self.npcs[index].training_active = false;
+            despawned.push(entity.id.clone());
+        }
+        if !despawned.is_empty() {
+            events.push((None, EventV4::TrainingTargetsDespawning { ids: despawned }));
         }
         Ok(())
     }

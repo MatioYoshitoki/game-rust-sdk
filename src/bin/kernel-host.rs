@@ -22,6 +22,8 @@ enum Command {
     SetEquippedWeapon { request: SetEquippedWeapon },
     ResetTrainingCooldowns { request: ResetTrainingCooldowns },
     RestoreTrainingMember { request: RestoreTrainingMember },
+    SpawnTrainingTargets { request: SpawnTrainingTargets },
+    DespawnTrainingTargets { request: DespawnTrainingTargets },
     SubmitBusinessReceipt { request: BusinessReceiptRequest },
     SubmitTransportReceipt { request: TransportReceipt },
     Spectate { request: SpectateV6 },
@@ -124,6 +126,12 @@ fn main() -> io::Result<()> {
                         .map(|status| Response::Status { status }),
                     Command::RestoreTrainingMember { request } => client
                         .restore_training_member(request)
+                        .map(|status| Response::Status { status }),
+                    Command::SpawnTrainingTargets { request } => client
+                        .spawn_training_targets(request)
+                        .map(|status| Response::Status { status }),
+                    Command::DespawnTrainingTargets { request } => client
+                        .despawn_training_targets(request)
                         .map(|status| Response::Status { status }),
                     Command::SubmitInput { request } => client
                         .submit_input(request)

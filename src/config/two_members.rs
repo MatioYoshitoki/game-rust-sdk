@@ -61,6 +61,17 @@ pub(crate) struct TrainingTools {
     pub enabled: bool,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub restore_clears: Vec<String>,
+    #[serde(
+        default = "default_spawn_max_alive",
+        skip_serializing_if = "is_default_spawn_max_alive"
+    )]
+    pub spawn_max_alive: u32,
+}
+fn default_spawn_max_alive() -> u32 {
+    3
+}
+fn is_default_spawn_max_alive(v: &u32) -> bool {
+    *v == 3
 }
 pub(crate) const MAX_SPECTATORS: u8 = 8;
 pub(crate) const MAX_SPECTATOR_EVENTS: usize = 32;
@@ -93,7 +104,7 @@ pub(crate) struct MemberSettings<'a> {
 pub(super) fn validation_document(v: &Value) -> Result<Value, &'static str> {
     let replicated = v["schema_version"] == 7;
     if v.pointer("/params/entry_years").and_then(Value::as_u64) == Some(0)
-        && (!replicated || !matches!(v["mechanism_version"].as_u64(), Some(105..=106)))
+        && (!replicated || !matches!(v["mechanism_version"].as_u64(), Some(105..=107)))
     {
         return Err("CONFIG_PARAMETER_BOUNDS");
     }
@@ -115,7 +126,7 @@ pub(super) fn validation_document(v: &Value) -> Result<Value, &'static str> {
             || v.get("members").is_some())
         || multi
             && (if replicated {
-                !matches!(v["mechanism_version"].as_u64(), Some(37..=106))
+                !matches!(v["mechanism_version"].as_u64(), Some(37..=107))
             } else {
                 v["mechanism_version"] != 36
             } || !v["members"].is_object()
@@ -189,7 +200,7 @@ pub(super) fn validate(c: &Config) -> Result<(), &'static str> {
             c.two_members.is_some(),
             c.members.is_some()
         ),
-        (5, 35, true, false) | (6, 36, false, true) | (7, 37..=106, false, true)
+        (5, 35, true, false) | (6, 36, false, true) | (7, 37..=107, false, true)
     ) || c.asset_contract.is_none()
         || c.result_contract.is_none()
     {

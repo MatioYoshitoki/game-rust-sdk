@@ -1053,10 +1053,10 @@
     "newOriginalVectorRuns": 0
   },
   "currentBatch": {
-    "id": "SDK-5-98",
+    "id": "SDK-5-99",
     "status": "completed",
-    "scope": "训练模式房主有限管理机制：受信宿主 RPC reset_training_cooldowns / restore_training_member + members.training_tools 开关（机制 106）",
-    "spec": "docs/batches/SDK-5-98-training-tools.md",
+    "scope": "共享训练目标（owner_scope: seat|all）+ 运行时按模板加怪/移除（受信 RPC spawn/despawn_training_targets，spawn_max_alive 上限，白名单=注册模板）+ 训练工具机制 107",
+    "spec": "docs/batches/SDK-5-98-training-tools.md §7",
     "latestVerifiedSlice": "docs/batches/SDK-5-98-training-tools.md"
   },
   "lastSpecifiedBatch": {
@@ -1284,13 +1284,6 @@
     "scope": "最近签收的 DELIVERY-04 SDK 范围，保留 DELIVERY-01 来源矩阵用于追溯。",
     "scopeSpec": "docs/batches/SDK-5-91-resources-instances-and-containers.md"
   },
-  "currentSdkVersion": "0.186.0",
-  "candidateBatches": [
-    {
-      "id": "SDK-5-99",
-      "status": "candidate_awaiting_product_decision",
-      "scope": "训练目标运行时生成扩展：SpawnTrainingTarget{template_id, position} 动作 + 注册表校验 + 归属绑定 + 存活上限（产品侧若采用预设分组呈现则本批取消）",
-      "spec": "docs/batches/SDK-5-98-training-tools.md#63-运行时按模板新增实例排期评估"
-    }
-  ]
+  "currentSdkVersion": "0.187.0",
+  "candidateBatches": []
 }

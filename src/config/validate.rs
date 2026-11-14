@@ -8,7 +8,7 @@ pub(super) fn validate(c: &Config, skill_limit: usize) -> Result<(), &'static st
     let time = |n: u64| n <= 3_600_000;
     let p = &c.params;
     let r = &p.runtime;
-    if (matches!(c.mechanism_version, 37..=106) && c.schema_version != 7)
+    if (matches!(c.mechanism_version, 37..=107) && c.schema_version != 7)
         || (c.mechanism_version == 35 && c.schema_version != 5)
         || (c.mechanism_version == 36 && c.schema_version != 6)
     {

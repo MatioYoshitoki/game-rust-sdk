@@ -4,7 +4,7 @@ use super::*;
 
 fn tools_input(tools: bool) -> Value {
     let mut v = input();
-    v["mechanism_version"] = json!(106);
+    v["mechanism_version"] = json!(107);
     v["pve"]["monster_positions"] = json!([[52, 20], [80, 20]]);
     v["pve"]["status_definitions"] = json!([
         {"id":"hold","mechanism":"timed_control","attribute":"root","duration_ms":900,
@@ -15,11 +15,12 @@ fn tools_input(tools: bool) -> Value {
     v["params"]["entry_years"] = json!(0);
     v["carried_quantity"] = json!(0);
     v["members"]["training_targets"] = json!([
-        {"initial_preset":"pack","presets":{"pack":["npc-1"]}},
+        {"owner_scope":"all","initial_preset":"pack","presets":{"pack":["npc-1"]}},
         {"initial_preset":"pack","presets":{"pack":["npc-2"]}}
     ]);
     if tools {
-        v["members"]["training_tools"] = json!({"enabled":true,"restore_clears":[]});
+        v["members"]["training_tools"] =
+            json!({"enabled":true,"restore_clears":[],"spawn_max_alive":3});
     }
     v
 }
@@ -256,4 +257,139 @@ fn restore_training_member_rejects_dead_member() {
         w.restore_training_member(&[0], &[], &c, 30, &mut events),
         Err(Error::InvalidState)
     );
+}
+
+#[test]
+fn shared_scope_lets_other_members_attack_owner_targets() {
+    let c = catalog(tools_input(true), |v| {}).unwrap().default_config();
+    let mut w = world(&c);
+    // 席 0（owner，scope=all）的目标 npc-1：席 1 可作为单位目标（共享）
+    let shared = crate::protocol::UnitTarget {
+        id: "npc-1".into(),
+        generation: 1,
+    };
+    let cast_b = w.action(
+        1,
+        &Action::CastUnit {
+            skill_id: "skill".into(),
+            target: shared,
+        },
+        "shared-cast",
+        &c,
+        0,
+    );
+    assert!(
+        cast_b.is_ok(),
+        "shared target must be attackable by other members"
+    );
+    // 席 1 自己的目标 npc-2：席 0 不可目标（seat 作用域私有）
+    let private = crate::protocol::UnitTarget {
+        id: "npc-2".into(),
+        generation: 1,
+    };
+    let cast_a = w.action(
+        0,
+        &Action::CastUnit {
+            skill_id: "skill".into(),
+            target: private,
+        },
+        "private-cast",
+        &c,
+        0,
+    );
+    assert_eq!(cast_a, Err(Error::InvalidTarget));
+}
+
+#[test]
+fn spawn_training_targets_respects_registered_templates_and_alive_cap() {
+    let c = catalog(tools_input(true), |v| {
+        v["members"]["training_tools"]["spawn_max_alive"] = json!(2);
+        v["pve"]["additional_templates"] = json!({"wolf": {"mechanism":"melee_projectile_heal","name":"wolf",
+            "stats":{"hp":50,"spirit":0,"atk":5,"def":0,"spd":1,"crit":0,"dodge":0},
+            "combat":{"radius":2,"attack_interval_ms":1000,"aggro_range":8,"melee_range":2,"cast_chance":0,
+                      "return_distance":8,"lifesteal_ratio":0,"mark_max":0,"mark_duration_ms":0,
+                      "projectile":{"mechanism":"projectile","id":"wolf-cast","cost":60,
+                                    "windup_ms":30,"cooldown_ms":300,"recovery_ms":60,
+                                    "range":80,"speed":10,"radius":1,
+                                    "ttl_ms":1000,"damage_bps":10000},
+                      "heal":{"mechanism":"budget_heal_channel","id":"wolf-heal","cost":0,"windup_ms":30,
+                              "cooldown_ms":300,"recovery_ms":60,"hp_threshold":0,"heal_bps":0,
+                              "interval_ms":30,"ticks":1}},
+            "leash":16,"help_range":1,"memory_range":16,"kill_credit":false,"drop_orb":false,
+            "drop_table":{"guaranteed":[],"random":[]}}});
+    })
+    .unwrap()
+    .default_config();
+    let mut w = world(&c);
+    let mut events = vec![];
+    // 未注册模板 → InvalidTarget
+    assert_eq!(
+        w.spawn_training_targets(0, "p0", "ghost", &[[60.0, 20.0]], &c, 0, &mut events),
+        Err(Error::InvalidTarget)
+    );
+    // 注册模板 ×2（max_alive 2）→ ok
+    let ids = w
+        .spawn_training_targets(
+            0,
+            "p0",
+            "wolf",
+            &[[60.0, 20.0], [70.0, 20.0]],
+            &c,
+            0,
+            &mut events,
+        )
+        .unwrap();
+    assert_eq!(ids.len(), 2);
+    assert!(
+        w.npcs
+            .iter()
+            .any(|n| n.runtime_spawned && n.entity.id == ids[0])
+    );
+    // 超出上限 → Capacity
+    assert_eq!(
+        w.spawn_training_targets(0, "p0", "wolf", &[[90.0, 20.0]], &c, 0, &mut events),
+        Err(Error::Capacity)
+    );
+    // 不可行走落点 → InvalidTarget
+    assert_eq!(
+        w.spawn_training_targets(1, "p1", "wolf", &[[0.0, 0.0]], &c, 0, &mut events),
+        Err(Error::InvalidTarget)
+    );
+}
+
+#[test]
+fn despawn_training_targets_removes_runtime_instances_only() {
+    let c = catalog(tools_input(true), |v| {
+        v["pve"]["additional_templates"] = json!({"wolf": {"mechanism":"melee_projectile_heal","name":"wolf",
+            "stats":{"hp":50,"spirit":0,"atk":0,"def":0,"spd":0,"crit":0,"dodge":0},
+            "combat":{"radius":2,"attack_interval_ms":1000,"aggro_range":8,"melee_range":2,"cast_chance":0,
+                      "return_distance":8,"lifesteal_ratio":0,"mark_max":0,"mark_duration_ms":0,
+                      "projectile":{"mechanism":"projectile","id":"wolf-cast","cost":60,
+                                    "windup_ms":30,"cooldown_ms":300,"recovery_ms":60,
+                                    "range":80,"speed":10,"radius":1,
+                                    "ttl_ms":1000,"damage_bps":10000},
+                      "heal":{"mechanism":"budget_heal_channel","id":"wolf-heal","cost":0,"windup_ms":30,
+                              "cooldown_ms":300,"recovery_ms":60,"hp_threshold":0,"heal_bps":0,
+                              "interval_ms":30,"ticks":1}},
+            "leash":16,"help_range":1,"memory_range":16,"kill_credit":false,"drop_orb":false,
+            "drop_table":{"guaranteed":[],"random":[]}}});
+    })
+    .unwrap()
+    .default_config();
+    let mut w = world(&c);
+    let mut events = vec![];
+    let ids = w
+        .spawn_training_targets(0, "p0", "wolf", &[[60.0, 20.0]], &c, 0, &mut events)
+        .unwrap();
+    // 目录预布置实例不可 despawn（归预设语义）
+    assert_eq!(
+        w.despawn_training_targets(0, &["npc-1".to_string()], &c, 0, &mut events),
+        Err(Error::InvalidTarget)
+    );
+    // 运行时实例可移除：hp 0、非激活（死亡不刷新语义）
+    w.despawn_training_targets(0, &ids, &c, 0, &mut events)
+        .unwrap();
+    let spawned = w.npcs.iter().find(|n| n.entity.id == ids[0]).unwrap();
+    assert_eq!(spawned.hp, 0);
+    assert!(!spawned.training_active);
 }

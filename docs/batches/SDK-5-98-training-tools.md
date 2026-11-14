@@ -123,3 +123,12 @@
 
 - **TrainingView metrics**：不止 DPS——每席窗口发布 `damage / hits / critical_hits / highest_hit / rolling_dps / average_dps / by_source{basic, skill, periodic, summon, other}` + `sampled_at_ms`（[TrainingMetricsView](../../src/protocol/v4.md)），窗口 `window_ms`/发布间隔 `publish_interval_ms` 可配。跨局/细粒度统计仍归宿主事件流聚合。
 - **checkpoint 禁用**：确认为**玩法检查点区域配置**（SDK-5-88-checkpoint-zones 的 `checkpoint_schedules`）。财务责任恢复持久化不受影响——训练面全零金额，但宿主仍按恢复契约持久化责任账并落账至 `Closed`（含未到场席位的零金额补偿凭据）。
+
+## 7. SDK-5-99 合并批次：共享目标 + 运行时加怪（0.187.0，机制 107，2026-11-14 交付）
+
+宿主确认排期后与本批合并交付（机制 106 → 107）：
+
+- **共享目标**：`training_targets[]` 每席 `owner_scope: seat | all`（默认 seat）。scope=all 时归属席启用的目标全体成员可攻击（`same_training_scope` relation 豁免 + 共享目标 near 回灵判定扩展），归属席保留 `SetOwnedTargets`/`ClearOwnedTargets` 启停控制权；击杀贡献按现有规则。席位私有目标仍 `InvalidTarget`（契约断言保留）。
+- **运行时加怪/移除**：受信宿主 RPC `spawn_training_targets{participant_id, template_id, positions[]}`（白名单 = 目录注册模板 `additional_templates`+`template_id`；落点足迹校验；`spawn_max_alive` 存活上限默认 3；死亡不自动刷新）+ `despawn_training_targets{participant_id, ids[]}`（仅运行时实例可移除；目录预布置实例归预设语义不可移除）；`request_id` 幂等；训练工具门禁内可用；机制 107 门控。
+- 事件：公共 `TrainingTargetsSpawned{participant_id, ids}` / `TrainingTargetsDespawning{ids}`。
+- 验收：Rust 单元 8 项（共享可攻/私有拒绝、上限、未注册模板、死亡不刷新、预布置不可移除、双门禁、席位隔离重置、恢复净化）+ 真实协议栈功能验证；全套门禁绿（Rust 132 / Node 246 / fmt / config-gates）。

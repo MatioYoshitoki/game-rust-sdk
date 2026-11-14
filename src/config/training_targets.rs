@@ -5,9 +5,23 @@ use std::collections::{BTreeMap, BTreeSet};
 pub(crate) const MAX_PRESETS: usize = 8;
 pub(crate) const MAX_TARGETS_PER_PRESET: usize = 16;
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub(crate) enum OwnerScope {
+    Seat,
+    All,
+}
+impl Default for OwnerScope {
+    fn default() -> Self {
+        Self::Seat
+    }
+}
+
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub(crate) struct TrainingSeat {
+    #[serde(default)]
+    pub owner_scope: OwnerScope,
     pub presets: BTreeMap<String, Vec<String>>,
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     pub behaviors: BTreeMap<String, TrainingTargetBehavior>,
@@ -83,6 +97,22 @@ impl Config {
     pub(crate) fn training_tools(&self) -> Option<&super::two_members::TrainingTools> {
         self.members.as_ref()?.training_tools.as_ref()
     }
+    pub(crate) fn training_shared_seats(&self) -> Vec<usize> {
+        self.members
+            .as_ref()
+            .map(|members| {
+                members
+                    .training_targets
+                    .as_deref()
+                    .unwrap_or(&[])
+                    .iter()
+                    .enumerate()
+                    .filter(|(_, seat)| seat.owner_scope == OwnerScope::All)
+                    .map(|(i, _)| i)
+                    .collect()
+            })
+            .unwrap_or_default()
+    }
 }
 
 pub(super) fn validate(c: &Config) -> Result<(), &'static str> {
@@ -97,7 +127,7 @@ pub(super) fn validate(c: &Config) -> Result<(), &'static str> {
         if !tools.enabled {
             return Err("CONFIG_TRAINING_TOOLS");
         }
-        if !matches!(c.mechanism_version, 105..=106) {
+        if !matches!(c.mechanism_version, 105..=107) {
             return Err("CONFIG_TRAINING_TOOLS");
         }
         if c.pve.as_ref().is_some_and(|pve| {
@@ -108,9 +138,12 @@ pub(super) fn validate(c: &Config) -> Result<(), &'static str> {
         }) {
             return Err("CONFIG_TRAINING_TOOLS");
         }
+        if !(1..=16).contains(&tools.spawn_max_alive) {
+            return Err("CONFIG_TRAINING_TOOLS");
+        }
     }
     if c.protocol_version() != 6
-        || !matches!(c.mechanism_version, 105..=106)
+        || !matches!(c.mechanism_version, 105..=107)
         || c.combat_rules.is_none()
         || c.pve.is_none()
         || c.match_mode.is_some()

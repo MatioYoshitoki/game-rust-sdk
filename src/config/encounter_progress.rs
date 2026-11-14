@@ -52,7 +52,7 @@ pub(super) fn validate(c: &Config) -> Result<(), &'static str> {
         return Ok(());
     };
     if c.protocol_version() != 6
-        || !matches!(c.mechanism_version, 105..=106)
+        || !matches!(c.mechanism_version, 105..=107)
         || c.combat_rules.is_none()
         || c.training_targets().is_some()
         || c.members.is_none()

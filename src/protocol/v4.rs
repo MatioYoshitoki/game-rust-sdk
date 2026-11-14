@@ -819,6 +819,13 @@ pub struct ExtractionChannelChange {
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub enum EventV4 {
+    TrainingTargetsSpawned {
+        participant_id: String,
+        ids: Vec<String>,
+    },
+    TrainingTargetsDespawning {
+        ids: Vec<String>,
+    },
     ExtractionChannelChanged(ExtractionChannelChange),
     DeadlineDamage {
         target: EntityRef,

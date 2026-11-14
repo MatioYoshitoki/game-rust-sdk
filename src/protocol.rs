@@ -8,6 +8,8 @@ mod skill_loadouts;
 pub use skill_loadouts::*;
 mod training_tools;
 pub use training_tools::*;
+mod training_spawn;
+pub use training_spawn::*;
 mod weapon_equipment;
 pub use weapon_equipment::*;
 mod status;

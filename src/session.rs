@@ -116,6 +116,24 @@ impl Session {
             .ok_or(Error::Unsupported)?
             .restore_training_member(request)
     }
+    pub(crate) fn spawn_training_targets(
+        &mut self,
+        request: crate::protocol::SpawnTrainingTargets,
+    ) -> Result<Status> {
+        self.two
+            .as_mut()
+            .ok_or(Error::Unsupported)?
+            .spawn_training_targets(request)
+    }
+    pub(crate) fn despawn_training_targets(
+        &mut self,
+        request: crate::protocol::DespawnTrainingTargets,
+    ) -> Result<Status> {
+        self.two
+            .as_mut()
+            .ok_or(Error::Unsupported)?
+            .despawn_training_targets(request)
+    }
     pub(crate) fn set_equipped_weapon(
         &mut self,
         request: SetEquippedWeapon,

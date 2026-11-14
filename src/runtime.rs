@@ -13,6 +13,8 @@ enum Command {
     SetEquippedWeapon(SetEquippedWeapon),
     ResetTrainingCooldowns(crate::protocol::ResetTrainingCooldowns),
     RestoreTrainingMember(crate::protocol::RestoreTrainingMember),
+    SpawnTrainingTargets(crate::protocol::SpawnTrainingTargets),
+    DespawnTrainingTargets(crate::protocol::DespawnTrainingTargets),
     Business(BusinessReceiptRequest),
     Transport(TransportReceipt),
     Spectate(SpectateV6),
@@ -83,6 +85,27 @@ impl Client {
         request: crate::protocol::RestoreTrainingMember,
     ) -> Result<Status> {
         match self.call(Command::RestoreTrainingMember(request))? {
+            Response::Status(status) => Ok(status),
+            _ => Err(Error::Faulted),
+        }
+    }
+    /// Training-room host tool: spawn instances of a registered template at
+    /// host-provided points (ownership binds to the requesting seat).
+    pub fn spawn_training_targets(
+        &self,
+        request: crate::protocol::SpawnTrainingTargets,
+    ) -> Result<Status> {
+        match self.call(Command::SpawnTrainingTargets(request))? {
+            Response::Status(status) => Ok(status),
+            _ => Err(Error::Faulted),
+        }
+    }
+    /// Training-room host tool: remove runtime-spawned targets.
+    pub fn despawn_training_targets(
+        &self,
+        request: crate::protocol::DespawnTrainingTargets,
+    ) -> Result<Status> {
+        match self.call(Command::DespawnTrainingTargets(request))? {
             Response::Status(status) => Ok(status),
             _ => Err(Error::Faulted),
         }
@@ -207,6 +230,12 @@ impl Runtime {
                                     .map(Response::Status),
                                 Command::RestoreTrainingMember(request) => engine
                                     .restore_training_member(request)
+                                    .map(Response::Status),
+                                Command::SpawnTrainingTargets(request) => {
+                                    engine.spawn_training_targets(request).map(Response::Status)
+                                }
+                                Command::DespawnTrainingTargets(request) => engine
+                                    .despawn_training_targets(request)
                                     .map(Response::Status),
                                 Command::Input(request) => {
                                     engine.input(request).map(Response::Status)

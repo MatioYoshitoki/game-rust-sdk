@@ -542,6 +542,7 @@ struct Npc {
     boss_phase: usize,
     training_owner: Option<usize>,
     training_active: bool,
+    runtime_spawned: bool,
     training_reverse: bool,
     pursuit: Option<contested_equipment::Pursuit>,
 }
@@ -574,6 +575,7 @@ impl Npc {
             boss_phase: 0,
             training_owner: None,
             training_active: false,
+            runtime_spawned: false,
             training_reverse: false,
             pursuit: None,
         }
@@ -625,6 +627,7 @@ pub(crate) struct World {
     encounter: Option<encounter_progress::EncounterState>,
     member_conflict: bool,
     training: bool,
+    training_shared_seats: Vec<usize>,
     training_runtime: Option<Vec<training_targets::SeatRuntime>>,
     checkpoint_epoch: u32,
     shared_boon_claims: [u8; crate::config::world_boons::MAX_OPPORTUNITIES],
@@ -737,6 +740,7 @@ impl World {
                 .map(encounter_progress::EncounterState::new),
             member_conflict: c.member_conflict(),
             training: c.training_targets().is_some(),
+            training_shared_seats: c.training_shared_seats(),
             training_runtime: c.training_runtime().map(|r| {
                 (0..seats.len())
                     .map(|_| training_targets::SeatRuntime::new(r.metrics))
@@ -2941,9 +2945,16 @@ impl World {
                 if !m.living() {
                     continue;
                 }
+                let shared_near = self.training_shared_seats.iter().any(|&owner| {
+                    self.npcs.iter().any(|n| {
+                        n.hp > 0
+                            && n.training_owner == Some(owner)
+                            && distance(n.position, m.position) <= c.params.regen.near_radius
+                    })
+                });
                 let near = self.npcs.iter().any(|n| {
                     n.hp > 0
-                        && n.training_owner.is_none_or(|owner| owner == index)
+                        && (n.training_owner.is_none_or(|owner| owner == index) || shared_near)
                         && distance(n.position, m.position) <= c.params.regen.near_radius
                 });
                 let ratio = if near {
